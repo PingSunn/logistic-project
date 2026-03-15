@@ -1,1 +1,8 @@
-﻿Console.WriteLine("Hello, World!");
+using Avalonia;
+using logistic;
+
+AppBuilder.Configure<App>()
+    .UsePlatformDetect()
+    .LogToTrace()
+    .StartWithClassicDesktopLifetime(args);
+    
