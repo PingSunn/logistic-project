@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="logistic.MainWindow"
+        Title="Logistic"
+        Width="800"
+        Height="600">
+  <DockPanel>
+    <!-- Top bar -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Height="48"
+          Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+
+      <Button x:Name="BackButton"
+              Content="← Back"
+              IsVisible="False"
+              VerticalAlignment="Center"
+              Margin="8,0"
+              Click="BackButton_Click" />
+
+      <TextBlock x:Name="TitleText"
+                 Grid.Column="1"
+                 Text="Logistic"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 FontSize="16"
+                 FontWeight="SemiBold" />
+
+      <Button x:Name="SettingsButton"
+              Grid.Column="2"
+              Content="Setting"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Center"
+              Margin="8,0"
+              Click="OpenSettings_Click" />
+    </Grid>
+
+    <!-- Body -->
+    <ContentControl x:Name="MainContent" />
+  </DockPanel>
+</Window>
