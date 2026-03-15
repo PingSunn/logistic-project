@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="logistic.SettingsWindow">
+  <Grid ColumnDefinitions="180,Auto,*">
+
+    <!-- Sidebar -->
+    <Border Grid.Column="0"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+      <ListBox x:Name="SidebarList"
+               SelectionChanged="SidebarList_SelectionChanged"
+               Margin="0,8">
+        <ListBoxItem Content="Container" Tag="Container" />
+      </ListBox>
+    </Border>
+
+    <!-- Divider -->
+    <GridSplitter Grid.Column="1"
+                  Width="1"
+                  ResizeBehavior="PreviousAndNext"
+                  IsEnabled="False"
+                  Background="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+    <!-- Content area -->
+    <ContentControl Grid.Column="2"
+                    x:Name="ContentArea"
+                    Margin="24,20" />
+
+  </Grid>
+</UserControl>
