@@ -2,38 +2,48 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="logistic.MainWindow"
         Title="Logistic"
-        Width="800"
-        Height="600">
+        Width="900"
+        Height="640"
+        MinWidth="720"
+        MinHeight="500"
+        Background="#F1F5F9">
   <DockPanel>
+
     <!-- Top bar -->
-    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Height="48"
-          Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+    <Border DockPanel.Dock="Top"
+            Height="56"
+            Background="White"
+            BorderThickness="0,0,0,1"
+            BorderBrush="#E2E8F0">
+      <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0">
 
-      <Button x:Name="BackButton"
-              Content="← Back"
-              IsVisible="False"
-              VerticalAlignment="Center"
-              Margin="8,0"
-              Click="BackButton_Click" />
+        <Button x:Name="BackButton"
+                Classes="ghost"
+                Content="← Back"
+                IsVisible="False"
+                VerticalAlignment="Center"
+                Click="BackButton_Click" />
 
-      <TextBlock x:Name="TitleText"
-                 Grid.Column="1"
-                 Text="Logistic"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 FontSize="16"
-                 FontWeight="SemiBold" />
+        <TextBlock x:Name="TitleText"
+                   Grid.Column="1"
+                   Text="Logistic"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="17"
+                   FontWeight="SemiBold"
+                   Foreground="#1E293B" />
 
-      <Button x:Name="SettingsButton"
-              Grid.Column="2"
-              Content="Setting"
-              HorizontalAlignment="Left"
-              VerticalAlignment="Center"
-              Margin="8,0"
-              Click="OpenSettings_Click" />
-    </Grid>
+        <Button x:Name="SettingsButton"
+                Grid.Column="2"
+                Classes="ghost"
+                Content="⚙  Settings"
+                VerticalAlignment="Center"
+                Click="OpenSettings_Click" />
+      </Grid>
+    </Border>
 
     <!-- Body -->
     <ContentControl x:Name="MainContent" />
+
   </DockPanel>
 </Window>

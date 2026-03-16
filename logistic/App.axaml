@@ -4,5 +4,61 @@
              RequestedThemeVariant="Light">
   <Application.Styles>
     <FluentTheme />
+
+    <!-- Primary button -->
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#2563EB"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="16,8"/>
+      <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1D4ED8"/>
+    </Style>
+
+    <!-- Outline button -->
+    <Style Selector="Button.outline">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#2563EB"/>
+      <Setter Property="BorderBrush" Value="#2563EB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="16,8"/>
+      <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.outline:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#EFF6FF"/>
+    </Style>
+
+    <!-- Ghost button -->
+    <Style Selector="Button.ghost">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Foreground" Value="#374151"/>
+      <Setter Property="Padding" Value="10,6"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.ghost:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#F1F5F9"/>
+    </Style>
+
+    <!-- Danger ghost button -->
+    <Style Selector="Button.danger">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#DC2626"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="8,4"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#FEF2F2"/>
+    </Style>
+
   </Application.Styles>
 </Application>
