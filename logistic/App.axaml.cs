@@ -10,6 +10,8 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        ContainerSpec.Load();
+        ProductSpec.Load();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = new MainWindow();
         base.OnFrameworkInitializationCompleted();

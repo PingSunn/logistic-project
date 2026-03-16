@@ -5,32 +5,24 @@ using System.Text.Json.Serialization;
 
 namespace logistic;
 
-/// <summary>
-/// Represents a shipping container type.
-/// Nominal = real physical size shown to the user.
-/// Interior = usable space for calculation (nominal − 15 cm per side).
-/// </summary>
-public record ContainerSpec(
-    string Name,
-    string SizeLabel,
-    int NominalW,
-    int NominalL,
-    int NominalH)
+public record ProductSpec(
+    string Description,
+    string Content,
+    string PackSize,
+    double WeightPerBoxKg,
+    bool BoxTypeRsc,
+    bool BoxTypeAuto,
+    double W,
+    double L,
+    double H)
 {
-    [JsonIgnore] public int InteriorW => NominalW - 15;
-    [JsonIgnore] public int InteriorL => NominalL - 15;
-    [JsonIgnore] public int InteriorH => NominalH - 15;
+    [JsonIgnore] public double Cbm => W * L * H / 1_000_000;
 
-    public static readonly List<ContainerSpec> All =
-    [
-        new("ตู้สั้น",     "20 ft",    244, 600,  259),
-        new("ตู้ยาว",     "40 ft",    244, 1209, 260),
-        new("ตู้ไฮคิวบ์", "40 ft HC", 244, 1203, 290),
-    ];
+    public static readonly List<ProductSpec> All = [];
 
     private static readonly string FilePath = Path.Combine(
         System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
-        "logistic", "containers.json");
+        "logistic", "products.json");
 
     private static readonly JsonSerializerOptions JsonOpts = new() { WriteIndented = true };
 
@@ -40,7 +32,7 @@ public record ContainerSpec(
         try
         {
             var json = File.ReadAllText(FilePath);
-            var specs = JsonSerializer.Deserialize<ContainerSpec[]>(json, JsonOpts);
+            var specs = JsonSerializer.Deserialize<ProductSpec[]>(json, JsonOpts);
             if (specs is null || specs.Length == 0) return;
             All.Clear();
             All.AddRange(specs);
