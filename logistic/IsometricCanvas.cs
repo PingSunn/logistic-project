@@ -10,11 +10,13 @@ namespace logistic;
 public record BoxPlacement(
     double X, double Y, double Z,
     double BW, double BL, double BH,
-    int ProductIndex);
+    int ProductIndex,
+    bool Rotated = false);
 
 public class IsometricCanvas : Control
 {
     private const string SansSerif = "sans-serif";
+    private const string MutedHex  = "#94A3B8";
 
     private static readonly Color[] Palette =
     [
@@ -27,6 +29,12 @@ public class IsometricCanvas : Control
         Color.Parse("#14B8A6"),
         Color.Parse("#F97316"),
     ];
+
+    // Rotated-box variant: blend each palette color 60% toward violet (#6D28D9)
+    private static readonly Color[] PaletteAlt = Array.ConvertAll(Palette, c => Color.FromRgb(
+        (byte)Math.Clamp(c.R * 0.4 + 109 * 0.6, 0, 255),
+        (byte)Math.Clamp(c.G * 0.4 +  40 * 0.6, 0, 255),
+        (byte)Math.Clamp(c.B * 0.4 + 217 * 0.6, 0, 255)));
 
     public List<BoxPlacement> Placements { get; private set; } = [];
     public ContainerSpec? Container { get; private set; }
@@ -169,16 +177,18 @@ public class IsometricCanvas : Control
 
         var clipped = ClipToCutPlane(cutZ);
 
-        // Painter's sort: project box centres onto view direction → back-to-front
+        // Painter's sort: viewer direction = (sinA*sinE, cosA*sinE, cosE) — back-to-front
         clipped.Sort((a, b) =>
         {
-            double da = (a.X + a.BW * 0.5) * cosA * cosE + (a.Y + a.BL * 0.5) * sinA * cosE - (a.Z + a.BH * 0.5) * sinE;
-            double db = (b.X + b.BW * 0.5) * cosA * cosE + (b.Y + b.BL * 0.5) * sinA * cosE - (b.Z + b.BH * 0.5) * sinE;
+            double da = (a.X + a.BW * 0.5) * sinA * sinE + (a.Y + a.BL * 0.5) * cosA * sinE + (a.Z + a.BH * 0.5) * cosE;
+            double db = (b.X + b.BW * 0.5) * sinA * sinE + (b.Y + b.BL * 0.5) * cosA * sinE + (b.Z + b.BH * 0.5) * cosE;
             return da.CompareTo(db);
         });
 
         foreach (var box in clipped)
-            DrawBox(context, box, Iso);
+            DrawBox(context, box, Iso, cosA, sinA);
+
+        DrawLayerLabels(context, clipped, Iso);
 
         if (_cutRatio < 0.999 && clipped.Count > 0)
             DrawCutPlane(context, cW, cL, cutZ, Iso);
@@ -206,7 +216,7 @@ public class IsometricCanvas : Control
     private static void DrawContainerWireframe(DrawingContext dc, double cW, double cL, double cH,
         Func<double, double, double, Point> iso)
     {
-        var pen = new Pen(new SolidColorBrush(Color.Parse("#94A3B8")), 1.5);
+        var pen = new Pen(new SolidColorBrush(Color.Parse(MutedHex)), 1.5);
 
         var p000 = iso(0,   0,   0);   var p100 = iso(cW, 0,   0);
         var p010 = iso(0,   cL,  0);   var p110 = iso(cW, cL,  0);
@@ -221,27 +231,51 @@ public class IsometricCanvas : Control
         dc.DrawLine(pen, p101, p111); dc.DrawLine(pen, p011, p111);
     }
 
-    private static void DrawBox(DrawingContext dc, BoxPlacement box, Func<double, double, double, Point> iso)
+    private static void DrawBox(DrawingContext dc, BoxPlacement box,
+        Func<double, double, double, Point> iso, double cosAz, double sinAz)
     {
-        var baseColor = Palette[box.ProductIndex % Palette.Length];
+        var pal = box.Rotated ? PaletteAlt : Palette;
+        var baseColor = pal[box.ProductIndex % pal.Length];
         double x = box.X, y = box.Y, z = box.Z;
         double w = box.BW, l = box.BL, h = box.BH;
 
-        var p000 = iso(x,     y,     z);
-        var p010 = iso(x,     y+l,   z);     var p110 = iso(x+w, y+l,   z);
-        var p001 = iso(x,     y,     z+h);   var p101 = iso(x+w, y,     z+h);
-        var p011 = iso(x,     y+l,   z+h);   var p111 = iso(x+w, y+l,   z+h);
+        var p000 = iso(x,   y,   z);   var p100 = iso(x+w, y,   z);
+        var p010 = iso(x,   y+l, z);   var p110 = iso(x+w, y+l, z);
+        var p001 = iso(x,   y,   z+h); var p101 = iso(x+w, y,   z+h);
+        var p011 = iso(x,   y+l, z+h); var p111 = iso(x+w, y+l, z+h);
 
-        FillFace(dc, [p001, p101, p111, p011], Lighten(baseColor, 0.45));              // top (fully opaque)
-        FillFace(dc, [p010, p110, p111, p011], WithAlpha(baseColor, 210));             // right face
-        FillFace(dc, [p000, p010, p011, p001], WithAlpha(Darken(baseColor, 0.40), 185)); // left face (deeper fade)
+        // Solid silhouette fill first — zero see-through regardless of painter-sort ties or AA gaps.
+        // Silhouette is the 6-corner convex hull of the 3 visible faces (varies by viewer quadrant).
+        Point[] sil;
+        if      (sinAz >= 0 && cosAz >= 0) sil = [p001, p101, p100, p110, p010, p011]; // +X +Y
+        else if (sinAz >= 0)               sil = [p001, p011, p111, p110, p100, p000]; // +X -Y
+        else if (cosAz >= 0)               sil = [p001, p101, p111, p110, p010, p000]; // -X +Y
+        else                               sil = [p101, p111, p011, p010, p000, p100]; // -X -Y
+        FillFace(dc, sil, baseColor);
 
-        var edge = new Pen(new SolidColorBrush(Darken(baseColor, 0.60)), 0.8);
+        // Shaded faces on top for 3-D depth
+        FillFace(dc, [p001, p101, p111, p011], baseColor);
+
+        if (cosAz >= 0)
+            FillFace(dc, [p010, p110, p111, p011], Darken(baseColor, 0.22));
+        else
+            FillFace(dc, [p000, p100, p101, p001], Darken(baseColor, 0.22));
+
+        if (sinAz >= 0)
+            FillFace(dc, [p100, p110, p111, p101], Darken(baseColor, 0.40));
+        else
+            FillFace(dc, [p000, p010, p011, p001], Darken(baseColor, 0.40));
+
+        var edge = new Pen(new SolidColorBrush(Darken(baseColor, 0.55)), 0.8);
+        // Top edges (always same)
         dc.DrawLine(edge, p001, p101); dc.DrawLine(edge, p101, p111);
         dc.DrawLine(edge, p111, p011); dc.DrawLine(edge, p011, p001);
-        dc.DrawLine(edge, p001, p000); dc.DrawLine(edge, p011, p010);
-        dc.DrawLine(edge, p111, p110); dc.DrawLine(edge, p000, p010);
-        dc.DrawLine(edge, p010, p110);
+        // Y-side edges
+        if (cosAz >= 0) { dc.DrawLine(edge, p010, p011); dc.DrawLine(edge, p110, p111); dc.DrawLine(edge, p010, p110); }
+        else            { dc.DrawLine(edge, p000, p001); dc.DrawLine(edge, p100, p101); dc.DrawLine(edge, p000, p100); }
+        // X-side edges
+        if (sinAz >= 0) { dc.DrawLine(edge, p100, p101); dc.DrawLine(edge, p110, p111); dc.DrawLine(edge, p100, p110); }
+        else            { dc.DrawLine(edge, p000, p001); dc.DrawLine(edge, p010, p011); dc.DrawLine(edge, p000, p010); }
     }
 
     private static void DrawCutPlane(DrawingContext dc, double cW, double cL, double cutZ,
@@ -268,6 +302,38 @@ public class IsometricCanvas : Control
         dc.DrawLine(pen, pts[1], pts[2]);
         dc.DrawLine(pen, pts[2], pts[3]);
         dc.DrawLine(pen, pts[3], pts[0]);
+    }
+
+    private static void DrawLayerLabels(DrawingContext dc, List<BoxPlacement> clipped,
+        Func<double, double, double, Point> iso)
+    {
+        if (clipped.Count == 0) return;
+
+        var levels = new System.Collections.Generic.SortedSet<double>();
+        foreach (var b in clipped) levels.Add(b.Z);
+        if (levels.Count < 2 || levels.Count > 20) return;
+
+        var tf    = new Typeface(SansSerif);
+        var brush = new SolidColorBrush(Color.Parse("#64748B"));
+        var tick  = new Pen(new SolidColorBrush(Color.Parse(MutedHex)), 0.8);
+
+        int n = 1;
+        Point? prev = null;
+        foreach (double z in levels)
+        {
+            var p = iso(0, 0, z);
+            if (prev.HasValue && Math.Abs(prev.Value.Y - p.Y) < 12) { n++; continue; }
+
+            var ft = new FormattedText($"ชั้นที่ {n}",
+                System.Globalization.CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight, tf, 10, brush);
+
+            dc.DrawLine(tick, p, new Point(p.X - 8, p.Y));
+            dc.DrawText(ft, new Point(p.X - ft.Width - 12, p.Y - ft.Height / 2));
+
+            prev = p;
+            n++;
+        }
     }
 
     private static void FillFace(DrawingContext dc, Point[] pts, Color color)
@@ -300,7 +366,7 @@ public class IsometricCanvas : Control
         Func<double, double, double, Point> iso)
     {
         var tf    = new Typeface(SansSerif);
-        var brush = new SolidColorBrush(Color.Parse("#94A3B8"));
+        var brush = new SolidColorBrush(Color.Parse(MutedHex));
 
         FormattedText Ft(string t) => new(t,
             System.Globalization.CultureInfo.CurrentCulture,
@@ -348,7 +414,7 @@ public class IsometricCanvas : Control
             System.Globalization.CultureInfo.CurrentCulture,
             FlowDirection.LeftToRight,
             new Typeface(SansSerif), 16,
-            new SolidColorBrush(Color.Parse("#94A3B8")));
+            new SolidColorBrush(Color.Parse(MutedHex)));
         dc.DrawText(ft, new Point((bounds.Width - ft.Width) / 2, (bounds.Height - ft.Height) / 2));
     }
 
@@ -362,14 +428,8 @@ public class IsometricCanvas : Control
         dc.DrawText(ft, new Point((bounds.Width - ft.Width) / 2, bounds.Height / 2 + 28));
     }
 
-    private static Color Lighten(Color c, double t) =>
-        Color.FromRgb(Clamp(c.R + (255 - c.R) * t), Clamp(c.G + (255 - c.G) * t), Clamp(c.B + (255 - c.B) * t));
-
     private static Color Darken(Color c, double t) =>
         Color.FromRgb(Clamp(c.R * (1 - t)), Clamp(c.G * (1 - t)), Clamp(c.B * (1 - t)));
-
-    private static Color WithAlpha(Color c, byte alpha) =>
-        Color.FromArgb(alpha, c.R, c.G, c.B);
 
     private static byte Clamp(double v) => (byte)Math.Clamp(v, 0, 255);
 }

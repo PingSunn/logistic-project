@@ -627,7 +627,7 @@ public class PlanningView : UserControl
                         double px = sectionX + c * bw;
                         double py = stackY + r * bl;
                         if (px + bw > dims.W + 0.01 || py + bl > dims.L - Clearance + 0.01) continue;
-                        placements.Add(new BoxPlacement(px, py, z, bw, bl, spec.H, productIndex));
+                        placements.Add(new BoxPlacement(px, py, z, bw, bl, spec.H, productIndex, section.Rotated));
                         packed++;
                     }
                 }
