@@ -81,17 +81,43 @@ public class PlanningView : UserControl
         statsCard.Child = _statsText;
         dock.Children.Add(statsCard);
 
-        // Layer cut slider — docked above stats
+        // Canvas config bar — docked above stats
         var sliderRow = new Border
         {
             Background = Surface,
             BorderBrush = BorderLight,
             BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(10),
-            Padding = new Thickness(14, 8),
+            CornerRadius = new CornerRadius(8),
+            Padding = new Thickness(10, 6),
             Margin = new Thickness(0, 8, 0, 0)
         };
         DockPanel.SetDock(sliderRow, Dock.Bottom);
+
+        // Chip buttons row
+        var chipRow = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 5,
+            Margin = new Thickness(0, 0, 0, 6)
+        };
+
+        var resetBtn = new Button
+        {
+            Content = "↺ รีเซ็ต",
+            FontSize = 10,
+            Padding = new Thickness(7, 2),
+            CornerRadius = new CornerRadius(5),
+            Background = SurfaceSub,
+            BorderBrush = BorderLight,
+            BorderThickness = new Thickness(1),
+            Foreground = InkMuted,
+            Cursor = new Cursor(StandardCursorType.Hand)
+        };
+        resetBtn.Click += (_, _) => _canvas.ResetView();
+        chipRow.Children.Add(resetBtn);
+        chipRow.Children.Add(MakeChip("ลวดลาย",    false, v => _canvas.SetWireframeMode(v)));
+        chipRow.Children.Add(MakeChip("สีตามชั้น", false, v => _canvas.SetColorByLayer(v)));
+        chipRow.Children.Add(MakeChip("แสดงขนาด",  true,  v => _canvas.SetShowDimensions(v)));
 
         var sliderGrid = new Grid { ColumnDefinitions = ColumnDefinitions.Parse("Auto,*,38") };
 
@@ -135,7 +161,10 @@ public class PlanningView : UserControl
             _cutLabel.Text = $"{(int)Math.Round(_cutSlider.Value * 100)}%";
         };
 
-        sliderRow.Child = sliderGrid;
+        var controlStack = new StackPanel { Spacing = 0 };
+        controlStack.Children.Add(chipRow);
+        controlStack.Children.Add(sliderGrid);
+        sliderRow.Child = controlStack;
         dock.Children.Add(sliderRow);
 
         // Canvas card — fills remaining space
@@ -303,6 +332,32 @@ public class PlanningView : UserControl
         Foreground = InkMuted,
         Margin = new Thickness(2, 4, 0, 0)
     };
+
+    private static Button MakeChip(string label, bool active, Action<bool> onToggle)
+    {
+        bool[] on = { active };
+        var btn = new Button
+        {
+            Content = label,
+            FontSize = 10,
+            Padding = new Thickness(7, 2),
+            CornerRadius = new CornerRadius(5),
+            Background = active ? AccentBg : SurfaceSub,
+            BorderBrush = active ? AccentBorder : BorderLight,
+            BorderThickness = new Thickness(1),
+            Foreground = active ? AccentText : InkMuted,
+            Cursor = new Cursor(StandardCursorType.Hand)
+        };
+        btn.Click += (_, _) =>
+        {
+            on[0] = !on[0];
+            btn.Background  = on[0] ? AccentBg     : SurfaceSub;
+            btn.BorderBrush = on[0] ? AccentBorder : BorderLight;
+            btn.Foreground  = on[0] ? AccentText   : InkMuted;
+            onToggle(on[0]);
+        };
+        return btn;
+    }
 
     private static Border MakeContainerItem(string name, string size, bool selected)
     {
@@ -581,7 +636,7 @@ public class PlanningView : UserControl
                 bool useA    = flipStart ? (layer % 2 == 1) : (layer % 2 == 0);
                 var sections = useA ? spec.PatternA : (spec.PatternB ?? spec.PatternA);
 
-                int n = PlaceLayerAt(sections, spec, dims, stackY, z, requested - packed, productIndex, placements);
+                int n = PlaceLayerAt(sections, spec, dims, stackY, z, requested - packed, productIndex, placements, stackIndex);
                 if (n < 0) break;
                 packed += n;
                 layersPlaced++;
@@ -600,7 +655,7 @@ public class PlanningView : UserControl
 
     private static int PlaceLayerAt(
         LayerSection[] sections, ProductSpec spec, ContainerDims dims,
-        double stackY, double z, int limit, int productIndex, List<BoxPlacement> placements)
+        double stackY, double z, int limit, int productIndex, List<BoxPlacement> placements, int stackIndex)
     {
         if (z + spec.H > dims.H + 0.01) return -1;
 
@@ -627,7 +682,7 @@ public class PlanningView : UserControl
                         double px = sectionX + c * bw;
                         double py = stackY + r * bl;
                         if (px + bw > dims.W + 0.01 || py + bl > dims.L - Clearance + 0.01) continue;
-                        placements.Add(new BoxPlacement(px, py, z, bw, bl, spec.H, productIndex, section.Rotated));
+                        placements.Add(new BoxPlacement(px, py, z, bw, bl, spec.H, productIndex, section.Rotated, stackIndex));
                         packed++;
                     }
                 }
