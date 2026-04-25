@@ -47,6 +47,7 @@ public class IsometricCanvas : Control
     // ── Rotation state ────────────────────────────────────────────────────────
     private double _azimuth   = Math.PI / 4;
     private double _elevation = 0.50;
+    private double _zoom      = 1.0;
     private bool   _dragging;
     private Point  _dragStart;
     private double _azimuthAtDrag;
@@ -75,6 +76,7 @@ public class IsometricCanvas : Control
     {
         _azimuth   = Math.PI / 4;
         _elevation = 0.50;
+        _zoom      = 1.0;
         InvalidateVisual();
     }
 
@@ -116,8 +118,8 @@ public class IsometricCanvas : Control
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
-        _azimuth   -= e.Delta.X * 0.08;
-        _elevation  = Math.Clamp(_elevation + e.Delta.Y * 0.05, 0.08, 1.45);
+        _azimuth -= e.Delta.X * 0.08;
+        _zoom     = Math.Clamp(_zoom * Math.Pow(1.12, e.Delta.Y), 0.2, 8.0);
         InvalidateVisual();
     }
 
@@ -171,8 +173,8 @@ public class IsometricCanvas : Control
 
         double spanX = maxSx - minSx;
         double spanY = maxSy - minSy;
-        double maxW  = bounds.Width  * 0.85;
-        double maxH  = bounds.Height * 0.85;
+        double maxW  = bounds.Width  * 0.85 * _zoom;
+        double maxH  = bounds.Height * 0.85 * _zoom;
         double scale = Math.Min(maxW / Math.Max(spanX, 1), maxH / Math.Max(spanY, 1));
 
         double midSx = (minSx + maxSx) / 2;
@@ -196,7 +198,7 @@ public class IsometricCanvas : Control
             DrawFloorFill(context, cW, cL, Iso);
             if (_showDimensions) DrawEdgeLabels(context, cW, cL, cH, Iso);
             DrawHint(context, bounds, "เลือกสินค้าแล้วกด คำนวณ");
-            DrawHint2(context, bounds, "ลากเพื่อหมุน  ·  Scroll ซ้าย-ขวา = หมุน  ·  Scroll ขึ้น-ลง = เอียง");
+            DrawHint2(context, bounds, "ลากเพื่อหมุน/เอียง  ·  Scroll ขึ้น-ลง = ซูม  ·  Scroll ซ้าย-ขวา = หมุน");
             return;
         }
 
