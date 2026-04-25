@@ -13,24 +13,28 @@
       {
         "Rows": 2,
         "Cols": 6,
-        "Rotated": false
+        "Rotated": false,
+        "SubRows": null
       },
       {
         "Rows": 3,
         "Cols": 3,
-        "Rotated": true
+        "Rotated": true,
+        "SubRows": null
       }
     ],
     "PatternB": [
       {
         "Rows": 3,
         "Cols": 3,
-        "Rotated": true
+        "Rotated": true,
+        "SubRows": null
       },
       {
         "Rows": 2,
         "Cols": 6,
-        "Rotated": false
+        "Rotated": false,
+        "SubRows": null
       }
     ],
     "MaxLayers": 10
@@ -45,9 +49,35 @@
     "W": 24.6,
     "L": 35.6,
     "H": 21.1,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 9
   },
   {
     "Description": "Aloe",
@@ -59,9 +89,35 @@
     "W": 25.1,
     "L": 33.2,
     "H": 29.6,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 3,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 7
   },
   {
     "Description": "Beauti drink",
@@ -73,9 +129,35 @@
     "W": 24,
     "L": 36.1,
     "H": 21.5,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 2,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Blue",
@@ -87,9 +169,35 @@
     "W": 27.4,
     "L": 41.4,
     "H": 22.7,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 7,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 2,
+        "Cols": 7,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 20
   },
   {
     "Description": "Cooler Bag",
@@ -105,24 +213,28 @@
       {
         "Rows": 3,
         "Cols": 3,
-        "Rotated": true
+        "Rotated": true,
+        "SubRows": null
       },
       {
         "Rows": 2,
         "Cols": 4,
-        "Rotated": false
+        "Rotated": false,
+        "SubRows": null
       }
     ],
     "PatternB": [
       {
         "Rows": 2,
         "Cols": 4,
-        "Rotated": false
+        "Rotated": false,
+        "SubRows": null
       },
       {
         "Rows": 3,
         "Cols": 3,
-        "Rotated": true
+        "Rotated": true,
+        "SubRows": null
       }
     ],
     "MaxLayers": 10
@@ -137,9 +249,123 @@
     "W": 25.8,
     "L": 38.5,
     "H": 16.3,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      }
+    ],
+    "MaxLayers": 13
   },
   {
     "Description": "Gumi Jelly",
@@ -207,15 +433,129 @@
     "W": 25.8,
     "L": 38.5,
     "H": 15.7,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      }
+    ],
+    "MaxLayers": 13
   },
   {
     "Description": "Mogu Tea",
     "Content": "300 ML",
     "PackSize": "Pack 6",
-    "WeightPerBoxKg": 8.0,
+    "WeightPerBoxKg": 8,
     "BoxTypeRsc": false,
     "BoxTypeAuto": false,
     "W": 23.4,
@@ -229,7 +569,7 @@
     "Description": "Mogu Tea",
     "Content": "450 ML",
     "PackSize": "Pack 24",
-    "WeightPerBoxKg": 13.0,
+    "WeightPerBoxKg": 13,
     "BoxTypeRsc": false,
     "BoxTypeAuto": false,
     "W": 25.8,
@@ -239,24 +579,28 @@
       {
         "Rows": 3,
         "Cols": 2,
-        "Rotated": true
+        "Rotated": true,
+        "SubRows": null
       },
       {
         "Rows": 2,
         "Cols": 6,
-        "Rotated": false
+        "Rotated": false,
+        "SubRows": null
       }
     ],
     "PatternB": [
       {
         "Rows": 2,
         "Cols": 6,
-        "Rotated": false
+        "Rotated": false,
+        "SubRows": null
       },
       {
         "Rows": 3,
         "Cols": 2,
-        "Rotated": true
+        "Rotated": true,
+        "SubRows": null
       }
     ],
     "MaxLayers": 10
@@ -391,15 +735,129 @@
     "Description": "Mogu Cube",
     "Content": "320 ML",
     "PackSize": "Pack 24",
-    "WeightPerBoxKg": 9.0,
+    "WeightPerBoxKg": 9,
     "BoxTypeRsc": false,
     "BoxTypeAuto": false,
     "W": 25.8,
     "L": 38.5,
     "H": 16.3,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 0,
+        "Cols": 0,
+        "Rotated": false,
+        "SubRows": [
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          },
+          {
+            "Rows": 1,
+            "Cols": 2,
+            "Rotated": true
+          },
+          {
+            "Rows": 1,
+            "Cols": 3,
+            "Rotated": false
+          }
+        ]
+      }
+    ],
+    "MaxLayers": 13
   },
   {
     "Description": "Mogu Cut Case-Half Tray",
