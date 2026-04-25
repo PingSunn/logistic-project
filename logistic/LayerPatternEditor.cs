@@ -3,21 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 
 namespace logistic;
 
 // Visual editor for a layer pattern composed of sections placed left-to-right.
-// Each section has its own rows, cols, and box orientation (normal W×L or rotated L×W).
+// Each section contains one or more sub-rows, each with its own box orientation.
 public class LayerPatternEditor : UserControl
 {
-    private static readonly SolidColorBrush BgNormal    = new(Color.Parse("#EFF6FF"));
-    private static readonly SolidColorBrush BgRotated   = new(Color.Parse("#FFF7ED"));
-    private static readonly SolidColorBrush BoxNormal   = new(Color.Parse("#3B82F6"));
-    private static readonly SolidColorBrush BoxRotated  = new(Color.Parse("#F97316"));
-    private static readonly SolidColorBrush CardBorder  = new(Color.Parse("#E2E8F0"));
+    private static readonly SolidColorBrush BgCard     = new(Color.Parse("#F8FAFC"));
+    private static readonly SolidColorBrush BoxNormal  = new(Color.Parse("#3B82F6"));
+    private static readonly SolidColorBrush BoxRotated = new(Color.Parse("#F97316"));
+    private static readonly SolidColorBrush CardBorder = new(Color.Parse("#E2E8F0"));
     private static readonly SolidColorBrush LabelMuted  = new(Color.Parse("#64748B"));
     private static readonly SolidColorBrush LabelStrong = new(Color.Parse("#1E293B"));
 
@@ -26,7 +24,7 @@ public class LayerPatternEditor : UserControl
     private double _boxL;
 
     private StackPanel _sectionsPanel = null!;
-    private TextBlock _summaryLabel   = null!;
+    private TextBlock  _summaryLabel  = null!;
 
     public event Action<LayerSection[]>? PatternChanged;
 
@@ -120,182 +118,288 @@ public class LayerPatternEditor : UserControl
 
     private void UpdateSummary()
     {
-        int total = _rows.Sum(r => r.Rows * r.Cols);
+        int total = _rows.Sum(r => r.TotalBoxes);
         _summaryLabel.Text = total > 0 ? $"รวม {total} ลัง/ชั้น" : "";
     }
 
     private void Emit() => PatternChanged?.Invoke(Pattern);
 
-    // ── Inner class: one section card ────────────────────────────────────────
+    // ── SectionRow ────────────────────────────────────────────────────────────
 
     private sealed class SectionRow
     {
         public Border Card { get; }
-        public int Rows { get; private set; }
-        public int Cols { get; private set; }
-        private bool _rotated;
+        public int TotalBoxes => _subRows.Sum(r => r.Rows * r.Cols);
 
+        private readonly List<SubRowEntry> _subRows = [];
         private readonly Action _onChange;
         private readonly Action<SectionRow> _onRemove;
-        private Canvas _preview = null!;
+        private StackPanel _subRowsPanel = null!;
+        private Canvas     _preview      = null!;
+        private double     _boxW;
+        private double     _boxL;
 
-        public LayerSection ToSection() => new(Rows, Cols, _rotated);
-
-        public SectionRow(LayerSection s, double boxW, double boxL, Action onChange, Action<SectionRow> onRemove)
+        public LayerSection ToSection()
         {
-            Rows = s.Rows;
-            Cols = s.Cols;
-            _rotated = s.Rotated;
-            _onChange = onChange;
-            _onRemove = onRemove;
-            Card = BuildCard(boxW, boxL);
+            var subs = _subRows.Select(r => new SectionSubRow(r.Rows, r.Cols, r.Rotated)).ToArray();
+            // Single sub-row: write legacy format so existing JSON stays clean
+            return subs.Length == 1
+                ? new LayerSection(subs[0].Rows, subs[0].Cols, subs[0].Rotated)
+                : new LayerSection(0, 0, false, subs);
         }
 
-        private Border BuildCard(double boxW, double boxL)
+        public SectionRow(LayerSection s, double boxW, double boxL,
+                          Action onChange, Action<SectionRow> onRemove)
         {
-            var inner = new StackPanel { Spacing = 8 };
+            _boxW     = boxW;
+            _boxL     = boxL;
+            _onChange = onChange;
+            _onRemove = onRemove;
+            Card      = BuildCard(s);
+        }
 
-            // ── Controls row ──────────────────────────────────────────────────
-            var controls = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+        private Border BuildCard(LayerSection s)
+        {
+            var inner = new StackPanel { Spacing = 6 };
 
-            controls.Children.Add(LabelText("แถว"));
-            controls.Children.Add(SpinBox(Rows, v => { Rows = v; _onChange(); }));
+            // Sub-rows panel
+            _subRowsPanel = new StackPanel { Spacing = 4 };
+            inner.Children.Add(_subRowsPanel);
 
-            controls.Children.Add(LabelText("คอลัมน์"));
-            controls.Children.Add(SpinBox(Cols, v => { Cols = v; _onChange(); }));
+            // Footer: add sub-row | delete section
+            var footerGrid = new Grid();
+            footerGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+            footerGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
 
-            // Orientation toggle button
-            var orientBtn = new Button
+            var addSubBtn = new Button
             {
+                Content = "+ เพิ่มแถวย่อย",
                 FontSize = 11,
-                Padding = new Thickness(8, 4),
-                Classes = { "outline" }
+                Padding  = new Thickness(8, 4),
+                Classes  = { "ghost" }
             };
-            void RefreshOrientBtn() =>
-                orientBtn.Content = _rotated ? "↺ Rotated (L×W)" : "→ Normal (W×L)";
-            RefreshOrientBtn();
-            orientBtn.Click += (_, _) =>
+            addSubBtn.Click += (_, _) =>
             {
-                _rotated = !_rotated;
-                RefreshOrientBtn();
+                var cols = _subRows.Count > 0 ? _subRows[0].Cols : 2;
+                AddSubRowEntry(new SectionSubRow(1, cols, false));
+                DrawPreview();
                 _onChange();
             };
-            controls.Children.Add(orientBtn);
+            footerGrid.Children.Add(addSubBtn);
 
-            // Delete button
-            var delBtn = new Button
+            var delSectionBtn = new Button
             {
-                Content = "✕",
+                Content = "✕ ลบ",
                 FontSize = 11,
-                Padding = new Thickness(6, 4),
-                Classes = { "danger" },
-                Margin = new Thickness(4, 0, 0, 0)
+                Padding  = new Thickness(8, 4),
+                Classes  = { "danger" }
             };
-            delBtn.Click += (_, _) => _onRemove(this);
-            controls.Children.Add(delBtn);
+            delSectionBtn.Click += (_, _) => _onRemove(this);
+            Grid.SetColumn(delSectionBtn, 1);
+            footerGrid.Children.Add(delSectionBtn);
 
-            inner.Children.Add(controls);
+            inner.Children.Add(footerGrid);
 
-            // ── Preview canvas ────────────────────────────────────────────────
-            _preview = new Canvas { Height = 60 };
-            DrawPreview(boxW, boxL);
+            // Preview canvas
+            _preview = new Canvas { Height = 80 };
             inner.Children.Add(_preview);
 
-            var card = new Border
+            // Init sub-rows after _preview is assigned
+            foreach (var sub in s.GetSubRows())
+                AddSubRowEntry(sub);
+            DrawPreview();
+
+            return new Border
             {
-                Background = _rotated ? BgRotated : BgNormal,
-                BorderBrush = CardBorder,
+                Background      = BgCard,
+                BorderBrush     = CardBorder,
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(12, 10)
+                CornerRadius    = new CornerRadius(8),
+                Padding         = new Thickness(12, 10),
+                Child           = inner
             };
-            card.Child = inner;
-            return card;
+        }
+
+        private void AddSubRowEntry(SectionSubRow sub)
+        {
+            var entry = new SubRowEntry(sub, OnSubChanged, OnSubRemoved);
+            _subRows.Add(entry);
+            _subRowsPanel.Children.Add(entry.Row);
+            UpdateDeleteButtons();
+        }
+
+        private void OnSubChanged()
+        {
+            DrawPreview();
+            _onChange();
+        }
+
+        private void OnSubRemoved(SubRowEntry entry)
+        {
+            if (_subRows.Count <= 1) return;
+            _subRowsPanel.Children.Remove(entry.Row);
+            _subRows.Remove(entry);
+            UpdateDeleteButtons();
+            DrawPreview();
+            _onChange();
+        }
+
+        private void UpdateDeleteButtons()
+        {
+            bool canDelete = _subRows.Count > 1;
+            foreach (var r in _subRows)
+                r.SetDeleteEnabled(canDelete);
         }
 
         public void UpdatePreview(double boxW, double boxL)
         {
-            _preview.Children.Clear();
-            DrawPreview(boxW, boxL);
-            Card.Background = _rotated ? BgRotated : BgNormal;
+            _boxW = boxW;
+            _boxL = boxL;
+            DrawPreview();
         }
 
-        private void DrawPreview(double boxW, double boxL)
+        private void DrawPreview()
         {
-            double bw = _rotated ? boxL : boxW;
-            double bl = _rotated ? boxW : boxL;
+            _preview.Children.Clear();
+            if (_subRows.Count == 0) return;
 
-            // Scale so the whole pattern fits within 200×50 px
-            double patW = Cols * bw;
-            double patH = Rows * bl;
-            double scale = Math.Min(200.0 / Math.Max(patW, 1), 50.0 / Math.Max(patH, 1));
+            double totalH = _subRows.Sum(r => r.Rows * (r.Rotated ? _boxW : _boxL));
+            double maxW   = _subRows.Max(r => r.Cols * (r.Rotated ? _boxL : _boxW));
+            double scale  = Math.Min(200.0 / Math.Max(maxW, 1), 80.0 / Math.Max(totalH, 1));
 
-            double cellW = bw * scale;
-            double cellH = bl * scale;
-
-            var fill = _rotated ? BoxRotated : BoxNormal;
-
-            for (int r = 0; r < Rows; r++)
+            double drawY = 0;
+            foreach (var sub in _subRows)
             {
-                for (int c = 0; c < Cols; c++)
+                double bw    = sub.Rotated ? _boxL : _boxW;
+                double bl    = sub.Rotated ? _boxW : _boxL;
+                double cellW = bw * scale;
+                double cellH = bl * scale;
+                var    fill  = sub.Rotated ? BoxRotated : BoxNormal;
+
+                for (int r = 0; r < sub.Rows; r++)
                 {
-                    var rect = new Border
+                    for (int c = 0; c < sub.Cols; c++)
                     {
-                        Width  = Math.Max(cellW - 2, 1),
-                        Height = Math.Max(cellH - 2, 1),
-                        Background = fill,
-                        BorderBrush = Brushes.White,
-                        BorderThickness = new Thickness(1),
-                        CornerRadius = new CornerRadius(2)
-                    };
-                    Canvas.SetLeft(rect, c * cellW + 1);
-                    Canvas.SetTop(rect,  r * cellH + 1);
-                    _preview.Children.Add(rect);
+                        var rect = new Border
+                        {
+                            Width           = Math.Max(cellW - 2, 1),
+                            Height          = Math.Max(cellH - 2, 1),
+                            Background      = fill,
+                            BorderBrush     = Brushes.White,
+                            BorderThickness = new Thickness(1),
+                            CornerRadius    = new CornerRadius(2)
+                        };
+                        Canvas.SetLeft(rect, c * cellW + 1);
+                        Canvas.SetTop(rect,  drawY + r * cellH + 1);
+                        _preview.Children.Add(rect);
+                    }
                 }
+                drawY += sub.Rows * cellH;
             }
         }
 
-        // ── Helpers ───────────────────────────────────────────────────────────
+        // ── SubRowEntry ───────────────────────────────────────────────────────
 
-        private static TextBlock LabelText(string t) => new()
+        private sealed class SubRowEntry
         {
-            Text = t,
-            FontSize = 12,
-            Foreground = LabelStrong,
-            VerticalAlignment = VerticalAlignment.Center
-        };
+            public Control Row { get; }
+            public int  Rows    { get; private set; }
+            public int  Cols    { get; private set; }
+            public bool Rotated { get; private set; }
 
-        private static Border SpinBox(int initial, Action<int> onChanged)
-        {
-            int value = initial;
-            var label = new TextBlock
+            private readonly Action             _onChange;
+            private readonly Action<SubRowEntry> _onRemove;
+            private Button _delBtn = null!;
+
+            public SubRowEntry(SectionSubRow sub,
+                               Action onChange, Action<SubRowEntry> onRemove)
             {
-                Text = value.ToString(),
-                Width = 24,
-                FontSize = 13,
-                TextAlignment = TextAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Center
+                Rows      = sub.Rows;
+                Cols      = sub.Cols;
+                Rotated   = sub.Rotated;
+                _onChange = onChange;
+                _onRemove = onRemove;
+                Row       = BuildRow();
+            }
+
+            public void SetDeleteEnabled(bool enabled) => _delBtn.IsEnabled = enabled;
+
+            private Control BuildRow()
+            {
+                var panel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Spacing     = 6
+                };
+
+                panel.Children.Add(Label("แถว"));
+                panel.Children.Add(SpinBox(Rows, v => { Rows = v; _onChange(); }));
+                panel.Children.Add(Label("คอล"));
+                panel.Children.Add(SpinBox(Cols, v => { Cols = v; _onChange(); }));
+
+                var orientBtn = new Button
+                {
+                    FontSize = 11,
+                    Padding  = new Thickness(7, 3),
+                    Classes  = { "outline" }
+                };
+                void RefreshOrient() => orientBtn.Content = Rotated ? "↺ R" : "→ N";
+                RefreshOrient();
+                orientBtn.Click += (_, _) => { Rotated = !Rotated; RefreshOrient(); _onChange(); };
+                panel.Children.Add(orientBtn);
+
+                _delBtn = new Button
+                {
+                    Content = "−",
+                    FontSize = 11,
+                    Padding  = new Thickness(6, 3),
+                    Classes  = { "danger" }
+                };
+                _delBtn.Click += (_, _) => _onRemove(this);
+                panel.Children.Add(_delBtn);
+
+                return panel;
+            }
+
+            private static TextBlock Label(string text) => new()
+            {
+                Text                = text,
+                FontSize            = 12,
+                Foreground          = LabelStrong,
+                VerticalAlignment   = VerticalAlignment.Center
             };
 
-            void Update(int delta)
+            private static Border SpinBox(int initial, Action<int> onChanged)
             {
-                value = Math.Max(1, value + delta);
-                label.Text = value.ToString();
-                onChanged(value);
+                int value = initial;
+                var display = new TextBlock
+                {
+                    Text                    = value.ToString(),
+                    Width                   = 24,
+                    FontSize                = 13,
+                    TextAlignment           = TextAlignment.Center,
+                    VerticalAlignment       = VerticalAlignment.Center,
+                    HorizontalAlignment     = HorizontalAlignment.Center
+                };
+
+                void Update(int delta)
+                {
+                    value       = Math.Max(1, value + delta);
+                    display.Text = value.ToString();
+                    onChanged(value);
+                }
+
+                var minus = new Button { Content = "−", FontSize = 11, Padding = new Thickness(5, 2) };
+                var plus  = new Button { Content = "+", FontSize = 11, Padding = new Thickness(5, 2) };
+                minus.Click += (_, _) => Update(-1);
+                plus.Click  += (_, _) => Update(+1);
+
+                var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 };
+                row.Children.Add(minus);
+                row.Children.Add(display);
+                row.Children.Add(plus);
+                return new Border { Child = row };
             }
-
-            var minus = new Button { Content = "−", FontSize = 11, Padding = new Thickness(5, 2) };
-            var plus  = new Button { Content = "+", FontSize = 11, Padding = new Thickness(5, 2) };
-            minus.Click += (_, _) => Update(-1);
-            plus.Click  += (_, _) => Update(+1);
-
-            var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 };
-            row.Children.Add(minus);
-            row.Children.Add(label);
-            row.Children.Add(plus);
-
-            return new Border { Child = row };
         }
     }
 }

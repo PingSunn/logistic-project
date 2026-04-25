@@ -5,9 +5,19 @@ using System.Text.Json.Serialization;
 
 namespace logistic;
 
+// One horizontal strip of boxes within a section — all share the same rotation.
+public record SectionSubRow(int Rows, int Cols, bool Rotated);
+
 // One rectangular section within a layer, placed left-to-right with other sections.
-// Rotated=false → box footprint is W×L; Rotated=true → L×W (90° turn).
-public record LayerSection(int Rows, int Cols, bool Rotated);
+// SubRows overrides Rows/Cols/Rotated when non-empty (multi-orientation section).
+// Rows/Cols/Rotated are kept for backward-compatible JSON deserialization of legacy data.
+public record LayerSection(int Rows, int Cols, bool Rotated, SectionSubRow[]? SubRows = null)
+{
+    public SectionSubRow[] GetSubRows() =>
+        SubRows is { Length: > 0 }
+            ? SubRows
+            : [new SectionSubRow(Rows, Cols, Rotated)];
+}
 
 public record ProductSpec(
     string Description,

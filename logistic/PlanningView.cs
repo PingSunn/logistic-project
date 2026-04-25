@@ -598,7 +598,12 @@ public class PlanningView : UserControl
     {
         double max = 0;
         foreach (var s in sections)
-            max = Math.Max(max, s.Rows * (s.Rotated ? W : L));
+        {
+            double depth = 0;
+            foreach (var sub in s.GetSubRows())
+                depth += sub.Rows * (sub.Rotated ? W : L);
+            max = Math.Max(max, depth);
+        }
         return max;
     }
 
@@ -659,9 +664,12 @@ public class PlanningView : UserControl
     {
         if (z + spec.H > dims.H + 0.01) return -1;
 
+        static double SectionWidth(LayerSection s, double w, double l) =>
+            s.GetSubRows().Max(sub => sub.Cols * (sub.Rotated ? l : w));
+
         double tierW = 0;
         foreach (var s in sections)
-            tierW += s.Cols * (s.Rotated ? spec.L : spec.W);
+            tierW += SectionWidth(s, spec.W, spec.L);
         if (tierW <= 0) return -1;
 
         int numTiers = Math.Max(1, (int)Math.Floor(dims.W / tierW));
@@ -672,21 +680,26 @@ public class PlanningView : UserControl
             double sectionX = tier * tierW;
             foreach (var section in sections)
             {
-                double bw = section.Rotated ? spec.L : spec.W;
-                double bl = section.Rotated ? spec.W : spec.L;
-
-                for (int c = 0; c < section.Cols && packed < limit; c++)
+                double subY = stackY;
+                foreach (var sub in section.GetSubRows())
                 {
-                    for (int r = 0; r < section.Rows && packed < limit; r++)
+                    double bw = sub.Rotated ? spec.L : spec.W;
+                    double bl = sub.Rotated ? spec.W : spec.L;
+
+                    for (int c = 0; c < sub.Cols && packed < limit; c++)
                     {
-                        double px = sectionX + c * bw;
-                        double py = stackY + r * bl;
-                        if (px + bw > dims.W + 0.01 || py + bl > dims.L - Clearance + 0.01) continue;
-                        placements.Add(new BoxPlacement(px, py, z, bw, bl, spec.H, productIndex, section.Rotated, stackIndex));
-                        packed++;
+                        for (int r = 0; r < sub.Rows && packed < limit; r++)
+                        {
+                            double px = sectionX + c * bw;
+                            double py = subY + r * bl;
+                            if (px + bw > dims.W + 0.01 || py + bl > dims.L - Clearance + 0.01) continue;
+                            placements.Add(new BoxPlacement(px, py, z, bw, bl, spec.H, productIndex, sub.Rotated, stackIndex));
+                            packed++;
+                        }
                     }
+                    subY += sub.Rows * bl;
                 }
-                sectionX += section.Cols * bw;
+                sectionX += SectionWidth(section, spec.W, spec.L);
             }
         }
 
