@@ -419,9 +419,35 @@
     "W": 25.8,
     "L": 38.5,
     "H": 15.7,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 9,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 9,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 13
   },
   {
     "Description": "Mogu",
@@ -561,9 +587,35 @@
     "W": 23.4,
     "L": 35,
     "H": 18.3,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 7,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 7,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 11
   },
   {
     "Description": "Mogu Tea",
@@ -615,9 +667,35 @@
     "W": 28.6,
     "L": 43,
     "H": 19.6,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 5,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 2,
+        "Cols": 5,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Mogu",
@@ -629,9 +707,35 @@
     "W": 28.6,
     "L": 43,
     "H": 19.6,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 5,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 2,
+        "Cols": 5,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Mogu",
@@ -643,9 +747,35 @@
     "W": 17.8,
     "L": 27.1,
     "H": 28.8,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 3,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 10,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 10,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 7
   },
   {
     "Description": "Mogu",
@@ -657,9 +787,35 @@
     "W": 26.2,
     "L": 34.8,
     "H": 26.7,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 6,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 6,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 8
   },
   {
     "Description": "Mogu",
@@ -671,9 +827,35 @@
     "W": 23.1,
     "L": 35,
     "H": 13.8,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 7,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 2,
+        "Cols": 7,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 14
   },
   {
     "Description": "Mogu",
@@ -685,9 +867,35 @@
     "W": 22.7,
     "L": 34.4,
     "H": 13.8,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 7,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 2,
+        "Cols": 7,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 14
   },
   {
     "Description": "Mogu Candy",
@@ -699,9 +907,35 @@
     "W": 24.6,
     "L": 32.2,
     "H": 9.2,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 20
   },
   {
     "Description": "Mogu Candy",
@@ -713,9 +947,35 @@
     "W": 24.6,
     "L": 32.2,
     "H": 9.2,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 20
   },
   {
     "Description": "Mogu Costco",
@@ -727,9 +987,35 @@
     "W": 19.6,
     "L": 26.1,
     "H": 15.7,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 9,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 9,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 13
   },
   {
     "Description": "Mogu Cube",
@@ -869,9 +1155,35 @@
     "W": 19.6,
     "L": 26.1,
     "H": 16.5,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 4,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 9,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 9,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 2,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 13
   },
   {
     "Description": "Mogu Ice",
@@ -883,9 +1195,35 @@
     "W": 26.9,
     "L": 23.7,
     "H": 19.1,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 6,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 2,
+        "Cols": 6,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Mogu Ice",
@@ -897,9 +1235,35 @@
     "W": 27.5,
     "L": 31.3,
     "H": 19.6,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Mogu Ice",
@@ -911,9 +1275,35 @@
     "W": 26.9,
     "L": 23.7,
     "H": 19.1,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 6,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 2,
+        "Cols": 6,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Mogu Ice",
@@ -925,9 +1315,35 @@
     "W": 14.1,
     "L": 23.5,
     "H": 18.4,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 15,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 5,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 5,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 15,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Mogu Ice Burst",
@@ -939,8 +1355,34 @@
     "W": 27.5,
     "L": 31.3,
     "H": 19.6,
-    "PatternA": [],
-    "PatternB": [],
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 4,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 8,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
     "MaxLayers": 0
   },
   {
@@ -953,9 +1395,35 @@
     "W": 14.1,
     "L": 23.5,
     "H": 18.4,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 2,
+        "Cols": 15,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 5,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 5,
+        "Cols": 1,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 2,
+        "Cols": 15,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Mogu Jelly",
@@ -967,9 +1435,35 @@
     "W": 27.5,
     "L": 31.3,
     "H": 18.8,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
+    "PatternA": [
+      {
+        "Rows": 3,
+        "Cols": 5,
+        "Rotated": false,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      }
+    ],
+    "PatternB": [
+      {
+        "Rows": 3,
+        "Cols": 3,
+        "Rotated": true,
+        "SubRows": null
+      },
+      {
+        "Rows": 3,
+        "Cols": 5,
+        "Rotated": false,
+        "SubRows": null
+      }
+    ],
+    "MaxLayers": 10
   },
   {
     "Description": "Mogu Jelly Korea",
