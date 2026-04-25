@@ -104,6 +104,7 @@ public class IsometricCanvas : Control
         _dragging = false;
         e.Pointer.Capture(null);
         Cursor = new Cursor(StandardCursorType.Hand);
+        InvalidateVisual(); // trigger full-quality render after drag ends
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
@@ -193,6 +194,16 @@ public class IsometricCanvas : Control
         }
 
         var clipped = ClipToCutPlane(cutZ);
+
+        // During drag with many boxes, skip expensive filled rendering to stay responsive.
+        if (_dragging && clipped.Count > 300)
+        {
+            DrawContainerWireframe(context, cW, cL, cH, Iso);
+            DrawInfoCard(context);
+            if (_showDimensions) DrawEdgeLabels(context, cW, cL, cH, Iso);
+            DrawHint(context, bounds, $"หมุนดู… ({clipped.Count} กล่อง)");
+            return;
+        }
 
         // Painter's sort: viewer direction = (sinA*sinE, cosA*sinE, cosE) — back-to-front
         clipped.Sort((a, b) =>

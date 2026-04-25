@@ -264,40 +264,50 @@ public partial class SettingsWindow : UserControl
 
     private async void ImportBtn_Click(object? sender, RoutedEventArgs e)
     {
-        var top = TopLevel.GetTopLevel(this)!;
-        var files = await top.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        try
         {
-            Title = "Import Containers",
-            AllowMultiple = false,
-            FileTypeFilter = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
-        });
+            var top = TopLevel.GetTopLevel(this);
+            if (top is null) return;
+            var files = await top.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Import Containers",
+                AllowMultiple = false,
+                FileTypeFilter = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
+            });
 
-        if (files.Count == 0) return;
+            if (files.Count == 0) return;
 
-        await using var stream = await files[0].OpenReadAsync();
-        var specs = await JsonSerializer.DeserializeAsync<ContainerSpec[]>(stream);
-        if (specs is null) return;
+            await using var stream = await files[0].OpenReadAsync();
+            var specs = await JsonSerializer.DeserializeAsync<ContainerSpec[]>(stream);
+            if (specs is null) return;
 
-        _editRows.Clear();
-        _rowsPanel.Children.Clear();
-        foreach (var c in specs)
-            _rowsPanel.Children.Add(BuildCardRow(c));
+            _editRows.Clear();
+            _rowsPanel.Children.Clear();
+            foreach (var c in specs)
+                _rowsPanel.Children.Add(BuildCardRow(c));
+        }
+        catch { /* storage/IO errors should not crash the app */ }
     }
 
     private async void ExportBtn_Click(object? sender, RoutedEventArgs e)
     {
-        var top = TopLevel.GetTopLevel(this)!;
-        var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        try
         {
-            Title = "Export Containers",
-            SuggestedFileName = "containers.json",
-            FileTypeChoices = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
-        });
+            var top = TopLevel.GetTopLevel(this);
+            if (top is null) return;
+            var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Export Containers",
+                SuggestedFileName = "containers.json",
+                FileTypeChoices = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
+            });
 
-        if (file is null) return;
+            if (file is null) return;
 
-        await using var stream = await file.OpenWriteAsync();
-        await JsonSerializer.SerializeAsync(stream, CollectSpecs(), _jsonOpts);
+            await using var stream = await file.OpenWriteAsync();
+            await JsonSerializer.SerializeAsync(stream, CollectSpecs(), _jsonOpts);
+        }
+        catch { /* storage/IO errors should not crash the app */ }
     }
 
     private List<ContainerSpec> CollectSpecs()
@@ -684,82 +694,97 @@ public partial class SettingsWindow : UserControl
 
     private async void ProductTemplateBtn_Click(object? sender, RoutedEventArgs e)
     {
-        var top = TopLevel.GetTopLevel(this)!;
-        var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        try
         {
-            Title = "Download Product Template",
-            SuggestedFileName = "products_template.csv",
-            FileTypeChoices = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
-        });
+            var top = TopLevel.GetTopLevel(this);
+            if (top is null) return;
+            var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Download Product Template",
+                SuggestedFileName = "products_template.csv",
+                FileTypeChoices = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
+            });
 
-        if (file is null) return;
+            if (file is null) return;
 
-        var sb = new StringBuilder();
-        sb.AppendLine(CsvHeader);
-        sb.AppendLine("Aloe,365ML,Pack 24,9.9,False,True,21.9,33.4,20.5");
+            var sb = new StringBuilder();
+            sb.AppendLine(CsvHeader);
+            sb.AppendLine("Aloe,365ML,Pack 24,9.9,False,True,21.9,33.4,20.5");
 
-        await using var stream = await file.OpenWriteAsync();
-        await using var writer = new StreamWriter(stream, Encoding.UTF8);
-        await writer.WriteAsync(sb.ToString());
+            await using var stream = await file.OpenWriteAsync();
+            await using var writer = new StreamWriter(stream, Encoding.UTF8);
+            await writer.WriteAsync(sb.ToString());
+        }
+        catch { /* storage/IO errors should not crash the app */ }
     }
 
     private async void ProductImportBtn_Click(object? sender, RoutedEventArgs e)
     {
-        var top = TopLevel.GetTopLevel(this)!;
-        var files = await top.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        try
         {
-            Title = "Import Products",
-            AllowMultiple = false,
-            FileTypeFilter = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
-        });
+            var top = TopLevel.GetTopLevel(this);
+            if (top is null) return;
+            var files = await top.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Import Products",
+                AllowMultiple = false,
+                FileTypeFilter = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
+            });
 
-        if (files.Count == 0) return;
+            if (files.Count == 0) return;
 
-        await using var stream = await files[0].OpenReadAsync();
-        using var reader = new StreamReader(stream);
+            await using var stream = await files[0].OpenReadAsync();
+            using var reader = new StreamReader(stream);
 
-        var specs = new List<ProductSpec>();
-        var isFirst = true;
-        while (await reader.ReadLineAsync() is { } line)
-        {
-            if (isFirst) { isFirst = false; continue; } // skip header
-            var parts = line.Split(',');
-            if (parts.Length < 9) continue;
-            double.TryParse(parts[3], out var weight);
-            bool.TryParse(parts[4], out var rsc);
-            bool.TryParse(parts[5], out var auto);
-            double.TryParse(parts[6], out var w);
-            double.TryParse(parts[7], out var l);
-            double.TryParse(parts[8], out var h);
-            specs.Add(new ProductSpec(parts[0], parts[1], parts[2], weight, rsc, auto, w, l, h));
+            var specs = new List<ProductSpec>();
+            var isFirst = true;
+            while (await reader.ReadLineAsync() is { } line)
+            {
+                if (isFirst) { isFirst = false; continue; } // skip header
+                var parts = line.Split(',');
+                if (parts.Length < 9) continue;
+                double.TryParse(parts[3], out var weight);
+                bool.TryParse(parts[4], out var rsc);
+                bool.TryParse(parts[5], out var auto);
+                double.TryParse(parts[6], out var w);
+                double.TryParse(parts[7], out var l);
+                double.TryParse(parts[8], out var h);
+                specs.Add(new ProductSpec(parts[0], parts[1], parts[2], weight, rsc, auto, w, l, h));
+            }
+
+            _productEditRows.Clear();
+            _productRowsPanel.Children.Clear();
+            foreach (var p in specs)
+                _productRowsPanel.Children.Add(BuildProductCard(p));
         }
-
-        _productEditRows.Clear();
-        _productRowsPanel.Children.Clear();
-        foreach (var p in specs)
-            _productRowsPanel.Children.Add(BuildProductCard(p));
+        catch { /* storage/IO errors should not crash the app */ }
     }
 
     private async void ProductExportBtn_Click(object? sender, RoutedEventArgs e)
     {
-        var top = TopLevel.GetTopLevel(this)!;
-        var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        try
         {
-            Title = "Export Products",
-            SuggestedFileName = "products.csv",
-            FileTypeChoices = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
-        });
+            var top = TopLevel.GetTopLevel(this);
+            if (top is null) return;
+            var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Export Products",
+                SuggestedFileName = "products.csv",
+                FileTypeChoices = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
+            });
 
-        if (file is null) return;
+            if (file is null) return;
 
-        var specs = CollectProductSpecs();
-        var sb = new StringBuilder();
-        sb.AppendLine(CsvHeader);
-        foreach (var p in specs)
-            sb.AppendLine($"{p.Description},{p.Content},{p.PackSize},{p.WeightPerBoxKg},{p.BoxTypeRsc},{p.BoxTypeAuto},{p.W},{p.L},{p.H}");
+            var specs = CollectProductSpecs();
+            var sb = new StringBuilder();
+            sb.AppendLine(CsvHeader);
+            foreach (var p in specs)
+                sb.AppendLine($"{p.Description},{p.Content},{p.PackSize},{p.WeightPerBoxKg},{p.BoxTypeRsc},{p.BoxTypeAuto},{p.W},{p.L},{p.H}");
 
-        await using var stream = await file.OpenWriteAsync();
-        await using var writer = new StreamWriter(stream, Encoding.UTF8);
-        await writer.WriteAsync(sb.ToString());
+            await using var stream = await file.OpenWriteAsync();
+            await using var writer = new StreamWriter(stream, Encoding.UTF8);
+            await writer.WriteAsync(sb.ToString());
+        }
+        catch { /* storage/IO errors should not crash the app */ }
     }
 }

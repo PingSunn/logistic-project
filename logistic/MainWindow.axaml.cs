@@ -22,6 +22,8 @@ public partial class MainWindow : Window
             Height = 620,
             Content = _settingsWindow
         };
+        // Detach on close so the same UserControl can be re-parented next time.
+        win.Closed += (_, _) => win.Content = null;
         win.ShowDialog(this);
     }
 }
