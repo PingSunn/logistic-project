@@ -380,7 +380,13 @@ public class IsometricCanvas : Control
         if (clipped.Count == 0) return;
 
         var levels = new System.Collections.Generic.SortedSet<double>();
-        foreach (var b in clipped) levels.Add(b.Z);
+        var layerHalfHeight = new Dictionary<double, double>();
+        foreach (var b in clipped)
+        {
+            levels.Add(b.Z);
+            if (!layerHalfHeight.TryGetValue(b.Z, out double h) || b.BH > h * 2)
+                layerHalfHeight[b.Z] = b.BH * 0.5;
+        }
         if (levels.Count < 2 || levels.Count > 20) return;
 
         var tf    = new Typeface(SansSerif);
@@ -391,8 +397,9 @@ public class IsometricCanvas : Control
         Point? prev = null;
         foreach (double z in levels)
         {
-            var p = iso(0, 0, z);
-            if (prev.HasValue && Math.Abs(prev.Value.Y - p.Y) < 12) { n++; continue; }
+            double halfH = layerHalfHeight.TryGetValue(z, out double hh) ? hh : 0;
+            var p = iso(0, 0, z + halfH);
+            if (prev.HasValue && Math.Abs(prev.Value.Y - p.Y) < 10) { n++; continue; }
 
             var ft = new FormattedText($"ชั้นที่ {n}",
                 System.Globalization.CultureInfo.CurrentCulture,
