@@ -1,1482 +1,1515 @@
 [
-  {
-    "Description": "Aloe",
-    "Content": "365 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 9.79,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 21.9,
-    "L": 33.4,
-    "H": 20.5,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Aloe",
-    "Content": "300 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 8.55,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 24.6,
-    "L": 35.6,
-    "H": 21.1,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 9
-  },
-  {
-    "Description": "Aloe",
-    "Content": "1000 ML",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 13.65,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 25.1,
-    "L": 33.2,
-    "H": 29.6,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 7
-  },
-  {
-    "Description": "Beauti drink",
-    "Content": "360 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 9.7,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 24,
-    "L": 36.1,
-    "H": 21.5,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Blue",
-    "Content": "500 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 13.58,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 27.4,
-    "L": 41.4,
-    "H": 22.7,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 7,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 7,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 20
-  },
-  {
-    "Description": "Cooler Bag",
-    "Content": "320 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 9.5,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 27.4,
-    "L": 40.9,
-    "H": 17.1,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 4,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 4,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Gumi",
-    "Content": "320 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 8.7,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 25.8,
-    "L": 38.5,
-    "H": 16.3,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      }
-    ],
-    "MaxLayers": 13
-  },
-  {
-    "Description": "Gumi Jelly",
-    "Content": "150 G",
-    "PackSize": "Pack 36",
-    "WeightPerBoxKg": 5.58,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 27.3,
-    "L": 31.1,
-    "H": 18.2,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
-  },
-  {
-    "Description": "Gumi Jelly",
-    "Content": "135 G",
-    "PackSize": "Pack 36",
-    "WeightPerBoxKg": 5.51,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 27.3,
-    "L": 31.1,
-    "H": 18.2,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
-  },
-  {
-    "Description": "Mogu",
-    "Content": "320 ML",
-    "PackSize": "Pack 6",
-    "WeightPerBoxKg": 2.4,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 25.8,
-    "L": 38.5,
-    "H": 15.7,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
-  },
-  {
-    "Description": "Mogu",
-    "Content": "320 ML",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 4.5,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 25.8,
-    "L": 38.5,
-    "H": 15.7,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 9,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 9,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 13
-  },
-  {
-    "Description": "Mogu",
-    "Content": "320 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 8.7,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 25.8,
-    "L": 38.5,
-    "H": 15.7,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      }
-    ],
-    "MaxLayers": 13
-  },
-  {
-    "Description": "Mogu Tea",
-    "Content": "300 ML",
-    "PackSize": "Pack 6",
-    "WeightPerBoxKg": 8,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 23.4,
-    "L": 35,
-    "H": 18.3,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 7,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 7,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 11
-  },
-  {
-    "Description": "Mogu Tea",
-    "Content": "450 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 13,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 25.8,
-    "L": 39,
-    "H": 20.3,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu",
-    "Content": "500 ML",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 6.8,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 28.6,
-    "L": 43,
-    "H": 19.6,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 5,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 5,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu",
-    "Content": "500 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 13.3,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 28.6,
-    "L": 43,
-    "H": 19.6,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 5,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 5,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu",
-    "Content": "1000 ML",
-    "PackSize": "Pack 6",
-    "WeightPerBoxKg": 6.8,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 17.8,
-    "L": 27.1,
-    "H": 28.8,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 10,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 10,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 7
-  },
-  {
-    "Description": "Mogu",
-    "Content": "1000 ML",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 13.47,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 26.2,
-    "L": 34.8,
-    "H": 26.7,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 8
-  },
-  {
-    "Description": "Mogu",
-    "Content": "220 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 6.2,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 23.1,
-    "L": 35,
-    "H": 13.8,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 7,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 7,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 14
-  },
-  {
-    "Description": "Mogu",
-    "Content": "220 ML",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 6.2,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 22.7,
-    "L": 34.4,
-    "H": 13.8,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 7,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 7,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 14
-  },
-  {
-    "Description": "Mogu Candy",
-    "Content": "19.5 G",
-    "PackSize": "Pack 48",
-    "WeightPerBoxKg": 1.9,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 24.6,
-    "L": 32.2,
-    "H": 9.2,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 20
-  },
-  {
-    "Description": "Mogu Candy",
-    "Content": "30 G",
-    "PackSize": "Pack 48",
-    "WeightPerBoxKg": 1.86,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 24.6,
-    "L": 32.2,
-    "H": 9.2,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 20
-  },
-  {
-    "Description": "Mogu Costco",
-    "Content": "320 ML",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 4.44,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 19.6,
-    "L": 26.1,
-    "H": 15.7,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 9,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 9,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 13
-  },
-  {
-    "Description": "Mogu Cube",
-    "Content": "320 ML",
-    "PackSize": "Pack 24",
-    "WeightPerBoxKg": 9,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 25.8,
-    "L": 38.5,
-    "H": 16.3,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 0,
-        "Cols": 0,
-        "Rotated": false,
-        "SubRows": [
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          },
-          {
-            "Rows": 1,
-            "Cols": 2,
-            "Rotated": true
-          },
-          {
-            "Rows": 1,
-            "Cols": 3,
-            "Rotated": false
-          }
-        ]
-      }
-    ],
-    "MaxLayers": 13
-  },
-  {
-    "Description": "Mogu Cut Case-Half Tray",
-    "Content": "320 ML",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 4.41,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 19.6,
-    "L": 26.1,
-    "H": 16.5,
-    "PatternA": [
-      {
-        "Rows": 4,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 9,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 9,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 2,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 13
-  },
-  {
-    "Description": "Mogu Ice",
-    "Content": "150 G",
-    "PackSize": "Pack 20",
-    "WeightPerBoxKg": 3.6,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 26.9,
-    "L": 23.7,
-    "H": 19.1,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu Ice",
-    "Content": "150 ML",
-    "PackSize": "Pack 36",
-    "WeightPerBoxKg": 6.1,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 27.5,
-    "L": 31.3,
-    "H": 19.6,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu Ice",
-    "Content": "150 ML",
-    "PackSize": "Pack 20",
-    "WeightPerBoxKg": 3.6,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 26.9,
-    "L": 23.7,
-    "H": 19.1,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 2,
-        "Cols": 6,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu Ice",
-    "Content": "150 ML",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 2.08,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 14.1,
-    "L": 23.5,
-    "H": 18.4,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 15,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 5,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 5,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 15,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu Ice Burst",
-    "Content": "150 G",
-    "PackSize": "Pack 36",
-    "WeightPerBoxKg": 6.12,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 27.5,
-    "L": 31.3,
-    "H": 19.6,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 4,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 8,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 0
-  },
-  {
-    "Description": "Mogu Ice Eskimo",
-    "Content": "150 G",
-    "PackSize": "Pack 12",
-    "WeightPerBoxKg": 2.08,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 14.1,
-    "L": 23.5,
-    "H": 18.4,
-    "PatternA": [
-      {
-        "Rows": 2,
-        "Cols": 15,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 5,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 5,
-        "Cols": 1,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 2,
-        "Cols": 15,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu Jelly",
-    "Content": "150 G",
-    "PackSize": "Pack 36",
-    "WeightPerBoxKg": 6.05,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 27.5,
-    "L": 31.3,
-    "H": 18.8,
-    "PatternA": [
-      {
-        "Rows": 3,
-        "Cols": 5,
-        "Rotated": false,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      }
-    ],
-    "PatternB": [
-      {
-        "Rows": 3,
-        "Cols": 3,
-        "Rotated": true,
-        "SubRows": null
-      },
-      {
-        "Rows": 3,
-        "Cols": 5,
-        "Rotated": false,
-        "SubRows": null
-      }
-    ],
-    "MaxLayers": 10
-  },
-  {
-    "Description": "Mogu Jelly Korea",
-    "Content": "150 G",
-    "PackSize": "Pack 36",
-    "WeightPerBoxKg": 6.4,
-    "BoxTypeRsc": false,
-    "BoxTypeAuto": false,
-    "W": 24.8,
-    "L": 44,
-    "H": 20.2,
-    "PatternA": [],
-    "PatternB": [],
-    "MaxLayers": 0
-  }
+    {
+        "Description": "Aloe",
+        "Content": "365 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 9.79,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 21.9,
+        "L": 33.4,
+        "H": 20.5,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 10
+    },
+    {
+        "Description": "Aloe",
+        "Content": "300 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 8.55,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 24.6,
+        "L": 35.6,
+        "H": 21.1,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 9,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Aloe",
+        "Content": "1000 ML",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 13.65,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 25.1,
+        "L": 33.2,
+        "H": 29.6,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 7,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Beauti drink",
+        "Content": "360 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 9.7,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 24,
+        "L": 36.1,
+        "H": 21.5,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Blue",
+        "Content": "500 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 13.58,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 27.4,
+        "L": 41.4,
+        "H": 22.7,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 7,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 7,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 20,
+        "CondoCount": 8
+    },
+    {
+        "Description": "Cooler Bag",
+        "Content": "320 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 9.5,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 27.4,
+        "L": 40.9,
+        "H": 17.1,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 4,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 4,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 8
+    },
+    {
+        "Description": "Gumi",
+        "Content": "320 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 8.7,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 25.8,
+        "L": 38.5,
+        "H": 16.3,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            }
+        ],
+        "MaxLayers": 13,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Gumi Jelly",
+        "Content": "150 G",
+        "PackSize": "Pack 36",
+        "WeightPerBoxKg": 5.58,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 27.3,
+        "L": 31.1,
+        "H": 18.2,
+        "PatternA": [],
+        "PatternB": [],
+        "MaxLayers": 0,
+        "CondoCount": 0
+    },
+    {
+        "Description": "Gumi Jelly",
+        "Content": "135 G",
+        "PackSize": "Pack 36",
+        "WeightPerBoxKg": 5.51,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 27.3,
+        "L": 31.1,
+        "H": 18.2,
+        "PatternA": [],
+        "PatternB": [],
+        "MaxLayers": 0,
+        "CondoCount": 0
+    },
+    {
+        "Description": "Mogu",
+        "Content": "320 ML",
+        "PackSize": "Pack 6",
+        "WeightPerBoxKg": 2.4,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 25.8,
+        "L": 38.5,
+        "H": 15.7,
+        "PatternA": [],
+        "PatternB": [],
+        "MaxLayers": 0,
+        "CondoCount": 0
+    },
+    {
+        "Description": "Mogu",
+        "Content": "320 ML",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 4.5,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 25.8,
+        "L": 38.5,
+        "H": 15.7,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 9,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 9,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 13,
+        "CondoCount": 12
+    },
+    {
+        "Description": "Mogu",
+        "Content": "320 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 8.7,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 25.8,
+        "L": 38.5,
+        "H": 15.7,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            }
+        ],
+        "MaxLayers": 13,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Mogu Tea",
+        "Content": "300 ML",
+        "PackSize": "Pack 6",
+        "WeightPerBoxKg": 8,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 23.4,
+        "L": 35,
+        "H": 18.3,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 7,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 7,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 11,
+        "CondoCount": 10
+    },
+    {
+        "Description": "Mogu Tea",
+        "Content": "450 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 13,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 25.8,
+        "L": 39,
+        "H": 20.3,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Mogu",
+        "Content": "500 ML",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 6.8,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 28.6,
+        "L": 43,
+        "H": 19.6,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 5,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 5,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 8
+    },
+    {
+        "Description": "Mogu",
+        "Content": "500 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 13.3,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 28.6,
+        "L": 43,
+        "H": 19.6,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 5,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 5,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 8
+    },
+    {
+        "Description": "Mogu",
+        "Content": "1000 ML",
+        "PackSize": "Pack 6",
+        "WeightPerBoxKg": 6.8,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 17.8,
+        "L": 27.1,
+        "H": 28.8,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 10,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 10,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 7,
+        "CondoCount": 13
+    },
+    {
+        "Description": "Mogu",
+        "Content": "1000 ML",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 13.47,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 26.2,
+        "L": 34.8,
+        "H": 26.7,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 8,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Mogu",
+        "Content": "220 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 6.2,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 23.1,
+        "L": 35,
+        "H": 13.8,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 7,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 7,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 14,
+        "CondoCount": 10
+    },
+    {
+        "Description": "Mogu",
+        "Content": "220 ML",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 6.2,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 22.7,
+        "L": 34.4,
+        "H": 13.8,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 7,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 7,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 14,
+        "CondoCount": 10
+    },
+    {
+        "Description": "Mogu Candy",
+        "Content": "19.5 G",
+        "PackSize": "Pack 48",
+        "WeightPerBoxKg": 1.9,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 24.6,
+        "L": 32.2,
+        "H": 9.2,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 20,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Mogu Candy",
+        "Content": "30 G",
+        "PackSize": "Pack 48",
+        "WeightPerBoxKg": 1.86,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 24.6,
+        "L": 32.2,
+        "H": 9.2,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 20,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Mogu Costco",
+        "Content": "320 ML",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 4.44,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 19.6,
+        "L": 26.1,
+        "H": 15.7,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 9,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 9,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 13,
+        "CondoCount": 12
+    },
+    {
+        "Description": "Mogu Cube",
+        "Content": "320 ML",
+        "PackSize": "Pack 24",
+        "WeightPerBoxKg": 9,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 25.8,
+        "L": 38.5,
+        "H": 16.3,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 0,
+                "Cols": 0,
+                "Rotated": false,
+                "SubRows": [
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 2,
+                        "Rotated": true
+                    },
+                    {
+                        "Rows": 1,
+                        "Cols": 3,
+                        "Rotated": false
+                    }
+                ]
+            }
+        ],
+        "MaxLayers": 13,
+        "CondoCount": 9
+    },
+    {
+        "Description": "Mogu Cut Case-Half Tray",
+        "Content": "320 ML",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 4.41,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 19.6,
+        "L": 26.1,
+        "H": 16.5,
+        "PatternA": [
+            {
+                "Rows": 4,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 9,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 9,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 2,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 13,
+        "CondoCount": 12
+    },
+    {
+        "Description": "Mogu Ice",
+        "Content": "150 G",
+        "PackSize": "Pack 20",
+        "WeightPerBoxKg": 3.6,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 26.9,
+        "L": 23.7,
+        "H": 19.1,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 10
+    },
+    {
+        "Description": "Mogu Ice",
+        "Content": "150 ML",
+        "PackSize": "Pack 36",
+        "WeightPerBoxKg": 6.1,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 27.5,
+        "L": 31.3,
+        "H": 19.6,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 8
+    },
+    {
+        "Description": "Mogu Ice",
+        "Content": "150 ML",
+        "PackSize": "Pack 20",
+        "WeightPerBoxKg": 3.6,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 26.9,
+        "L": 23.7,
+        "H": 19.1,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 2,
+                "Cols": 6,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 10
+    },
+    {
+        "Description": "Mogu Ice",
+        "Content": "150 ML",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 2.08,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 14.1,
+        "L": 23.5,
+        "H": 18.4,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 15,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 5,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 5,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 15,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 16
+    },
+    {
+        "Description": "Mogu Ice Burst",
+        "Content": "150 G",
+        "PackSize": "Pack 36",
+        "WeightPerBoxKg": 6.12,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 27.5,
+        "L": 31.3,
+        "H": 19.6,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 4,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 8,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 0,
+        "CondoCount": 8
+    },
+    {
+        "Description": "Mogu Ice Eskimo",
+        "Content": "150 G",
+        "PackSize": "Pack 12",
+        "WeightPerBoxKg": 2.08,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 14.1,
+        "L": 23.5,
+        "H": 18.4,
+        "PatternA": [
+            {
+                "Rows": 2,
+                "Cols": 15,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 5,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 5,
+                "Cols": 1,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 2,
+                "Cols": 15,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 16
+    },
+    {
+        "Description": "Mogu Jelly",
+        "Content": "150 G",
+        "PackSize": "Pack 36",
+        "WeightPerBoxKg": 6.05,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 27.5,
+        "L": 31.3,
+        "H": 18.8,
+        "PatternA": [
+            {
+                "Rows": 3,
+                "Cols": 5,
+                "Rotated": false,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            }
+        ],
+        "PatternB": [
+            {
+                "Rows": 3,
+                "Cols": 3,
+                "Rotated": true,
+                "SubRows": null
+            },
+            {
+                "Rows": 3,
+                "Cols": 5,
+                "Rotated": false,
+                "SubRows": null
+            }
+        ],
+        "MaxLayers": 10,
+        "CondoCount": 8
+    },
+    {
+        "Description": "Mogu Jelly Korea",
+        "Content": "150 G",
+        "PackSize": "Pack 36",
+        "WeightPerBoxKg": 6.4,
+        "BoxTypeRsc": false,
+        "BoxTypeAuto": false,
+        "W": 24.8,
+        "L": 44,
+        "H": 20.2,
+        "PatternA": [],
+        "PatternB": [],
+        "MaxLayers": 0,
+        "CondoCount": 0
+    }
 ]
