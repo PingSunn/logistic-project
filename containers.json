@@ -4,20 +4,23 @@
     "SizeLabel": "20 ft",
     "NominalW": 244,
     "NominalL": 600,
-    "NominalH": 259
+    "NominalH": 259,
+    "Gap": 5
   },
   {
     "Name": "\u0E15\u0E39\u0E49\u0E22\u0E32\u0E27",
     "SizeLabel": "40 ft",
     "NominalW": 244,
     "NominalL": 1209,
-    "NominalH": 260
+    "NominalH": 260,
+    "Gap": 5
   },
   {
     "Name": "\u0E15\u0E39\u0E49\u0E44\u0E2E\u0E04\u0E34\u0E27\u0E1A\u0E4C",
     "SizeLabel": "40 ft HC",
     "NominalW": 244,
     "NominalL": 1203,
-    "NominalH": 290
+    "NominalH": 290,
+    "Gap": 5
   }
 ]

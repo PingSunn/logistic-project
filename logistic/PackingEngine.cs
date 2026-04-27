@@ -28,7 +28,6 @@ internal sealed class PackingOutput
 
 internal static class PackingEngine
 {
-    internal const double Clearance      = 15.0;
     internal const int    CondoStackBase = 1000;
     internal const int    MixedStackBase = 2000;
 
@@ -53,7 +52,7 @@ internal static class PackingEngine
         List<BoxPlacement> placements, out double currentY)
     {
         var packInfos = new List<PackInfo>();
-        currentY = Clearance;
+        currentY = 0;
 
         for (int i = 0; i < requests.Count; i++)
         {
@@ -95,7 +94,7 @@ internal static class PackingEngine
         List<BoxPlacement> placements, ref double currentY)
     {
         var removed = new Dictionary<int,int>();
-        if (dims.L - Clearance - currentY >= 50.0) return removed;
+        if (dims.L - currentY >= 50.0) return removed;
 
         foreach (var info in packInfos)
         {
@@ -113,7 +112,7 @@ internal static class PackingEngine
             if (n > 0) removed[info.ProductIndex] = n;
         }
 
-        currentY = placements.Count > 0 ? placements.Max(p => p.Y + p.BL) + 0.1 : Clearance;
+        currentY = placements.Count > 0 ? placements.Max(p => p.Y + p.BL) + 0.1 : 0;
         return removed;
     }
 
@@ -129,7 +128,7 @@ internal static class PackingEngine
             .OrderByDescending(x => x.info.Spec.Cbm)
             .ToList();
 
-        double condoAreaStart = Math.Max(currentY, dims.L - Clearance - withRem.Sum(x => x.info.Spec.L));
+        double condoAreaStart = Math.Max(currentY, dims.L - withRem.Sum(x => x.info.Spec.L));
         var mixedMap = new Dictionary<int,int>();
 
         if (condoAreaStart - currentY >= 50.0 && withRem.Count > 0)
@@ -211,7 +210,7 @@ internal static class PackingEngine
         while (packed < requested)
         {
             double stackY = startY + stackIndex * stackDepth;
-            if (stackY >= dims.L - Clearance) break;
+            if (stackY >= dims.L) break;
 
             bool flipStart    = (stackIndex % 2 == 1) && spec.PatternB is { Length: > 0 };
             int  beforeStack  = packed;
@@ -300,7 +299,7 @@ internal static class PackingEngine
                         {
                             double px = sectionX + c * bw;
                             double py = subY + r * bl;
-                            if (px + bw > dims.W + 0.01 || py + bl > dims.L - Clearance + 0.01) continue;
+                            if (px + bw > dims.W + 0.01 || py + bl > dims.L + 0.01) continue;
                             placements.Add(new BoxPlacement(px, py, z, bw, bl, spec.H, productIndex, sub.Rotated, stackIndex, layerIndex));
                             packed++;
                         }
@@ -430,7 +429,7 @@ internal static class PackingEngine
             ? spec.CondoCount
             : (int)Math.Floor(dims.W / spec.W);
         int maxLayers = CalcLayerLimit(spec, dims);
-        if (condoCount <= 0 || maxLayers <= 0 || condoY + spec.L > dims.L - Clearance + 0.01) return 0;
+        if (condoCount <= 0 || maxLayers <= 0 || condoY + spec.L > dims.L + 0.01) return 0;
 
         int cols   = Math.Min(condoCount, (int)Math.Floor(dims.W / spec.W));
         int placed = 0;

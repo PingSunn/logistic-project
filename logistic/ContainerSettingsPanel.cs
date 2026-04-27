@@ -14,7 +14,7 @@ internal sealed class ContainerSettingsPanel : UserControl
     private StackPanel _rowsPanel = null!;
     private readonly List<EditRow> _editRows = [];
 
-    private record EditRow(TextBox Name, TextBox SizeLabel, TextBox W, TextBox L, TextBox H, Border Card, TextBlock Hint);
+    private record EditRow(TextBox Name, TextBox SizeLabel, TextBox W, TextBox L, TextBox H, TextBox Gap, Border Card, TextBlock Hint);
 
     public ContainerSettingsPanel()
     {
@@ -55,7 +55,7 @@ internal sealed class ContainerSettingsPanel : UserControl
 
         var subtitle = new TextBlock
         {
-            Text = "Enter nominal (actual) dimensions — 5 cm is subtracted per side for calculations.",
+            Text = "ใส่ขนาดจริงของตู้ — ระบบจะลบค่า Gap จากทุกด้านเพื่อคำนวณพื้นที่ใช้งาน",
             FontSize = 13,
             Foreground = ThemeColors.InkMuted,
             Margin = new Avalonia.Thickness(0, 6, 0, 0),
@@ -162,6 +162,20 @@ internal sealed class ContainerSettingsPanel : UserControl
 
         inner.Children.Add(row2);
 
+        var row3 = new Grid { ColumnDefinitions = ColumnDefinitions.Parse("Auto,8,80") };
+        row3.Children.Add(new TextBlock
+        {
+            Text = "GAP (CM)",
+            FontSize = 11,
+            FontWeight = FontWeight.Medium,
+            Foreground = ThemeColors.InkFaint,
+            VerticalAlignment = VerticalAlignment.Center
+        });
+        var gapBox = new TextBox { Text = (spec?.Gap ?? 5).ToString() };
+        Grid.SetColumn(gapBox, 2);
+        row3.Children.Add(gapBox);
+        inner.Children.Add(row3);
+
         var hint = new TextBlock { FontSize = 12, Foreground = ThemeColors.InkFaint };
 
         void UpdateHint()
@@ -169,18 +183,20 @@ internal sealed class ContainerSettingsPanel : UserControl
             int.TryParse(wBox.Text, out var w);
             int.TryParse(lBox.Text, out var l);
             int.TryParse(hBox.Text, out var h);
-            hint.Text = $"Effective interior: {w - 5} × {l - 5} × {h - 5} cm";
+            int.TryParse(gapBox.Text, out var gap);
+            hint.Text = $"ภายใน: {w - gap} × {l - gap} × {h - gap} cm";
         }
 
         wBox.TextChanged += (_, _) => UpdateHint();
         lBox.TextChanged += (_, _) => UpdateHint();
         hBox.TextChanged += (_, _) => UpdateHint();
+        gapBox.TextChanged += (_, _) => UpdateHint();
         UpdateHint();
 
         inner.Children.Add(hint);
         card.Child = inner;
 
-        var row = new EditRow(nameBox, sizeBox, wBox, lBox, hBox, card, hint);
+        var row = new EditRow(nameBox, sizeBox, wBox, lBox, hBox, gapBox, card, hint);
         _editRows.Add(row);
 
         delBtn.Click += (_, _) =>
@@ -257,7 +273,9 @@ internal sealed class ContainerSettingsPanel : UserControl
             int.TryParse(row.W.Text, out var w);
             int.TryParse(row.L.Text, out var l);
             int.TryParse(row.H.Text, out var h);
-            specs.Add(new ContainerSpec(row.Name.Text.Trim(), row.SizeLabel.Text?.Trim() ?? "", w, l, h));
+            int.TryParse(row.Gap.Text, out var gap);
+            if (gap <= 0) gap = 5;
+            specs.Add(new ContainerSpec(row.Name.Text.Trim(), row.SizeLabel.Text?.Trim() ?? "", w, l, h, gap));
         }
         return specs;
     }

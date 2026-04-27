@@ -706,7 +706,7 @@ public class PlanningView : UserControl
         {
             var dims = new ContainerDims(container.InteriorW, container.InteriorL, container.InteriorH);
             double maxUsedY = output.Placements.Max(p => p.Y + p.BL);
-            double shift = dims.L - PackingEngine.Clearance - maxUsedY;
+            double shift = dims.L - maxUsedY;
             if (shift > 0.01)
                 for (int i = 0; i < output.Placements.Count; i++)
                 {
