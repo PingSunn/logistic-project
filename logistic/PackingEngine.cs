@@ -43,6 +43,7 @@ internal static class PackingEngine
         RunBalancing(packInfos, dims, placements, ref currentY, effectiveLayers);
         RunLayerBalancing(packInfos, dims, placements);
         RunPartialRemoval(packInfos, dims, placements, ref currentY);
+        SortStacksByHeight(packInfos, placements);
         var condoMap  = RunCondoPlacement(packInfos, dims, currentY, placements);
 
         return new PackingOutput(placements, packInfos, new Dictionary<int,int>(), condoMap);
@@ -237,10 +238,9 @@ internal static class PackingEngine
         List<PackInfo> packInfos, ContainerDims dims,
         double condoAreaStart, List<BoxPlacement> placements)
     {
-        double condoY = condoAreaStart;
-        var condoMap  = new Dictionary<int,int>();
+        var condoMap = new Dictionary<int,int>();
 
-        // Sort H descending: tallest product is the base layer (Z=0).
+        // Sort H descending: tallest product is the base (placed first, lowest Z).
         var withRem = packInfos
             .Where(info => info.HasPattern && info.Requested - info.Result.Packed > 0)
             .Select(info => (info, rem: info.Requested - info.Result.Packed))
@@ -249,113 +249,56 @@ internal static class PackingEngine
 
         if (withRem.Count == 0) return condoMap;
 
-        // Assign cumulative Z offsets: tallest at Z=0, next on top, etc.
-        var zBases  = new double[packInfos.Count];
         var colsMap = new int[packInfos.Count];
-        double accumZ = 0;
         foreach (var (info, _) in withRem)
-        {
-            zBases[info.ProductIndex]  = accumZ;
             colsMap[info.ProductIndex] = CondoCols(info.Spec, dims);
-            accumZ += info.Spec.H;
-        }
 
-        // Track full rows placed per product (for partial calculation).
-        var rowsPlaced = new int[packInfos.Count];
+        var (baseInfo, baseRem) = withRem[0];
+        int basePI   = baseInfo.ProductIndex;
+        int baseCols = colsMap[basePI];
 
-        // Phase 1: combined full rows — all products share the same Y positions,
-        // each placed at its Z offset. Advance condoY once per combined row.
-        int maxRows = withRem.Max(x => colsMap[x.info.ProductIndex] > 0
-            ? x.rem / colsMap[x.info.ProductIndex] : 0);
+        double condoY = condoAreaStart;
+        double z      = 0.0;
 
-        var towerYs = new List<double>();
-
-        for (int row = 0; row < maxRows; row++)
+        // Phase 1: stack complete rows of base product vertically at condoY.
+        int placed1 = 0;
+        while (baseCols > 0 && placed1 + baseCols <= baseRem &&
+               z + baseInfo.Spec.H <= dims.H + 0.01 &&
+               condoY + baseInfo.Spec.L <= dims.L + 0.01)
         {
-            if (condoY >= dims.L) break;
-            double rowY      = condoY;
-            double rowAdvance = 0;
-            bool   anyPlaced = false;
-
-            foreach (var (info, rem) in withRem)
-            {
-                int cols = colsMap[info.ProductIndex];
-                if (cols <= 0) continue;
-                if (row >= rem / cols) continue;         // this product has no row here
-
-                double z = zBases[info.ProductIndex];
-                if (rowY + info.Spec.L > dims.L + 0.01) break;
-                if (z + info.Spec.H > dims.H + 0.01) continue;
-
-                for (int col = 0; col < cols; col++)
-                    placements.Add(new BoxPlacement(
-                        col * info.Spec.W, rowY, z,
-                        info.Spec.W, info.Spec.L, info.Spec.H,
-                        info.ProductIndex, false, CondoStackBase + info.ProductIndex, 0));
-
-                condoMap[info.ProductIndex] = condoMap.GetValueOrDefault(info.ProductIndex) + cols;
-                rowsPlaced[info.ProductIndex]++;
-                rowAdvance = Math.Max(rowAdvance, info.Spec.L);
-                anyPlaced  = true;
-            }
-
-            if (anyPlaced)
-            {
-                towerYs.Add(rowY);
-                condoY += rowAdvance;
-            }
+            for (int col = 0; col < baseCols; col++)
+                placements.Add(new BoxPlacement(
+                    col * baseInfo.Spec.W, condoY, z,
+                    baseInfo.Spec.W, baseInfo.Spec.L, baseInfo.Spec.H,
+                    basePI, false, CondoStackBase + basePI, 0));
+            condoMap[basePI] = condoMap.GetValueOrDefault(basePI) + baseCols;
+            placed1 += baseCols;
+            z       += baseInfo.Spec.H;
         }
 
-        // Phase 2: remaining partial boxes.
-        // Prefer stacking at an existing tower Y position where this product hasn't placed yet.
-        // Fallback: new row at current condoY at this product's Z base.
+        // Phase 2: all incomplete amounts continue the same vertical column.
+        // Order: base product partial first (heaviest/tallest), then secondary products.
         foreach (var (info, rem) in withRem)
         {
-            int cols = colsMap[info.ProductIndex];
-            if (cols <= 0) continue;
+            int cols      = colsMap[info.ProductIndex];
+            int remaining = rem - (info.ProductIndex == basePI ? placed1 : 0);
+            if (cols <= 0 || remaining <= 0) continue;
 
-            int partial = rem - rowsPlaced[info.ProductIndex] * cols;
-            if (partial <= 0) continue;
-
-            int    condoSI = CondoStackBase + info.ProductIndex;
-            double z       = zBases[info.ProductIndex];
-            if (z + info.Spec.H > dims.H + 0.01) continue;
-
-            var productYs = placements
-                .Where(p => p.ProductIndex == info.ProductIndex && p.StackIndex == condoSI)
-                .Select(p => p.Y).ToHashSet();
-
-            int placed = 0;
-            foreach (double towerY in towerYs)
+            int condoSI = CondoStackBase + info.ProductIndex;
+            while (remaining > 0 &&
+                   z + info.Spec.H <= dims.H + 0.01 &&
+                   condoY + info.Spec.L <= dims.L + 0.01)
             {
-                if (placed >= partial) break;
-                if (productYs.Contains(towerY)) continue;
-                if (towerY + info.Spec.L > dims.L + 0.01) continue;
-
-                int canPlace = Math.Min(cols, partial - placed);
-                for (int col = 0; col < canPlace; col++)
-                    placements.Add(new BoxPlacement(
-                        col * info.Spec.W, towerY, z,
-                        info.Spec.W, info.Spec.L, info.Spec.H,
-                        info.ProductIndex, false, condoSI, 0));
-                placed += canPlace;
-            }
-
-            // Fallback: new row at condoY
-            if (placed < partial && condoY + info.Spec.L <= dims.L + 0.01)
-            {
-                int canPlace = Math.Min(partial - placed, cols);
-                for (int col = 0; col < canPlace; col++)
+                int toPlace = Math.Min(cols, remaining);
+                for (int col = 0; col < toPlace; col++)
                     placements.Add(new BoxPlacement(
                         col * info.Spec.W, condoY, z,
                         info.Spec.W, info.Spec.L, info.Spec.H,
                         info.ProductIndex, false, condoSI, 0));
-                placed   += canPlace;
-                condoY   += info.Spec.L;
+                condoMap[info.ProductIndex] = condoMap.GetValueOrDefault(info.ProductIndex) + toPlace;
+                remaining -= toPlace;
+                z         += info.Spec.H;
             }
-
-            if (placed > 0)
-                condoMap[info.ProductIndex] = condoMap.GetValueOrDefault(info.ProductIndex) + placed;
         }
 
         return condoMap;
@@ -632,6 +575,42 @@ internal static class PackingEngine
         }
     }
 
+
+    private static void SortStacksByHeight(
+        List<PackInfo> packInfos, List<BoxPlacement> placements)
+    {
+        foreach (var info in packInfos)
+        {
+            if (!info.HasPattern) continue;
+
+            var stacks = placements
+                .Where(p => p.ProductIndex == info.ProductIndex && p.StackIndex < CondoStackBase)
+                .GroupBy(p => p.StackIndex)
+                .Select(g => (SI: g.Key, Height: g.Max(p => p.LayerIndex) + 1, MinY: g.Min(p => p.Y)))
+                .OrderBy(x => x.MinY)
+                .ToList();
+
+            if (stacks.Count < 2) continue;
+
+            var ySlots = stacks.Select(x => x.MinY).ToList();
+            var sorted = stacks.OrderBy(x => x.Height).ToList(); // short → tall (tall goes to highest Y = inner)
+
+            if (stacks.Select(x => x.SI).SequenceEqual(sorted.Select(x => x.SI))) continue;
+
+            var remapY = new Dictionary<int, double>();
+            for (int i = 0; i < sorted.Count; i++)
+                remapY[sorted[i].SI] = ySlots[i];
+
+            for (int j = 0; j < placements.Count; j++)
+            {
+                var p = placements[j];
+                if (p.ProductIndex != info.ProductIndex || p.StackIndex >= CondoStackBase) continue;
+                if (!remapY.TryGetValue(p.StackIndex, out double newMinY)) continue;
+                double oldMinY = stacks.First(x => x.SI == p.StackIndex).MinY;
+                placements[j] = p with { Y = newMinY + (p.Y - oldMinY) };
+            }
+        }
+    }
 
     private static int CondoCols(ProductSpec spec, ContainerDims dims)
     {
