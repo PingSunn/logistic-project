@@ -214,14 +214,14 @@ public class PackingEngineTests
     [Fact]
     public void Aloe365ml_500boxes_20ft()
     {
-        var container = TestHelpers.Container20ft();
+        var container = TestHelpers.Container40ft();
         var aloe = new ProductSpec("Aloe", "365 ML", "Pack 24", 9.79, false, false,
             21.9, 33.4, 20.5,
             PatternA: [new LayerSection(2, 6, false), new LayerSection(3, 3, true)],
             PatternB: [new LayerSection(3, 3, true),  new LayerSection(2, 6, false)],
             MaxLayers: 10, CondoCount: 10);
 
-        var requests = new List<(ProductSpec, int)> { (aloe, 500) };
+        var requests = new List<(ProductSpec, int)> { (aloe, 3000) };
         var output   = PackingEngine.Calculate(container, requests);
 
         TestHelpers.DumpOutput(container, requests, output, _log);

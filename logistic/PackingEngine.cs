@@ -41,6 +41,7 @@ internal static class PackingEngine
         var effectiveLayers = ComputeEffectiveLayers(dims, requests);
         var packInfos = RunPrimaryPacking(dims, requests, placements, out double currentY, effectiveLayers);
         RunBalancing(packInfos, dims, placements, ref currentY, effectiveLayers);
+        RunLayerBalancing(packInfos, dims, placements);
         RunPartialRemoval(packInfos, dims, placements, ref currentY);
         var condoMap  = RunCondoPlacement(packInfos, dims, currentY, placements);
 
@@ -146,11 +147,8 @@ internal static class PackingEngine
                 int primaryPacked = placements.Count(p =>
                     p.ProductIndex == info.ProductIndex && p.StackIndex < CondoStackBase);
 
-                bool topOff = false;
                 foreach (int si in stackIndices)
                 {
-                    if (topOff) break;
-
                     int current = placements
                         .Where(p => p.ProductIndex == info.ProductIndex && p.StackIndex == si)
                         .Select(p => p.LayerIndex).DefaultIfEmpty(-1).Max() + 1;
@@ -169,7 +167,6 @@ internal static class PackingEngine
                     }
                     else if (current < targetLayers)
                     {
-                        // Derive actual stack Y from placements (handles fill-zone stacks).
                         double stackY = placements
                             .Where(p => p.ProductIndex == info.ProductIndex && p.StackIndex == si)
                             .Min(p => p.Y);
@@ -185,15 +182,11 @@ internal static class PackingEngine
 
                             int capacity = CountLayerCapacity(sections, info.Spec, dims, stackY);
                             if (capacity <= 0) break;
+                            if (info.Requested - primaryPacked < capacity) break;
 
-                            int toPlace = info.Requested - primaryPacked;
-                            if (toPlace <= 0) { topOff = true; break; }
-                            if (toPlace < capacity) topOff = true; // partial last-batch fill
-
-                            PlaceLayerAt(sections, info.Spec, dims, stackY, z, Math.Min(toPlace, capacity),
+                            PlaceLayerAt(sections, info.Spec, dims, stackY, z, capacity,
                                          info.ProductIndex, placements, si, layer);
-                            primaryPacked += Math.Min(toPlace, capacity);
-                            if (topOff) break;
+                            primaryPacked += capacity;
                         }
                     }
                 }
@@ -383,10 +376,13 @@ internal static class PackingEngine
         int fullStacks   = 0;
         int partialBoxes = 0;
 
+        int fullBpl = CountLayerCapacity(spec.PatternA, spec, dims, startY);
+
         while (packed < requested)
         {
             double stackY = startY + (stackIndex - initialStackIndex) * stackDepth;
             if (stackY >= dims.L) break;
+            if (CountLayerCapacity(spec.PatternA, spec, dims, stackY) < fullBpl) break;
 
             bool flipStart    = (stackIndex % 2 == 1) && spec.PatternB is { Length: > 0 };
             int  beforeStack  = packed;
@@ -501,11 +497,81 @@ internal static class PackingEngine
         {
             var (bpl, sd, stacks) = data[i];
             if (bpl <= 0 || sd <= 0 || stacks <= 0) continue;
-            int newStacks = (int)Math.Ceiling(stacks * scale);
+
+            // Count stacks that fit without Y-clipping — same guard as PlaceProduct.
+            int maxFull = 0;
+            for (double y = 0; y < dims.L; y += sd)
+            {
+                if (CountLayerCapacity(requests[i].Spec.PatternA!, requests[i].Spec, dims, y) < bpl) break;
+                maxFull++;
+            }
+
+            int newStacks = Math.Min((int)Math.Ceiling(stacks * scale), maxFull > 0 ? maxFull : stacks);
             int newL      = (int)Math.Ceiling((double)requests[i].Qty / (newStacks * bpl));
             eff[i] = Math.Max(1, Math.Min(newL, eff[i]));
         }
         return eff;
+    }
+
+    private static void RunLayerBalancing(
+        List<PackInfo> packInfos, ContainerDims dims,
+        List<BoxPlacement> placements)
+    {
+        foreach (var info in packInfos)
+        {
+            if (!info.HasPattern) continue;
+
+            bool changed = true;
+            while (changed)
+            {
+                changed = false;
+
+                var stacks = placements
+                    .Where(p => p.ProductIndex == info.ProductIndex && p.StackIndex < CondoStackBase)
+                    .GroupBy(p => p.StackIndex)
+                    .Select(g => (SI: g.Key,
+                                  Height: g.Max(p => p.LayerIndex) + 1,
+                                  StackY: g.Min(p => p.Y)))
+                    .OrderBy(x => x.SI)
+                    .ToList();
+
+                if (stacks.Count < 2) break;
+
+                int maxH = stacks.Max(x => x.Height);
+                int minH = stacks.Min(x => x.Height);
+                if (maxH - minH <= 1) break;
+
+                var tall = stacks.Last(x => x.Height == maxH);
+                var low  = stacks.First(x => x.Height == minH);
+
+                int removeLayer = tall.Height - 1;
+                int removedCount = placements.Count(p =>
+                    p.ProductIndex == info.ProductIndex &&
+                    p.StackIndex   == tall.SI &&
+                    p.LayerIndex   == removeLayer);
+                if (removedCount == 0) break;
+
+                int nextLayer = low.Height;
+                double z = nextLayer * info.Spec.H;
+                if (z + info.Spec.H > dims.H + 0.01) break;
+
+                bool flipIt  = (low.SI % 2 == 1) && info.Spec.PatternB is { Length: > 0 };
+                bool useA    = flipIt ? (nextLayer % 2 == 1) : (nextLayer % 2 == 0);
+                var sections = useA ? info.Spec.PatternA! : (info.Spec.PatternB ?? info.Spec.PatternA)!;
+
+                int capacity = CountLayerCapacity(sections, info.Spec, dims, low.StackY);
+                if (capacity != removedCount) break;
+
+                placements.RemoveAll(p =>
+                    p.ProductIndex == info.ProductIndex &&
+                    p.StackIndex   == tall.SI &&
+                    p.LayerIndex   == removeLayer);
+
+                PlaceLayerAt(sections, info.Spec, dims, low.StackY, z, capacity,
+                             info.ProductIndex, placements, low.SI, nextLayer);
+                changed = true;
+            }
+        }
     }
 
     private static int CalcLayerLimit(ProductSpec spec, ContainerDims dims) =>
