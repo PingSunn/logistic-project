@@ -15,4 +15,3 @@ publish/
 # NuGet
 *.nupkg
 *.snupkg
-containers.json
