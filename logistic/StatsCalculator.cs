@@ -13,7 +13,8 @@ internal static class StatsCalculator
         int Requested,
         int FullStacks,
         int MixedPlaced,
-        int CondoPlaced);
+        int CondoPlaced,
+        int ScatterPlaced);
 
     internal static double ContainerCbm(ContainerSpec c) =>
         (double)c.InteriorW * c.InteriorL * c.InteriorH / 1_000_000.0;
@@ -25,14 +26,15 @@ internal static class StatsCalculator
         IReadOnlyList<PackInfo> packInfos,
         IReadOnlyList<BoxPlacement> placements,
         IReadOnlyDictionary<int,int> mixedMap,
-        IReadOnlyDictionary<int,int> condoMap)
+        IReadOnlyDictionary<int,int> condoMap,
+        IReadOnlyDictionary<int,int> scatterMap)
     {
         var rows = new List<PackStatRow>();
         foreach (var info in packInfos)
         {
             if (!info.HasPattern)
             {
-                rows.Add(new PackStatRow(info.Spec, info.ProductIndex, false, 0, info.Requested, 0, 0, 0));
+                rows.Add(new PackStatRow(info.Spec, info.ProductIndex, false, 0, info.Requested, 0, 0, 0, 0));
                 continue;
             }
 
@@ -45,7 +47,8 @@ internal static class StatsCalculator
                 info.Spec, info.ProductIndex, true, totalPacked, info.Requested,
                 fullStacks,
                 mixedMap.GetValueOrDefault(info.ProductIndex, 0),
-                condoMap.GetValueOrDefault(info.ProductIndex, 0)));
+                condoMap.GetValueOrDefault(info.ProductIndex, 0),
+                scatterMap.GetValueOrDefault(info.ProductIndex, 0)));
         }
         return rows;
     }

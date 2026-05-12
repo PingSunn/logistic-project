@@ -17,13 +17,13 @@ internal sealed class ProductSettingsPanel : UserControl
 
     private record ProductEditRow(
         TextBox Description, TextBox Content, TextBox PackSize,
-        TextBox Weight, CheckBox RscBox, CheckBox AutoBox,
+        TextBox Weight,
         TextBox W, TextBox L, TextBox H,
         TextBox MaxLayers, TextBox CondoCountBox,
         LayerPatternEditor PatternA, LayerPatternEditor PatternB,
         Border Card, TextBlock CbmHint);
 
-    private const string CsvHeader = "Description,Content,PackSize,WeightPerBoxKg,BoxTypeRsc,BoxTypeAuto,W,L,H";
+    private const string CsvHeader = "Description,Content,PackSize,WeightPerBoxKg,W,L,H";
 
     public ProductSettingsPanel()
     {
@@ -200,11 +200,6 @@ internal sealed class ProductSettingsPanel : UserControl
         weightLabel.Children.Add(weightBox);
         row2.Children.Add(weightLabel);
 
-        var rscBox  = new CheckBox { Content = "RSC",  IsChecked = spec?.BoxTypeRsc  ?? false, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Avalonia.Thickness(0, 0, 0, 4) };
-        var autoBox = new CheckBox { Content = "Auto", IsChecked = spec?.BoxTypeAuto ?? false, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Avalonia.Thickness(0, 0, 0, 4) };
-        row2.Children.Add(rscBox);
-        row2.Children.Add(autoBox);
-
         inner.Children.Add(row2);
 
         var row3 = new Grid { ColumnDefinitions = ColumnDefinitions.Parse("*,8,*,8,*") };
@@ -273,7 +268,7 @@ internal sealed class ProductSettingsPanel : UserControl
         wBox.TextChanged += (_, _) => { if (double.TryParse(wBox.Text, out var w)) { patternAEditor.BoxW = w; patternBEditor.BoxW = w; } };
         lBox.TextChanged += (_, _) => { if (double.TryParse(lBox.Text, out var l)) { patternAEditor.BoxL = l; patternBEditor.BoxL = l; } };
 
-        var productRow = new ProductEditRow(descBox, contentBox, packBox, weightBox, rscBox, autoBox, wBox, lBox, hBox,
+        var productRow = new ProductEditRow(descBox, contentBox, packBox, weightBox, wBox, lBox, hBox,
             maxLayersBox, condoCountBox, patternAEditor, patternBEditor, card, cbmHint);
         _productEditRows.Add(productRow);
 
@@ -303,8 +298,6 @@ internal sealed class ProductSettingsPanel : UserControl
                 row.Content.Text?.Trim() ?? "",
                 row.PackSize.Text?.Trim() ?? "",
                 weight,
-                row.RscBox.IsChecked == true,
-                row.AutoBox.IsChecked == true,
                 w, l, h,
                 row.PatternA.Pattern,
                 row.PatternB.Pattern,
@@ -330,7 +323,7 @@ internal sealed class ProductSettingsPanel : UserControl
 
             var sb = new StringBuilder();
             sb.AppendLine(CsvHeader);
-            sb.AppendLine("Aloe,365ML,Pack 24,9.9,False,True,21.9,33.4,20.5");
+            sb.AppendLine("Aloe,365ML,Pack 24,9.9,21.9,33.4,20.5");
 
             await using var stream = await file.OpenWriteAsync();
             await using var writer = new StreamWriter(stream, Encoding.UTF8);
@@ -363,14 +356,12 @@ internal sealed class ProductSettingsPanel : UserControl
             {
                 if (isFirst) { isFirst = false; continue; }
                 var parts = line.Split(',');
-                if (parts.Length < 9) continue;
+                if (parts.Length < 7) continue;
                 double.TryParse(parts[3], out var weight);
-                bool.TryParse(parts[4], out var rsc);
-                bool.TryParse(parts[5], out var auto);
-                double.TryParse(parts[6], out var w);
-                double.TryParse(parts[7], out var l);
-                double.TryParse(parts[8], out var h);
-                specs.Add(new ProductSpec(parts[0], parts[1], parts[2], weight, rsc, auto, w, l, h));
+                double.TryParse(parts[4], out var w);
+                double.TryParse(parts[5], out var l);
+                double.TryParse(parts[6], out var h);
+                specs.Add(new ProductSpec(parts[0], parts[1], parts[2], weight, w, l, h));
             }
 
             _productEditRows.Clear();
@@ -400,7 +391,7 @@ internal sealed class ProductSettingsPanel : UserControl
             var sb = new StringBuilder();
             sb.AppendLine(CsvHeader);
             foreach (var p in specs)
-                sb.AppendLine($"{p.Description},{p.Content},{p.PackSize},{p.WeightPerBoxKg},{p.BoxTypeRsc},{p.BoxTypeAuto},{p.W},{p.L},{p.H}");
+                sb.AppendLine($"{p.Description},{p.Content},{p.PackSize},{p.WeightPerBoxKg},{p.W},{p.L},{p.H}");
 
             await using var stream = await file.OpenWriteAsync();
             await using var writer = new StreamWriter(stream, Encoding.UTF8);

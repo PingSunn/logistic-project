@@ -385,7 +385,7 @@ public class PlanningView : UserControl
 
     private Border BuildProductStatRow(
         ProductSpec spec, int productIndex, int packed, int requested,
-        int fullStacks, int mixedPlaced = 0, int condoPlaced = 0)
+        int fullStacks, int mixedPlaced = 0, int condoPlaced = 0, int scatterPlaced = 0)
     {
         int remaining = requested - packed;
         var color = IsometricCanvas.GetProductColor(productIndex);
@@ -458,6 +458,13 @@ public class PlanningView : UserControl
             badges.Children.Add(new TextBlock
             {
                 Text = $"คอนโด {condoPlaced}", FontSize = 11, Foreground = InkMuted,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+
+        if (scatterPlaced > 0)
+            badges.Children.Add(new TextBlock
+            {
+                Text = $"กระจาย {scatterPlaced}", FontSize = 11, Foreground = InkMuted,
                 VerticalAlignment = VerticalAlignment.Center
             });
 
@@ -753,7 +760,7 @@ public class PlanningView : UserControl
 
     private void BuildPackStats(PackingOutput output, ContainerSpec container)
     {
-        var rows = StatsCalculator.ComputeRows(output.PackInfos, output.Placements, output.MixedMap, output.CondoMap);
+        var rows = StatsCalculator.ComputeRows(output.PackInfos, output.Placements, output.MixedMap, output.CondoMap, output.ScatterMap);
 
         foreach (var row in rows)
         {
@@ -769,7 +776,7 @@ public class PlanningView : UserControl
 
             _statsPanel.Children.Add(BuildProductStatRow(
                 row.Spec, row.ProductIndex, row.TotalPacked, row.Requested,
-                row.FullStacks, row.MixedPlaced, row.CondoPlaced));
+                row.FullStacks, row.MixedPlaced, row.CondoPlaced, row.ScatterPlaced));
         }
 
         double containerCbm = StatsCalculator.ContainerCbm(container);

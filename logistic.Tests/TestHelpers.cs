@@ -29,8 +29,8 @@ internal static class TestHelpers
         log.WriteLine($"    placements: {output.Placements.Count}  CBM: {usedCbm:F3}/{containerCbm:F3} ({pct:F1}%)");
         log.WriteLine("");
 
-        log.WriteLine("  #  Product                            Req  Packed  Primary  Condo  Pattern");
-        log.WriteLine("  " + new string('-', 72));
+        log.WriteLine("  #  Product                            Req  Packed  Primary  Condo  Scatter  Pattern");
+        log.WriteLine("  " + new string('-', 81));
 
         foreach (var info in output.PackInfos)
         {
@@ -38,11 +38,12 @@ internal static class TestHelpers
             int pri   = output.Placements.Count(p =>
                             p.ProductIndex == info.ProductIndex &&
                             p.StackIndex   <  PackingEngine.CondoStackBase);
-            int condo = output.CondoMap.GetValueOrDefault(info.ProductIndex, 0);
+            int condo   = output.CondoMap.GetValueOrDefault(info.ProductIndex, 0);
+            int scatter = output.ScatterMap.GetValueOrDefault(info.ProductIndex, 0);
             string name = $"{s.Description} {s.Content} {s.PackSize}";
 
             log.WriteLine($"  {info.ProductIndex,2}  {name,-34} {info.Requested,4}" +
-                          $"  {info.Result.Packed,6}  {pri,7}  {condo,5}  {(info.HasPattern ? "yes" : "no")}");
+                          $"  {info.Result.Packed,6}  {pri,7}  {condo,5}  {scatter,7}  {(info.HasPattern ? "yes" : "no")}");
         }
 
         log.WriteLine("");

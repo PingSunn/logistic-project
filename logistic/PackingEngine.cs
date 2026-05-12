@@ -14,15 +14,18 @@ internal sealed class PackingOutput
     internal List<PackInfo>      PackInfos  { get; }
     internal Dictionary<int,int> MixedMap   { get; }
     internal Dictionary<int,int> CondoMap   { get; }
+    internal Dictionary<int,int> ScatterMap { get; }
 
     internal PackingOutput(
         List<BoxPlacement> placements, List<PackInfo> packInfos,
-        Dictionary<int,int> mixedMap, Dictionary<int,int> condoMap)
+        Dictionary<int,int> mixedMap, Dictionary<int,int> condoMap,
+        Dictionary<int,int> scatterMap)
     {
         Placements = placements;
         PackInfos  = packInfos;
         MixedMap   = mixedMap;
         CondoMap   = condoMap;
+        ScatterMap = scatterMap;
     }
 }
 
@@ -44,9 +47,10 @@ internal static class PackingEngine
         RunLayerBalancing(packInfos, dims, placements);
         RunPartialRemoval(packInfos, dims, placements, ref currentY);
         SortStacksByHeight(packInfos, placements, dims);
-        var condoMap  = RunCondoPlacement(packInfos, dims, currentY, placements);
+        var condoMap   = RunCondoPlacement(packInfos, dims, currentY, placements);
+        var scatterMap = RunScatteredTopPlacement(packInfos, dims, placements);
 
-        return new PackingOutput(placements, packInfos, new Dictionary<int,int>(), condoMap);
+        return new PackingOutput(placements, packInfos, new Dictionary<int,int>(), condoMap, scatterMap);
     }
 
     private static List<PackInfo> RunPrimaryPacking(
@@ -317,6 +321,70 @@ internal static class PackingEngine
 
         return condoMap;
     }
+
+    private static Dictionary<int,int> RunScatteredTopPlacement(
+        List<PackInfo> packInfos, ContainerDims dims, List<BoxPlacement> placements)
+    {
+        var scatterMap = new Dictionary<int,int>();
+
+        foreach (var info in packInfos)
+        {
+            if (!info.HasPattern) continue;
+
+            int placedSoFar = placements.Count(p => p.ProductIndex == info.ProductIndex);
+            int rem         = info.Requested - placedSoFar;
+            if (rem <= 0) continue;
+
+            var stacks = placements
+                .Where(p => p.ProductIndex == info.ProductIndex && p.StackIndex < CondoStackBase)
+                .GroupBy(p => p.StackIndex)
+                .Select(g => (
+                    SI:       g.Key,
+                    StackY:   g.Min(p => p.Y),
+                    TopLayer: g.Max(p => p.LayerIndex) + 1))
+                .Where(s => s.TopLayer * info.Spec.H + info.Spec.H <= dims.H + 0.01)
+                .Select(s => new ScatterStack(s.SI, s.StackY, s.TopLayer, s.TopLayer * info.Spec.H))
+                .ToList();
+
+            while (rem > 0 && stacks.Count > 0)
+            {
+                int pick = 0;
+                for (int i = 1; i < stacks.Count; i++)
+                {
+                    double dz = stacks[i].TopZ - stacks[pick].TopZ;
+                    if (dz < -0.001 || (dz < 0.001 && stacks[i].SI < stacks[pick].SI))
+                        pick = i;
+                }
+                var s = stacks[pick];
+
+                bool flipIt  = (s.SI % 2 == 1) && info.Spec.PatternB is { Length: > 0 };
+                bool useA    = flipIt ? (s.TopLayer % 2 == 1) : (s.TopLayer % 2 == 0);
+                var sections = useA ? info.Spec.PatternA! : (info.Spec.PatternB ?? info.Spec.PatternA)!;
+
+                int cap = CountLayerCapacity(sections, info.Spec, dims, s.StackY);
+                if (cap <= 0) { stacks.RemoveAt(pick); continue; }
+
+                int take = Math.Min(cap, rem);
+                int n = PlaceLayerAt(sections, info.Spec, dims, s.StackY, s.TopZ, take,
+                                     info.ProductIndex, placements, s.SI, s.TopLayer);
+                if (n <= 0) { stacks.RemoveAt(pick); continue; }
+
+                rem -= n;
+                scatterMap[info.ProductIndex] = scatterMap.GetValueOrDefault(info.ProductIndex) + n;
+
+                int    nextLayer = s.TopLayer + 1;
+                double nextZ     = s.TopZ + info.Spec.H;
+                if (nextZ + info.Spec.H > dims.H + 0.01)
+                    stacks.RemoveAt(pick);
+                else
+                    stacks[pick] = new ScatterStack(s.SI, s.StackY, nextLayer, nextZ);
+            }
+        }
+
+        return scatterMap;
+    }
+
+    private record struct ScatterStack(int SI, double StackY, int TopLayer, double TopZ);
 
     private static double LayerDepth(LayerSection[] sections, double W, double L)
     {
