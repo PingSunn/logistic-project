@@ -383,10 +383,17 @@ public class PlanningView : UserControl
         return btn;
     }
 
-    private Border BuildProductStatRow(
-        ProductSpec spec, int productIndex, int packed, int requested,
-        int fullStacks, int mixedPlaced = 0, int condoPlaced = 0, int scatterPlaced = 0)
+    private Border BuildProductStatRow(StatsCalculator.PackStatRow row, double containerCbm)
     {
+        var spec         = row.Spec;
+        int productIndex = row.ProductIndex;
+        int packed       = row.TotalPacked;
+        int requested    = row.Requested;
+        int fullStacks   = row.FullStacks;
+        int mixedPlaced  = row.MixedPlaced;
+        int condoPlaced  = row.CondoPlaced;
+        int scatterPlaced = row.ScatterPlaced;
+
         int remaining = requested - packed;
         var color = IsometricCanvas.GetProductColor(productIndex);
         var colorBrush = new SolidColorBrush(color);
@@ -516,19 +523,18 @@ public class PlanningView : UserControl
 
         if (packed > 0)
         {
-            int boxesPerStack;
-            if (fullStacks > 0)
-                boxesPerStack = packed / fullStacks;
-            else
-                boxesPerStack = packed;
-            if (boxesPerStack > 0)
-                outer.Children.Add(new TextBlock
-                {
-                    Text = $"CBM/Stack: {spec.Cbm * boxesPerStack:F4} m³",
-                    FontSize = 10,
-                    Foreground = InkMuted,
-                    Margin = new Thickness(20, 0, 0, 0)
-                });
+            double productCbm  = spec.Cbm * packed;
+            double totalWeight = spec.WeightPerBoxKg * packed;
+            string pct = containerCbm > 0
+                ? $"  ({productCbm / containerCbm * 100:F1}% ของตู้)"
+                : "";
+            outer.Children.Add(new TextBlock
+            {
+                Text = $"CBM รวม: {productCbm:F3} m³  น้ำหนัก: {totalWeight:F1} kg{pct}",
+                FontSize = 10,
+                Foreground = InkMuted,
+                Margin = new Thickness(20, 0, 0, 0)
+            });
         }
 
         return new Border { Child = outer, Padding = new Thickness(0, 2) };
@@ -762,6 +768,8 @@ public class PlanningView : UserControl
     {
         var rows = StatsCalculator.ComputeRows(output.PackInfos, output.Placements, output.MixedMap, output.CondoMap, output.ScatterMap);
 
+        double containerCbm = StatsCalculator.ContainerCbm(container);
+
         foreach (var row in rows)
         {
             if (!row.HasPattern)
@@ -774,13 +782,10 @@ public class PlanningView : UserControl
                 continue;
             }
 
-            _statsPanel.Children.Add(BuildProductStatRow(
-                row.Spec, row.ProductIndex, row.TotalPacked, row.Requested,
-                row.FullStacks, row.MixedPlaced, row.CondoPlaced, row.ScatterPlaced));
+            _statsPanel.Children.Add(BuildProductStatRow(row, containerCbm));
         }
 
-        double containerCbm = StatsCalculator.ContainerCbm(container);
-        double usedCbm      = StatsCalculator.UsedCbm(output.Placements);
+        double usedCbm = StatsCalculator.UsedCbm(output.Placements);
 
         if (containerCbm > 0)
         {
