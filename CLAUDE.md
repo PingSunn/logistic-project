@@ -13,6 +13,12 @@ dotnet run --project logistic/logistic.csproj
 
 # Publish
 dotnet publish -c Release
+
+# Run all tests (with readable per-product dump output)
+dotnet test logistic.Tests/logistic.Tests.csproj --logger "console;verbosity=detailed"
+
+# Run a single test by name fragment
+dotnet test logistic.Tests/logistic.Tests.csproj --filter "FullyQualifiedName~<TestName>"
 ```
 
 ## Architecture
@@ -26,8 +32,8 @@ Avalonia 11 desktop application (`logistic/`) targeting `net10.0`.
 
 ### Planning
 - **`PlanningView.cs`** — code-behind UserControl (no AXAML); two-column layout: left = isometric canvas + stats (layer-cut slider, wireframe/color/dimension toggles, reset view), right = container selector, product search/checklist, quantity inputs, calculate button. Calls `PackingEngine.Calculate`, then `StatsCalculator.ComputeRows` to populate the stats panel.
-- **`PackingEngine.cs`** — pure static class; implements the 5-phase packing algorithm (Primary → Balancing → PartialRemoval → Mixed → Condo). No Avalonia/UI dependency. Entry point: `PackingEngine.Calculate(container, requests)` → `PackingOutput`.
-- **`StatsCalculator.cs`** — pure static class; computes per-product stats (packed, requested, full stacks, mixed, condo) and CBM utilisation from a `PackingOutput`.
+- **`PackingEngine.cs`** — pure static class; implements the 6-phase packing algorithm (Primary → Balancing → LayerBalancing → PartialRemoval → Condo → ScatteredTopPlacement). No Avalonia/UI dependency. Entry point: `PackingEngine.Calculate(container, requests)` → `PackingOutput`. The final Scatter phase places residual leftovers (boxes that fit in neither primary nor condo) on top of the **same product's** primary stacks, shortest-first, continuing the A/B flip sequence; never tops one product's stack with another's.
+- **`StatsCalculator.cs`** — pure static class; computes per-product stats (packed, requested, full stacks, mixed, condo, scatter) and CBM utilisation from a `PackingOutput`.
 
 ### Isometric Canvas
 - **`IsometricCanvas.cs`** — custom `Control`; renders `BoxPlacement` records using `IsometricProjection`. Owns camera state (`CameraState` inner struct: azimuth, elevation, zoom, drag). Supports layer-cut ratio, wireframe mode, color-by-layer, color-by-stack-layer, hidden products.
@@ -66,8 +72,24 @@ All UI text is in **Thai**. Labels, buttons, headings, and status messages must 
 
 This app plans **container-based freight/shipping logistics** — user selects a container type, picks products with quantities, and the app calculates and visualises a 3D isometric packing arrangement.
 
+### Test Harness
+- **`logistic.Tests/`** — xUnit project; references main project via `InternalsVisibleTo`.
+- **`PackingEngineTests.cs`** — 13 hermetic scenarios (inline `ContainerSpec`/`ProductSpec`, no file I/O). Covers single product, no-pattern product, multi-product balancing, large qty, tall boxes in HC, small qty, realistic 3-product load, multi-product 20ft variants, the DevPreset (Mogu 1000ML + Mogu 320ML 20ft), and two scatter-phase scenarios (cross-product invariant + minimal single-product placement).
+- **`TestHelpers.cs`** — `DumpOutput()` prints container interior, CBM utilisation, and per-product table (requested / primary / condo / scatter / has-pattern). Container factories use `Gap=10` matching `containers.json`.
+- All test data is inline — no dependency on `containers.json` / `products.json`.
+- **Workflow**: run tests before and after any `PackingEngine.cs` change; diff the dump to verify behaviour changed as intended.
+
 ## Task Management
 
 1. **Verify Plan**: Check in before starting implementation
 2. **Track Progress**: Mark items complete as you go
 3. **Explain Changes**: High-level summary at each step
+
+If you wondering something, feel free to ask me for clearly
+
+## Model Assignment Rules
+
+- Architecture decisions and reviews: Use Opus
+- Implementation tasks (new features, refactors): Use Sonnet  
+- Simple edits, formatting, renaming: Use Haiku
+- Security-sensitive changes: Always escalate to Opus for review
