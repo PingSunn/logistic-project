@@ -470,7 +470,7 @@ public class PlanningView : UserControl
         if (fullStacks > 0)
             badges.Children.Add(new TextBlock
             {
-                Text = $"{fullStacks} ตั้ง", FontSize = 11, Foreground = InkMuted,
+                Text = $"{fullStacks} ต๊ง", FontSize = 11, Foreground = InkMuted,
                 VerticalAlignment = VerticalAlignment.Center
             });
 

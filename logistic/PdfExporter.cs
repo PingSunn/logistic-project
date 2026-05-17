@@ -253,7 +253,7 @@ internal static class PdfExporter
             DrawColHeader("บรรจุ/สั่ง", xPacked,  hy);
             DrawColHeader("น้ำหนัก",    xWeight,  hy);
             DrawColHeader("CBM%",       xCbm,     hy);
-            DrawColHeader("ตั้ง",       xFull,    hy);
+            DrawColHeader("ต๊ง",        xFull,    hy);
             DrawColHeader("ผสม",        xMixed,   hy);
             DrawColHeader("คอนโด",      xCondo,   hy);
             DrawColHeader("กระจาย",     xScatter, hy);
@@ -719,14 +719,16 @@ internal static class PdfExporter
 
             string typeLabel = isCondo
                 ? "คอนโด"
-                : $"ตั้งที่ {unit.StackOrdinal}/{unit.StackTotalOfProduct}";
+                : $"ต๊งที่ {unit.StackOrdinal}/{unit.StackTotalOfProduct}";
             SKColor typeBg = isCondo ? C(0xF3, 0xE8, 0xFF) : C(0xDC, 0xFC, 0xE7);
             SKColor typeFg = isCondo ? C(0x7C, 0x3A, 0xED) : C(0x15, 0x80, 0x3D);
 
             // Two zoomed-in diagrams: just this unit's footprint (X×Y) and section (axis × Z).
+            // Condo cards also get a 3D isometric view for spatial clarity.
             float diagW = InnerW;
             const float topH  = 100f;
             const float sideH = 140f;
+            const float isoH  = 130f;
 
             // Auto-orient: if the unit is wider (X) than deep (Y), draw with X horizontal
             // so a wide-thin condo column reads naturally; otherwise keep Y (door→inner) horizontal.
@@ -752,6 +754,7 @@ internal static class PdfExporter
                         + 3                           // gap
                         + captionH                    // "จากด้านข้าง" caption
                         + sideH                       // side view
+                        + (isCondo ? 3 + captionH + isoH : 0)  // iso view (condo only)
                         + 8                           // gap
                         + layerListH                  // layer rows
                         + 6                           // gap
@@ -770,8 +773,8 @@ internal static class PdfExporter
             float iy = cy + CardPad;
 
             // ── Header row ─────────────────────────────────────────────────
-            DrawText($"ขั้นที่ {stepNo}", ix, iy + 4, 14, C(0x1E, 0x29, 0x3B), bold: true);
-            float stepW = MeasureText($"ขั้นที่ {stepNo}", 14, bold: true);
+            DrawText($"{stepNo}", ix, iy + 4, 14, C(0x1E, 0x29, 0x3B), bold: true);
+            float stepW = MeasureText($"{stepNo}", 14, bold: true);
 
             // Type pill
             float pillX = ix + stepW + 10;
@@ -831,7 +834,18 @@ internal static class PdfExporter
             DrawText(sideCaption, ix, iy, 7.5f, C(0x64, 0x74, 0x8B));
             iy += captionH;
             DrawUnitSideView(unitBoxes, ix, iy, diagW, sideH, xHorizontal);
-            iy += sideH + 8;
+            iy += sideH;
+
+            if (isCondo)
+            {
+                iy += 3;
+                DrawText("มุมมองเฉียง (เห็นทุกชนิดที่ผสมในแถว)", ix, iy, 7.5f, C(0x64, 0x74, 0x8B));
+                iy += captionH;
+                DrawUnitIsoView(unitBoxes, ix, iy, diagW, isoH);
+                iy += isoH;
+            }
+
+            iy += 8;
 
             // Per-layer list
             float colW = InnerW / layerCols;
@@ -1027,6 +1041,64 @@ internal static class PdfExporter
             }
         }
 
+        private void DrawUnitIsoView(List<BoxPlacement> unitBoxes,
+                                      float x, float y, float maxW, float maxH)
+        {
+            DrawRoundRect(x, y, maxW, maxH, 3, Fill(C(0xF8, 0xFA, 0xFC)));
+            DrawRoundRect(x, y, maxW, maxH, 3, Stroke(C(0xCB, 0xD5, 0xE1), 0.8f));
+            if (unitBoxes.Count == 0) return;
+
+            double xMin = unitBoxes.Min(b => b.X);
+            double xMax = unitBoxes.Max(b => b.X + b.BW);
+            double yMin = unitBoxes.Min(b => b.Y);
+            double yMax = unitBoxes.Max(b => b.Y + b.BL);
+            double zMin = unitBoxes.Min(b => b.Z);
+            double zMax = unitBoxes.Max(b => b.Z + b.BH);
+
+            double localW = Math.Max(xMax - xMin, 0.1);
+            double localL = Math.Max(yMax - yMin, 0.1);
+            double localH = Math.Max(zMax - zMin, 0.1);
+
+            // Camera angle: higher elevation = camera lower in space (more side-on view),
+            // lower elevation = closer to top-down. Full container uses π/6 (30°); condos
+            // get π/4 (45°) for a more side-on read that shows box stacking clearly.
+            const double azimuth   = Math.PI / 4;
+            const double elevation = Math.PI / 4;
+
+            var proj = new PdfIsoProjection(
+                azimuth, elevation, 1.0,
+                localW, localL, localH, maxW, maxH);
+
+            var bounds = new SKRect(x, y, x + maxW, y + maxH);
+            _canvas.Save();
+            _canvas.ClipRect(bounds);
+
+            // Painter sort: back-to-front along view direction (matches DrawIsoView).
+            float sinA = proj.SinAzimuth, cosA = proj.CosAzimuth;
+            float sinE = (float)Math.Sin(elevation);
+            float cosE = (float)Math.Cos(elevation);
+            var sorted = unitBoxes
+                .OrderBy(b =>
+                    (b.X + b.BW * 0.5) * sinA * sinE +
+                    (b.Y + b.BL * 0.5) * cosA * sinE +
+                    (b.Z + b.BH * 0.5) * cosE)
+                .ToList();
+
+            // Translate each box to local origin so the projection's fit-to-frame matches the unit bbox.
+            foreach (var box in sorted)
+            {
+                var shifted = box with
+                {
+                    X = box.X - xMin,
+                    Y = box.Y - yMin,
+                    Z = box.Z - zMin
+                };
+                DrawIsoBox(shifted, proj, bounds);
+            }
+
+            _canvas.Restore();
+        }
+
         private void DrawPlanarBox(BoxPlacement box, float ox, float oy, float scale,
                                     double horizMin, double vertMin, bool xHorizontal)
         {
@@ -1104,7 +1176,7 @@ internal static class PdfExporter
 
             // Alternation note — include layer count when available
             string altNote = layersPerStack > 0
-                ? $"{layersPerStack} ชั้น/ตั้ง  ·  {stackCount} ตั้ง  ·  สลับ Pattern A / B ทุกชั้น"
+                ? $"{layersPerStack} ชั้น/ต๊ง  ·  {stackCount} ต๊ง  ·  สลับ Pattern A / B ทุกชั้น"
                 : "ชั้นเลขคี่ → Pattern A  ·  ชั้นเลขคู่ → Pattern B  (สลับกัน)";
             DrawText(altNote, ix, iy, 8, C(0x1E, 0x29, 0x3B));
             iy += 11;
@@ -1167,7 +1239,7 @@ internal static class PdfExporter
             sx = DrawStat(sx, iy, "รวม", $"{row.TotalPacked}/{row.Requested} ลัง",
                           full ? C(0x16, 0xA3, 0x4A) : C(0xD9, 0x77, 0x06));
             sx += 9;
-            sx = DrawStat(sx, iy, "เต็มตั้ง", $"{row.FullStacks}");
+            sx = DrawStat(sx, iy, "เต็มต๊ง", $"{row.FullStacks}");
             if (row.MixedPlaced   > 0) { sx += 9; sx = DrawStat(sx, iy, "ผสม",    $"{row.MixedPlaced}"); }
             if (row.CondoPlaced   > 0) { sx += 9; sx = DrawStat(sx, iy, "คอนโด",  $"{row.CondoPlaced} กล่อง"); }
             if (row.ScatterPlaced > 0) { sx += 9; sx = DrawStat(sx, iy, "กระจาย", $"{row.ScatterPlaced} กล่อง"); }
