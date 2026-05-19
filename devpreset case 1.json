@@ -1,0 +1,10 @@
+{
+  "container": 1,
+  "calculate": true,
+  "products": [
+    { "index": 0,  "qty": 200  },
+    { "index": 11, "qty": 1100 },
+    { "index": 13, "qty": 340  },
+    { "index": 17, "qty": 625  }
+  ]
+}
