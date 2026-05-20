@@ -248,10 +248,13 @@ internal static class PackingEngine
     {
         var condoMap = new Dictionary<int,int>();
 
+        // Order by remaining CBM (largest total leftover volume first), so products
+        // with the most leftover bulk get their full rows placed before others. Phase 2
+        // partial rows reuse the same order.
         var withRem = packInfos
             .Where(info => info.HasPattern && info.Requested - info.Result.Packed > 0)
             .Select(info => (info, rem: info.Requested - info.Result.Packed))
-            .OrderByDescending(x => ParseContentValue(x.info.Spec.Content))
+            .OrderByDescending(x => x.rem * x.info.Spec.Cbm)
             .ThenByDescending(x => x.info.Spec.H)
             .ToList();
 
@@ -719,15 +722,6 @@ internal static class PackingEngine
     }
 
     // Returns a sortable magnitude from content strings like "1000 ML", "450 ML", "150 G", "19.5 G".
-    // ML and G share the same numeric scale in this product catalog (G values are 19–150,
-    // ML values are 150–1000), so raw numeric comparison produces the correct condo order.
-    private static double ParseContentValue(string content)
-    {
-        var parts = content.TrimStart().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length == 0 || !double.TryParse(parts[0], out double v)) return 0;
-        return v;
-    }
-
     private static int CondoCols(ProductSpec spec, ContainerDims dims)
     {
         int condoCount = spec.CondoCount > 0

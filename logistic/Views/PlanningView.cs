@@ -35,8 +35,11 @@ public class PlanningView : UserControl
     private IsometricCanvas _canvas = null!;
     private StackPanel _statsPanel = null!;
     private readonly HashSet<int> _hiddenProducts = [];
-    private Slider _cutSlider = null!;
-    private TextBlock _cutLabel = null!;
+    private Button _exportPdfBtn = null!;
+
+    private PackingOutput? _lastOutput;
+    private IReadOnlyList<(ProductSpec Spec, int Qty)>? _lastRequests;
+    private ContainerSpec? _lastContainer;
 
     public PlanningView()
     {
@@ -85,13 +88,13 @@ public class PlanningView : UserControl
         statsCard.Child = new ScrollViewer
         {
             Content = _statsPanel,
-            MaxHeight = 210,
+            MaxHeight = 340,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto
         };
         dock.Children.Add(statsCard);
 
         // Canvas config bar — docked above stats
-        var sliderRow = new Border
+        var chipBar = new Border
         {
             Background = Surface,
             BorderBrush = BorderLight,
@@ -100,14 +103,12 @@ public class PlanningView : UserControl
             Padding = new Thickness(10, 6),
             Margin = new Thickness(0, 8, 0, 0)
         };
-        DockPanel.SetDock(sliderRow, Dock.Bottom);
+        DockPanel.SetDock(chipBar, Dock.Bottom);
 
-        // Chip buttons row
         var chipRow = new StackPanel
         {
             Orientation = Orientation.Horizontal,
-            Spacing = 5,
-            Margin = new Thickness(0, 0, 0, 6)
+            Spacing = 5
         };
 
         var resetBtn = new Button
@@ -129,53 +130,8 @@ public class PlanningView : UserControl
         chipRow.Children.Add(MakeChip("สีสลับชั้น", false, v => _canvas.SetColorByStackLayer(v)));
         chipRow.Children.Add(MakeChip("แสดงขนาด",  true,  v => _canvas.SetShowDimensions(v)));
 
-        var sliderGrid = new Grid { ColumnDefinitions = ColumnDefinitions.Parse("Auto,*,38") };
-
-        sliderGrid.Children.Add(new TextBlock
-        {
-            Text = "แสดงชั้น",
-            FontSize = 11,
-            FontWeight = FontWeight.Medium,
-            Foreground = InkMuted,
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(0, 0, 10, 0)
-        });
-
-        _cutSlider = new Slider
-        {
-            Minimum = 0,
-            Maximum = 1,
-            Value = 1,
-            SmallChange = 0.05,
-            LargeChange = 0.1,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-        Grid.SetColumn(_cutSlider, 1);
-        sliderGrid.Children.Add(_cutSlider);
-
-        _cutLabel = new TextBlock
-        {
-            Text = "100%",
-            FontSize = 11,
-            Foreground = InkMuted,
-            VerticalAlignment = VerticalAlignment.Center,
-            TextAlignment = TextAlignment.Right,
-            Margin = new Thickness(10, 0, 0, 0)
-        };
-        Grid.SetColumn(_cutLabel, 2);
-        sliderGrid.Children.Add(_cutLabel);
-
-        _cutSlider.ValueChanged += (_, _) =>
-        {
-            _canvas.SetCutRatio(_cutSlider.Value);
-            _cutLabel.Text = $"{(int)Math.Round(_cutSlider.Value * 100)}%";
-        };
-
-        var controlStack = new StackPanel { Spacing = 0 };
-        controlStack.Children.Add(chipRow);
-        controlStack.Children.Add(sliderGrid);
-        sliderRow.Child = controlStack;
-        dock.Children.Add(sliderRow);
+        chipBar.Child = chipRow;
+        dock.Children.Add(chipBar);
 
         // Canvas card — fills remaining space
         var canvasCard = new Border
@@ -212,6 +168,7 @@ public class PlanningView : UserControl
 
         var rootGrid = new Grid();
         rootGrid.RowDefinitions.Add(new RowDefinition(GridLength.Star));
+        rootGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
         rootGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
 
         var inner = new StackPanel { Spacing = 4 };
@@ -329,6 +286,20 @@ public class PlanningView : UserControl
         startBtn.Click += Calculate_Click;
         Grid.SetRow(startBtn, 1);
         rootGrid.Children.Add(startBtn);
+
+        _exportPdfBtn = new Button
+        {
+            Content = "พิมพ์ PDF",
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            HorizontalContentAlignment = HorizontalAlignment.Center,
+            FontSize = 13,
+            IsEnabled = false,
+            Margin = new Thickness(0, 6, 0, 0),
+            Padding = new Thickness(0, 9)
+        };
+        _exportPdfBtn.Click += ExportPdf_Click;
+        Grid.SetRow(_exportPdfBtn, 2);
+        rootGrid.Children.Add(_exportPdfBtn);
 
         panel.Child = rootGrid;
         return panel;
@@ -450,7 +421,7 @@ public class PlanningView : UserControl
         if (fullStacks > 0)
             badges.Children.Add(new TextBlock
             {
-                Text = $"{fullStacks} ตั้ง", FontSize = 11, Foreground = InkMuted,
+                Text = $"{fullStacks} ต๊ง", FontSize = 11, Foreground = InkMuted,
                 VerticalAlignment = VerticalAlignment.Center
             });
 
@@ -735,8 +706,6 @@ public class PlanningView : UserControl
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Foreground = InkMuted, FontSize = 13
             });
-            _cutSlider.Value = 1.0;
-            _cutLabel.Text = "100%";
             _canvas.SetData(container, []);
             return;
         }
@@ -759,8 +728,11 @@ public class PlanningView : UserControl
 
         BuildPackStats(output, container);
 
-        _cutSlider.Value = 1.0;
-        _cutLabel.Text = "100%";
+        _lastOutput    = output;
+        _lastRequests  = requests;
+        _lastContainer = container;
+        _exportPdfBtn.IsEnabled = true;
+
         _canvas.SetData(container, output.Placements);
     }
 
@@ -796,6 +768,87 @@ public class PlanningView : UserControl
                 FontSize = 12, Foreground = InkMuted
             });
         }
+
+        double remainCm = StatsCalculator.RemainingDoorLengthCm(container, output.Placements);
+        _statsPanel.Children.Add(new TextBlock
+        {
+            Text = $"พื้นที่ว่างฝั่งประตู: {remainCm:F0} cm ({remainCm / 100:F2} m)",
+            FontSize = 12, Foreground = InkMuted
+        });
+    }
+
+    // ── PDF export ──────────────────────────────────────────────────────────
+
+    private async void ExportPdf_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (_lastOutput is null || _lastRequests is null || _lastContainer is null) return;
+
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(
+            new Avalonia.Platform.Storage.FilePickerSaveOptions
+            {
+                Title             = "บันทึก PDF",
+                DefaultExtension  = "pdf",
+                SuggestedFileName = $"จัดเรียง_{DateTime.Now:yyyyMMdd_HHmm}.pdf",
+                FileTypeChoices   =
+                [
+                    new Avalonia.Platform.Storage.FilePickerFileType("PDF") { Patterns = ["*.pdf"] }
+                ]
+            });
+
+        if (file is null) return;
+
+        _exportPdfBtn.IsEnabled = false;
+        try
+        {
+            byte[] bytes = await System.Threading.Tasks.Task.Run(() =>
+                PdfExporter.Generate(_lastContainer!, _lastRequests!, _lastOutput!));
+            await using var stream = await file.OpenWriteAsync();
+            await stream.WriteAsync(bytes);
+        }
+        catch (Exception ex)
+        {
+            await ShowErrorAsync(ex.Message);
+        }
+        finally
+        {
+            _exportPdfBtn.IsEnabled = true;
+        }
+    }
+
+    private async System.Threading.Tasks.Task ShowErrorAsync(string message)
+    {
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        if (owner is null) return;
+        var btn = new Button
+        {
+            Content                     = "ตกลง",
+            HorizontalAlignment         = Avalonia.Layout.HorizontalAlignment.Center,
+            Margin                      = new Thickness(0, 12, 0, 0),
+            Padding                     = new Thickness(24, 6),
+        };
+        var dlg = new Window
+        {
+            Title                   = "เกิดข้อผิดพลาด",
+            Width                   = 440,
+            CanResize               = false,
+            WindowStartupLocation   = WindowStartupLocation.CenterOwner,
+            Content                 = new StackPanel
+            {
+                Margin   = new Thickness(20),
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text        = message,
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                        MaxWidth    = 400,
+                    },
+                    btn,
+                },
+            },
+        };
+        btn.Click += (_, _) => dlg.Close();
+        await dlg.ShowDialog(owner);
     }
 
     // ── Dev preset ──────────────────────────────────────────────────────────

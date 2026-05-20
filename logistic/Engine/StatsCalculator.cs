@@ -22,6 +22,20 @@ internal static class StatsCalculator
     internal static double UsedCbm(IReadOnlyList<BoxPlacement> placements) =>
         placements.Sum(p => p.BW * p.BL * p.BH / 1_000_000.0);
 
+    /// <summary>
+    /// Free contiguous length (cm) along the door↔back axis, given current placements.
+    /// Equals the empty span at the door side after packing (boxes are pushed to the back wall).
+    /// </summary>
+    internal static double RemainingDoorLengthCm(ContainerSpec c, IReadOnlyList<BoxPlacement> placements)
+    {
+        if (placements.Count == 0) return c.InteriorL;
+        double minY = placements.Min(p => p.Y);
+        double maxY = placements.Max(p => p.Y + p.BL);
+        double used = maxY - minY;
+        double remain = c.InteriorL - used;
+        return remain < 0 ? 0 : remain;
+    }
+
     internal static List<PackStatRow> ComputeRows(
         IReadOnlyList<PackInfo> packInfos,
         IReadOnlyList<BoxPlacement> placements,
