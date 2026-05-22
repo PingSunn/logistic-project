@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="logistic.LicenseWindow"
+        Title="เปิดใช้งานเวอร์ชันทดลอง"
+        Width="480"
+        Height="360"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Background="#F1F5F9">
+  <Grid Margin="32" RowDefinitions="Auto,Auto,Auto,*,Auto">
+
+    <TextBlock Grid.Row="0"
+               Text="Logistic — เวอร์ชันทดลอง"
+               FontSize="22"
+               FontWeight="Bold"
+               Foreground="#1E293B" />
+
+    <TextBlock Grid.Row="1"
+               Text="กรุณากรอกโทเค็นที่ได้รับจากปิง"
+               FontSize="14"
+               Foreground="#64748B"
+               Margin="0,8,0,16" />
+
+    <TextBox x:Name="TokenInput"
+             Grid.Row="2"
+             Watermark="tr_xxxxxxxxxxxxxxxxxxxxxx"
+             FontFamily="Menlo,Consolas,monospace"
+             FontSize="14"
+             Padding="10,10"
+             CornerRadius="6"
+             BorderBrush="#CBD5E1" />
+
+    <TextBlock x:Name="StatusLabel"
+               Grid.Row="3"
+               Text=""
+               FontSize="13"
+               Foreground="#DC2626"
+               TextWrapping="Wrap"
+               Margin="0,16,0,0"
+               VerticalAlignment="Top" />
+
+    <StackPanel Grid.Row="4"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="10">
+      <Button x:Name="CancelButton"
+              Classes="ghost"
+              Content="ยกเลิก"
+              Click="CancelButton_Click" />
+      <Button x:Name="ActivateButton"
+              Classes="primary"
+              Content="เปิดใช้งาน"
+              Click="ActivateButton_Click"
+              IsDefault="True" />
+    </StackPanel>
+
+  </Grid>
+</Window>

@@ -677,10 +677,31 @@ public class PlanningView : UserControl
         return border;
     }
 
+    // ── License gate ────────────────────────────────────────────────────────
+
+    private async System.Threading.Tasks.Task<bool> RequireLicenseAsync()
+    {
+        var result = await LicenseManager.EnsureFreshAsync();
+        if (result.IsOk) return true;
+        await ShowErrorAsync(LicenseGateMessage(result.Status));
+        return false;
+    }
+
+    private static string LicenseGateMessage(LicenseStatus s) => s switch
+    {
+        LicenseStatus.Expired       => "เวอร์ชันทดลองหมดอายุแล้ว กรุณาติดต่อปิงเพื่อขอโทเค็นใหม่",
+        LicenseStatus.Revoked       => "โทเค็นถูกยกเลิก กรุณาติดต่อปิง",
+        LicenseStatus.WrongMachine  => "โทเค็นนี้ถูกผูกกับเครื่องอื่นแล้ว",
+        LicenseStatus.NoNetwork     => "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง",
+        LicenseStatus.BadSignature  => "เซิร์ฟเวอร์ตอบกลับด้วยลายเซ็นที่ไม่ถูกต้อง",
+        _                            => "ไม่สามารถยืนยันการใช้งานได้ ลองอีกครั้ง",
+    };
+
     // ── Calculation ──────────────────────────────────────────────────────────
 
-    private void Calculate_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Calculate_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        if (!await RequireLicenseAsync()) return;
         if (_selectedContainerIndex < 0 || _selectedContainerIndex >= ContainerSpec.All.Count) return;
         var container = ContainerSpec.All[_selectedContainerIndex];
 
@@ -781,6 +802,7 @@ public class PlanningView : UserControl
 
     private async void ExportPdf_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        if (!await RequireLicenseAsync()) return;
         if (_lastOutput is null || _lastRequests is null || _lastContainer is null) return;
 
         var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(

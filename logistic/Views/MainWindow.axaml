@@ -36,6 +36,21 @@
       </Grid>
     </Border>
 
+    <!-- Trial-expiry banner (visible when ≤3 days remain) -->
+    <Border x:Name="TrialBanner"
+            DockPanel.Dock="Top"
+            Background="#FEF3C7"
+            BorderBrush="#F59E0B"
+            BorderThickness="0,0,0,1"
+            Padding="16,8"
+            IsVisible="False">
+      <TextBlock x:Name="TrialBannerText"
+                 FontSize="13"
+                 FontWeight="Medium"
+                 Foreground="#92400E"
+                 HorizontalAlignment="Center" />
+    </Border>
+
     <!-- Single-page planning view -->
     <ContentControl x:Name="MainContent" />
 

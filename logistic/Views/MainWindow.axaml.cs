@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 
 namespace logistic;
 
@@ -11,6 +12,24 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         MainContent.Content = new PlanningView();
+
+        LicenseManager.Verified += _ => Dispatcher.UIThread.Post(UpdateTrialBanner);
+        UpdateTrialBanner();
+    }
+
+    private void UpdateTrialBanner()
+    {
+        var days = LicenseManager.DaysRemaining;
+        if (days is null || days > 3)
+        {
+            TrialBanner.IsVisible = false;
+            return;
+        }
+
+        TrialBannerText.Text = days == 0
+            ? "⚠ เวอร์ชันทดลองหมดอายุวันนี้ — ติดต่อปิงเพื่อต่ออายุ"
+            : $"⚠ เวอร์ชันทดลองเหลืออีก {days} วัน — ติดต่อปิงเพื่อต่ออายุ";
+        TrialBanner.IsVisible = true;
     }
 
     private void OpenSettings_Click(object? sender, RoutedEventArgs e)

@@ -1,0 +1,55 @@
+# Deploy the license server on the Pi5 (or any Docker host).
+#
+# First-time setup:
+#   1. Create a .env file next to this docker-compose.yml with:
+#        LICENSE_SERVER_SIGNING_KEY=<private key from `license-admin init-keys`>
+#   2. docker compose up -d license-server
+#   3. To generate the keypair the first time (before step 1), run:
+#        docker compose run --rm license-admin init-keys
+#      then copy the private key into .env and the public key into
+#      logistic/Services/LicenseConfig.cs.
+#
+# Day-to-day token management:
+#   docker compose run --rm license-admin mint --client "Acme" --days 30
+#   docker compose run --rm license-admin list
+#   docker compose run --rm license-admin revoke tr_xxx
+
+services:
+
+  license-server:
+    build:
+      context: .
+      dockerfile: logistic.LicenseServer/Dockerfile
+    image: logistic-license:latest
+    container_name: logistic-license-server
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5080:5080"      # bound to localhost only; expose via Cloudflare Tunnel or Caddy
+    volumes:
+      - license-data:/data
+    environment:
+      LICENSE_SERVER_DB_PATH: /data/licenses.db
+      LICENSE_SERVER_SIGNING_KEY: ${LICENSE_SERVER_SIGNING_KEY:?set LICENSE_SERVER_SIGNING_KEY in .env}
+      # Set LICENSE_SERVER_ADMIN_PASSWORD in .env (or Dokploy UI) to enable the /admin web UI.
+      # If unset, /admin returns 503. Username defaults to "admin"; override with LICENSE_SERVER_ADMIN_USER.
+      LICENSE_SERVER_ADMIN_PASSWORD: ${LICENSE_SERVER_ADMIN_PASSWORD:-}
+      LICENSE_SERVER_ADMIN_USER: ${LICENSE_SERVER_ADMIN_USER:-admin}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5080/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Run with: `docker compose run --rm license-admin <command>`
+  # Shares the same volume so it reads/writes the same licenses.db.
+  license-admin:
+    image: logistic-license:latest
+    profiles: ["admin"]              # not started by `docker compose up`
+    entrypoint: ["license-admin"]
+    volumes:
+      - license-data:/data
+    environment:
+      LICENSE_SERVER_DB_PATH: /data/licenses.db
+
+volumes:
+  license-data:
