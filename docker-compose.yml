@@ -21,10 +21,11 @@ services:
       context: .
       dockerfile: logistic.LicenseServer/Dockerfile
     image: logistic-license:latest
-    container_name: logistic-license-server
+    # No container_name / ports here: Dokploy + Traefik discover the service by
+    # compose service name ("license-server") and route via the internal Docker
+    # network. Hard-coding container_name breaks that discovery; binding ports
+    # to the host is unnecessary (and conflicts with multi-project Dokploy hosts).
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:5080:5080"      # bound to localhost only; expose via Cloudflare Tunnel or Caddy
     volumes:
       - license-data:/data
     environment:
@@ -34,11 +35,9 @@ services:
       # If unset, /admin returns 503. Username defaults to "admin"; override with LICENSE_SERVER_ADMIN_USER.
       LICENSE_SERVER_ADMIN_PASSWORD: ${LICENSE_SERVER_ADMIN_PASSWORD:-}
       LICENSE_SERVER_ADMIN_USER: ${LICENSE_SERVER_ADMIN_USER:-admin}
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5080/healthz"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
+    # Healthcheck removed: mcr.microsoft.com/dotnet/aspnet ships without wget/curl,
+    # so the previous probe always reported "unhealthy". Dokploy's monitoring +
+    # Traefik already use the external /healthz endpoint.
 
   # Run with: `docker compose run --rm license-admin <command>`
   # Shares the same volume so it reads/writes the same licenses.db.
