@@ -19,8 +19,8 @@ services:
   license-server:
     build:
       context: .
-      dockerfile: logistic.LicenseServer/Dockerfile
-    image: logistic-license:latest
+      dockerfile: CargoFit.LicenseServer/Dockerfile
+    image: cargofit-license:latest
     # No container_name / ports here: Dokploy + Traefik discover the service by
     # compose service name ("license-server") and route via the internal Docker
     # network. Hard-coding container_name breaks that discovery; binding ports
@@ -42,7 +42,7 @@ services:
   # Run with: `docker compose run --rm license-admin <command>`
   # Shares the same volume so it reads/writes the same licenses.db.
   license-admin:
-    image: logistic-license:latest
+    image: cargofit-license:latest
     profiles: ["admin"]              # not started by `docker compose up`
     entrypoint: ["license-admin"]
     volumes:
