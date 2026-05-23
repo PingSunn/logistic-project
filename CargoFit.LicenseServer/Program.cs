@@ -41,6 +41,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<LicenseDbContext>();
     db.Database.EnsureCreated();
+    LicenseDbContext.EnsureAuditLogTable(db);
 }
 
 // Basic Auth guard for /admin routes — disabled entirely if password is unset.
@@ -79,17 +80,31 @@ app.MapAdminEndpoints();
 
 app.MapGet("/healthz", () => Results.Text("OK"));
 
-app.MapPost("/v1/activate", async (ActivateRequest req, LicenseDbContext db, ServerSigningKey key) =>
+app.MapPost("/v1/activate", async (ActivateRequest req, LicenseDbContext db, ServerSigningKey key, HttpContext httpCtx) =>
 {
+    var ip = httpCtx.Connection.RemoteIpAddress?.ToString();
+
     if (string.IsNullOrWhiteSpace(req.Token) || string.IsNullOrWhiteSpace(req.MachineId))
         return Results.BadRequest(new { error = "missing_fields" });
 
     var license = await db.Licenses.FirstOrDefaultAsync(l => l.Token == req.Token);
-    if (license is null) return Results.NotFound(new { error = "unknown_token" });
-    if (license.Revoked) return Results.Json(new { error = "revoked" }, statusCode: 410);
+    if (license is null)
+    {
+        await AuditWriter.WriteAsync(db, "activate", req.Token, null, req.MachineId, ip, false, "unknown_token");
+        return Results.NotFound(new { error = "unknown_token" });
+    }
+    if (license.Revoked)
+    {
+        await AuditWriter.WriteAsync(db, "activate", license.Token, license.ClientName, req.MachineId, ip, false, "revoked");
+        return Results.Json(new { error = "revoked" }, statusCode: 410);
+    }
 
     var now = DateTime.UtcNow;
-    if (now >= license.ExpiresAt) return Results.Json(new { error = "expired" }, statusCode: 410);
+    if (now >= license.ExpiresAt)
+    {
+        await AuditWriter.WriteAsync(db, "activate", license.Token, license.ClientName, req.MachineId, ip, false, "expired");
+        return Results.Json(new { error = "expired" }, statusCode: 410);
+    }
 
     if (license.MachineId is null)
     {
@@ -97,32 +112,52 @@ app.MapPost("/v1/activate", async (ActivateRequest req, LicenseDbContext db, Ser
     }
     else if (license.MachineId != req.MachineId)
     {
+        await AuditWriter.WriteAsync(db, "activate", license.Token, license.ClientName, req.MachineId, ip, false, "wrong_machine");
         return Results.Conflict(new { error = "wrong_machine" });
     }
 
     license.LastSeenAt = now;
     await db.SaveChangesAsync();
+    await AuditWriter.WriteAsync(db, "activate", license.Token, license.ClientName, req.MachineId, ip, true);
 
     return Sign(license, now, key);
 });
 
-app.MapPost("/v1/heartbeat", async (HeartbeatRequest req, LicenseDbContext db, ServerSigningKey key) =>
+app.MapPost("/v1/heartbeat", async (HeartbeatRequest req, LicenseDbContext db, ServerSigningKey key, HttpContext httpCtx) =>
 {
+    var ip = httpCtx.Connection.RemoteIpAddress?.ToString();
+
     if (string.IsNullOrWhiteSpace(req.Token) || string.IsNullOrWhiteSpace(req.MachineId))
         return Results.BadRequest(new { error = "missing_fields" });
 
     var license = await db.Licenses.FirstOrDefaultAsync(l => l.Token == req.Token);
-    if (license is null) return Results.NotFound(new { error = "unknown_token" });
-    if (license.Revoked) return Results.Json(new { error = "revoked" }, statusCode: 410);
+    if (license is null)
+    {
+        await AuditWriter.WriteAsync(db, "heartbeat", req.Token, null, req.MachineId, ip, false, "unknown_token");
+        return Results.NotFound(new { error = "unknown_token" });
+    }
+    if (license.Revoked)
+    {
+        await AuditWriter.WriteAsync(db, "heartbeat", license.Token, license.ClientName, req.MachineId, ip, false, "revoked");
+        return Results.Json(new { error = "revoked" }, statusCode: 410);
+    }
 
     var now = DateTime.UtcNow;
-    if (now >= license.ExpiresAt) return Results.Json(new { error = "expired" }, statusCode: 410);
+    if (now >= license.ExpiresAt)
+    {
+        await AuditWriter.WriteAsync(db, "heartbeat", license.Token, license.ClientName, req.MachineId, ip, false, "expired");
+        return Results.Json(new { error = "expired" }, statusCode: 410);
+    }
 
     if (license.MachineId != req.MachineId)
+    {
+        await AuditWriter.WriteAsync(db, "heartbeat", license.Token, license.ClientName, req.MachineId, ip, false, "wrong_machine");
         return Results.Conflict(new { error = "wrong_machine" });
+    }
 
     license.LastSeenAt = now;
     await db.SaveChangesAsync();
+    await AuditWriter.WriteAsync(db, "heartbeat", license.Token, license.ClientName, req.MachineId, ip, true);
 
     return Sign(license, now, key);
 });

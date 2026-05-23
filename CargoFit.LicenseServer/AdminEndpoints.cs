@@ -12,13 +12,18 @@ internal static class AdminEndpoints
         app.MapGet("/admin", async (LicenseDbContext db, [FromQuery] string? flash) =>
         {
             var rows = await db.Licenses.ToListAsync();
-            return Results.Content(AdminHtml.RenderList(rows, flash), "text/html; charset=utf-8");
+            var logs = await db.AuditLogs
+                .OrderByDescending(a => a.Timestamp)
+                .Take(100)
+                .ToListAsync();
+            return Results.Content(AdminHtml.RenderList(rows, logs, flash), "text/html; charset=utf-8");
         });
 
         app.MapPost("/admin/mint", async (
             [FromForm] string clientName,
             [FromForm] int? days,
-            LicenseDbContext db) =>
+            LicenseDbContext db,
+            HttpContext httpCtx) =>
         {
             if (string.IsNullOrWhiteSpace(clientName))
                 return Results.Redirect("/admin?flash=" + Uri.EscapeDataString("ต้องระบุชื่อลูกค้า"));
@@ -35,10 +40,13 @@ internal static class AdminEndpoints
             db.Licenses.Add(license);
             await db.SaveChangesAsync();
 
+            var ip = httpCtx.Connection.RemoteIpAddress?.ToString();
+            await AuditWriter.WriteAsync(db, "mint", license.Token, license.ClientName, null, ip, true, $"{d} วัน");
+
             return Results.Content(AdminHtml.RenderMintSuccess(license), "text/html; charset=utf-8");
         }).DisableAntiforgery();
 
-        app.MapPost("/admin/revoke", async ([FromForm] string token, LicenseDbContext db) =>
+        app.MapPost("/admin/revoke", async ([FromForm] string token, LicenseDbContext db, HttpContext httpCtx) =>
         {
             var license = await db.Licenses.FirstOrDefaultAsync(l => l.Token == token);
             if (license is null)
@@ -46,6 +54,10 @@ internal static class AdminEndpoints
 
             license.Revoked = true;
             await db.SaveChangesAsync();
+
+            var ip = httpCtx.Connection.RemoteIpAddress?.ToString();
+            await AuditWriter.WriteAsync(db, "revoke", license.Token, license.ClientName, null, ip, true);
+
             return Results.Redirect("/admin?flash=" + Uri.EscapeDataString($"ยกเลิกโทเค็น {license.ClientName} แล้ว"));
         }).DisableAntiforgery();
     }
