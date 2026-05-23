@@ -248,9 +248,6 @@ internal static class PackingEngine
     {
         var condoMap = new Dictionary<int,int>();
 
-        // Order by remaining CBM (largest total leftover volume first), so products
-        // with the most leftover bulk get their full rows placed before others. Phase 2
-        // partial rows reuse the same order.
         var withRem = packInfos
             .Where(info => info.HasPattern && info.Requested - info.Result.Packed > 0)
             .Select(info => (info, rem: info.Requested - info.Result.Packed))
@@ -260,66 +257,72 @@ internal static class PackingEngine
 
         if (withRem.Count == 0) return condoMap;
 
+        // Target Z = the height the primary stack adjacent to the condo border
+        // will reach after scatter top-up — i.e. min(MaxLayers, floor(H/spec.H)) × spec.H
+        // of the adjacent product. Using "current TopZ" before scatter would
+        // under-estimate, leaving condo columns >1 layer below primary.
+        var adjacent = placements
+            .Where(p => p.StackIndex < CondoStackBase)
+            .GroupBy(p => p.StackIndex)
+            .Select(g => new { EndY = g.Max(p => p.Y + p.BL), ProductIndex = g.First().ProductIndex })
+            .OrderByDescending(s => s.EndY)
+            .FirstOrDefault();
+
+        if (adjacent is null) return condoMap;
+
+        // Scatter doesn't honour MaxLayers (it tops up primary stacks until the
+        // container ceiling), so target the same ceiling here. MaxLayers caps
+        // only the primary phase before scatter — it doesn't bound final TopZ.
+        var adjSpec = packInfos[adjacent.ProductIndex].Spec;
+        int adjMaxLayers = (int)Math.Floor(dims.H / adjSpec.H);
+        double targetCondoZ = adjMaxLayers * adjSpec.H;
+
+        if (targetCondoZ <= 0) return condoMap;
+
         var colsMap = new int[packInfos.Count];
         foreach (var (info, _) in withRem)
             colsMap[info.ProductIndex] = CondoCols(info.Spec, dims);
 
         double colDepth = withRem.Max(x => x.info.Spec.L);
         double condoY   = condoAreaStart;
-        double z        = 0.0;
 
         bool HasY() => condoY + colDepth <= dims.L + 0.01;
-        void NextColumn() { condoY += colDepth; z = 0.0; }
+        void NextColumn() { condoY += colDepth; }
 
-        // Phase 1: all full rows (condoCols wide) for every product, tallest-first.
         foreach (var (info, rem) in withRem)
         {
-            int cols     = colsMap[info.ProductIndex];
-            int fullRows = cols > 0 ? rem / cols : 0;
-            int condoSI  = CondoStackBase + info.ProductIndex;
+            int cols = colsMap[info.ProductIndex];
+            if (cols <= 0) continue;
 
-            for (int r = 0; r < fullRows; r++)
+            int targetLayers = Math.Min(
+                (int)Math.Floor(targetCondoZ / info.Spec.H),
+                (int)Math.Floor(dims.H / info.Spec.H));
+            if (targetLayers <= 0) continue;
+
+            int condoCap = cols * targetLayers;
+            if (rem < condoCap) continue;
+
+            int fullColumns = rem / condoCap;
+            int condoSI     = CondoStackBase + info.ProductIndex;
+
+            for (int c = 0; c < fullColumns; c++)
             {
                 if (!HasY()) break;
-                if (z + info.Spec.H > dims.H + 0.01) { NextColumn(); if (!HasY()) break; }
 
-                for (int col = 0; col < cols; col++)
-                    placements.Add(new BoxPlacement(
-                        col * info.Spec.W, condoY, z,
-                        info.Spec.W, info.Spec.L, info.Spec.H,
-                        info.ProductIndex, false, condoSI, 0));
+                for (int layer = 0; layer < targetLayers; layer++)
+                {
+                    double z = layer * info.Spec.H;
+                    for (int col = 0; col < cols; col++)
+                        placements.Add(new BoxPlacement(
+                            col * info.Spec.W, condoY, z,
+                            info.Spec.W, info.Spec.L, info.Spec.H,
+                            info.ProductIndex, false, condoSI, layer));
 
-                condoMap[info.ProductIndex] = condoMap.GetValueOrDefault(info.ProductIndex) + cols;
-                z += info.Spec.H;
+                    condoMap[info.ProductIndex] = condoMap.GetValueOrDefault(info.ProductIndex) + cols;
+                }
+
+                NextColumn();
             }
-        }
-
-        // Phase 2: partial rows (rem % cols) for every product, packed side-by-side in X.
-        double xCursor = 0.0;
-        double levelH  = 0.0;
-
-        foreach (var (info, rem) in withRem)
-        {
-            int cols    = colsMap[info.ProductIndex];
-            int partial = cols > 0 ? rem % cols : rem;
-            if (partial <= 0) continue;
-
-            int    condoSI = CondoStackBase + info.ProductIndex;
-            double neededX = partial * info.Spec.W;
-
-            if (!HasY()) break;
-            if (xCursor + neededX > dims.W + 0.01) { z += levelH; xCursor = 0.0; levelH = 0.0; }
-            if (z + info.Spec.H > dims.H + 0.01)   { NextColumn(); xCursor = 0.0; levelH = 0.0; if (!HasY()) continue; }
-
-            for (int col = 0; col < partial; col++)
-                placements.Add(new BoxPlacement(
-                    xCursor + col * info.Spec.W, condoY, z,
-                    info.Spec.W, info.Spec.L, info.Spec.H,
-                    info.ProductIndex, false, condoSI, 0));
-
-            condoMap[info.ProductIndex] = condoMap.GetValueOrDefault(info.ProductIndex) + partial;
-            xCursor += neededX;
-            levelH   = Math.Max(levelH, info.Spec.H);
         }
 
         return condoMap;

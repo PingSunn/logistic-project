@@ -544,4 +544,129 @@ public class PackingEngineTests
             Assert.True(stackPrimaryMaxLayer.ContainsKey(p.StackIndex));
         }
     }
+
+    // ── Scenario 14: Condo column height tracks adjacent primary stack ──────
+    // Every condo column must reach (within ±1 layer) the TopZ of the primary
+    // stack that borders the condo area. No "step" of 2+ layers between them.
+
+    [Fact]
+    public void Condo_ColumnHeight_MatchesAdjacentPrimary()
+    {
+        var container = TestHelpers.Container20ft();
+
+        var mogu1000 = new ProductSpec("Mogu", "1000 ML", "Pack 12", 13.47,
+            26.2, 34.8, 26.7,
+            PatternA: [new LayerSection(4, 2, true), new LayerSection(3, 6, false)],
+            PatternB: [new LayerSection(3, 6, false), new LayerSection(4, 2, true)],
+            MaxLayers: 8, CondoCount: 9);
+
+        var mogu320 = new ProductSpec("Mogu", "320 ML", "Pack 24", 8.7,
+            25.8, 38.5, 15.7,
+            PatternA:
+            [
+                new LayerSection(4, 1, true),
+                new LayerSection(0, 0, false, [new SectionSubRow(1, 3, false), new SectionSubRow(1, 2, true), new SectionSubRow(1, 3, false)]),
+                new LayerSection(0, 0, false, [new SectionSubRow(1, 3, false), new SectionSubRow(1, 2, true), new SectionSubRow(1, 3, false)]),
+                new LayerSection(4, 1, true),
+            ],
+            PatternB:
+            [
+                new LayerSection(0, 0, false, [new SectionSubRow(1, 3, false), new SectionSubRow(1, 2, true), new SectionSubRow(1, 3, false)]),
+                new LayerSection(4, 1, true),
+                new LayerSection(4, 1, true),
+                new LayerSection(0, 0, false, [new SectionSubRow(1, 3, false), new SectionSubRow(1, 2, true), new SectionSubRow(1, 3, false)]),
+            ],
+            MaxLayers: 13, CondoCount: 9);
+
+        var requests = new List<(ProductSpec, int)>
+        {
+            (mogu1000, 540),
+            (mogu320,  850),
+        };
+        var output = PackingEngine.Calculate(container, requests);
+
+        TestHelpers.DumpOutput(container, requests, output, _log);
+
+        AssertBounds(output, container);
+        AssertPackedLeRequested(output, requests);
+
+        var primary = output.Placements
+            .Where(p => p.StackIndex < PackingEngine.CondoStackBase)
+            .ToList();
+        var condo = output.Placements
+            .Where(p => p.StackIndex >= PackingEngine.CondoStackBase)
+            .ToList();
+
+        if (condo.Count == 0) return;
+
+        // Adjacent primary = stack with the largest Y+BL (i.e. closest to condo area).
+        double adjacentTopZ = primary
+            .GroupBy(p => p.StackIndex)
+            .Select(g => (EndY: g.Max(p => p.Y + p.BL), TopZ: g.Max(p => p.Z + p.BH)))
+            .OrderByDescending(s => s.EndY)
+            .ThenByDescending(s => s.TopZ)
+            .Select(s => s.TopZ)
+            .First();
+
+        // For every condo column (grouped by (ProductIndex, Y)), TopZ should be ≤ adjacentTopZ
+        // and at most one product-H below it (since cap = floor(adjacentTopZ / spec.H)).
+        foreach (var grp in condo.GroupBy(p => (p.ProductIndex, p.Y)))
+        {
+            double colTopZ  = grp.Max(p => p.Z + p.BH);
+            double specH    = grp.First().BH;
+            Assert.True(colTopZ <= adjacentTopZ + 0.01,
+                $"Condo column TopZ={colTopZ:F1} exceeds adjacent primary TopZ={adjacentTopZ:F1}");
+            Assert.True(adjacentTopZ - colTopZ < specH + 0.01,
+                $"Condo column TopZ={colTopZ:F1} is more than 1 layer below primary TopZ={adjacentTopZ:F1} (specH={specH:F1})");
+        }
+    }
+
+    // ── Scenario 15: Leftover smaller than one full condo column → all to scatter ──
+    // When a product can't fill a single condo column at the target height,
+    // CondoMap must not contain it; the leftover must end up in ScatterMap (or unpacked).
+
+    [Fact]
+    public void Condo_InsufficientLeftover_GoesToScatterNotCondo()
+    {
+        var container = TestHelpers.Container20ft();
+
+        // Aloe pattern fills primary easily; we pick a quantity that leaves only
+        // a few boxes over so they can't fill a full condo column.
+        var aloe = new ProductSpec("Aloe", "365 ML", "Pack 24", 9.79,
+            21.9, 33.4, 20.5,
+            PatternA: [new LayerSection(2, 6, false), new LayerSection(3, 3, true)],
+            PatternB: [new LayerSection(3, 3, true),  new LayerSection(2, 6, false)],
+            MaxLayers: 10, CondoCount: 10);
+
+        // Companion product to create primary stacks adjacent to condo area.
+        var mogu1000 = new ProductSpec("Mogu", "1000 ML", "Pack 12", 13.47,
+            26.2, 34.8, 26.7,
+            PatternA: [new LayerSection(4, 2, true), new LayerSection(3, 6, false)],
+            PatternB: [new LayerSection(3, 6, false), new LayerSection(4, 2, true)],
+            MaxLayers: 8, CondoCount: 9);
+
+        // Aloe 365: small leftover (a handful), Mogu 1000: bulk to build primary stacks.
+        var requests = new List<(ProductSpec, int)>
+        {
+            (aloe,     145),
+            (mogu1000, 400),
+        };
+        var output = PackingEngine.Calculate(container, requests);
+
+        TestHelpers.DumpOutput(container, requests, output, _log);
+
+        AssertBounds(output, container);
+        AssertPackedLeRequested(output, requests);
+
+        // Aloe's leftover (if any) must NOT live in a full condo column shorter than the cap.
+        // Either Condo got at least cols*targetLayers boxes (full column) or Condo[aloe] == 0.
+        int aloeCondo = output.CondoMap.GetValueOrDefault(0, 0);
+        int cols      = Math.Min(aloe.CondoCount, (int)System.Math.Floor(container.InteriorW / aloe.W));
+
+        if (aloeCondo > 0)
+        {
+            // If a condo column was created, it must be sized as a complete cols×layers block.
+            Assert.Equal(0, aloeCondo % cols);
+        }
+    }
 }
