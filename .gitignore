@@ -2,6 +2,10 @@
 bin/
 obj/
 publish/
+dist/
+
+# Runtime cache
+license-cache.json
 
 # IDE
 .idea/
