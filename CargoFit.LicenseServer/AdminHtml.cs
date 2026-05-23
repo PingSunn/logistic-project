@@ -6,7 +6,7 @@ namespace CargoFit.LicenseServer;
 
 internal static class AdminHtml
 {
-    internal static string RenderList(IEnumerable<License> licenses, string? flash = null)
+    internal static string RenderList(IEnumerable<License> licenses, IEnumerable<AuditLog> auditLogs, string? flash = null)
     {
         var sb = new StringBuilder();
         sb.Append(Shell.Start("License Admin"));
@@ -60,6 +60,7 @@ internal static class AdminHtml
         }
 
         sb.Append("</tbody></table></div>");
+        sb.Append(RenderAuditLog(auditLogs));
         sb.Append(Shell.End());
         return sb.ToString();
     }
@@ -137,6 +138,97 @@ internal static class AdminHtml
             <td class='px-4 py-3'>{bound}</td>
             <td class='px-4 py-3 text-slate-500 text-xs'>{lastSeen}</td>
             <td class='px-4 py-3 text-right'>{revokeBtn}</td>
+          </tr>
+        """;
+    }
+
+    private static string RenderAuditLog(IEnumerable<AuditLog> entries)
+    {
+        var list = entries.ToList();
+        var sb = new StringBuilder();
+        sb.Append("""
+        <div class='mt-8 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden'>
+          <div class='px-5 py-3 border-b border-slate-100 flex items-center justify-between'>
+            <h2 class='text-base font-semibold text-slate-800'>กิจกรรมล่าสุด</h2>
+            <span class='text-xs text-slate-400'>แสดง 100 รายการล่าสุด</span>
+          </div>
+        """);
+
+        if (list.Count == 0)
+        {
+            sb.Append("<p class='px-5 py-8 text-center text-slate-400 text-sm'>ยังไม่มีกิจกรรม</p>");
+        }
+        else
+        {
+            sb.Append("""
+            <div class='overflow-x-auto'>
+            <table class='w-full text-sm'>
+              <thead class='bg-slate-50 text-slate-600 text-xs uppercase'>
+                <tr>
+                  <th class='px-4 py-2 text-left whitespace-nowrap'>เวลา (ไทย)</th>
+                  <th class='px-4 py-2 text-left'>การกระทำ</th>
+                  <th class='px-4 py-2 text-left'>ลูกค้า</th>
+                  <th class='px-4 py-2 text-left'>Token</th>
+                  <th class='px-4 py-2 text-left'>เครื่อง</th>
+                  <th class='px-4 py-2 text-left'>IP</th>
+                  <th class='px-4 py-2 text-left'>ผล</th>
+                </tr>
+              </thead>
+              <tbody class='divide-y divide-slate-100'>
+            """);
+            foreach (var e in list)
+                sb.Append(RenderAuditRow(e));
+            sb.Append("</tbody></table></div>");
+        }
+
+        sb.Append("</div>");
+        return sb.ToString();
+    }
+
+    private static string RenderAuditRow(AuditLog e)
+    {
+        var time = Escape(ToBangkok(e.Timestamp).ToString("MM-dd HH:mm:ss"));
+
+        var (badgeLabel, badgeClass) = e.Action switch
+        {
+            "activate"  => ("activate",  "bg-blue-100 text-blue-700"),
+            "heartbeat" => ("heartbeat", "bg-slate-100 text-slate-500"),
+            "mint"      => ("mint",      "bg-emerald-100 text-emerald-700"),
+            "revoke"    => ("revoke",    "bg-rose-100 text-rose-700"),
+            _           => (Escape(e.Action), "bg-slate-100 text-slate-600"),
+        };
+
+        var rowClass = e.Action == "heartbeat" ? "hover:bg-slate-50 opacity-60" : "hover:bg-slate-50";
+
+        var clientCell = string.IsNullOrEmpty(e.ClientName)
+            ? "<span class='text-slate-300'>—</span>"
+            : Escape(e.ClientName);
+
+        var tokenCell = string.IsNullOrEmpty(e.Token)
+            ? "<span class='text-slate-300'>—</span>"
+            : $"<span class='font-mono text-xs text-slate-600'>{Escape(Mask(e.Token))}</span>";
+
+        var machineCell = string.IsNullOrEmpty(e.MachineId)
+            ? "<span class='text-slate-300'>—</span>"
+            : $"<span class='font-mono text-xs text-slate-500'>{Escape(e.MachineId[..Math.Min(12, e.MachineId.Length)])}…</span>";
+
+        var ipCell = string.IsNullOrEmpty(e.IpAddress)
+            ? "<span class='text-slate-300'>—</span>"
+            : Escape(e.IpAddress);
+
+        var statusCell = e.Success
+            ? "<span class='text-emerald-600 font-medium'>✓</span>"
+            : $"<span class='text-rose-600 font-medium'>✗</span> <span class='text-slate-500 text-xs'>{Escape(e.Detail)}</span>";
+
+        return $"""
+          <tr class='{rowClass}'>
+            <td class='px-4 py-2 text-slate-500 text-xs whitespace-nowrap'>{time}</td>
+            <td class='px-4 py-2'><span class='inline-block px-2 py-0.5 rounded text-xs font-medium {badgeClass}'>{badgeLabel}</span></td>
+            <td class='px-4 py-2 text-slate-700'>{clientCell}</td>
+            <td class='px-4 py-2'>{tokenCell}</td>
+            <td class='px-4 py-2'>{machineCell}</td>
+            <td class='px-4 py-2 text-slate-500 text-xs'>{ipCell}</td>
+            <td class='px-4 py-2'>{statusCell}</td>
           </tr>
         """;
     }
