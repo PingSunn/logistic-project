@@ -66,9 +66,13 @@ internal static class AdminHtml
 
     internal static string RenderMintSuccess(License license)
     {
+        var escapedToken = Escape(license.Token);
+        var escapedName  = Escape(license.ClientName);
+        var expiry       = ToBangkok(license.ExpiresAt).ToString("yyyy-MM-dd HH:mm");
+
         var sb = new StringBuilder();
         sb.Append(Shell.Start("Token created"));
-        sb.Append("""
+        sb.Append($"""
         <div class='bg-emerald-50 border border-emerald-200 rounded-lg p-6 mb-4'>
           <h2 class='text-lg font-semibold text-emerald-900 mb-2'>✓ สร้างโทเค็นสำเร็จ</h2>
           <p class='text-sm text-emerald-800 mb-4'>คัดลอกโทเค็นด้านล่างนี้ส่งให้ลูกค้า — หน้านี้จะไม่แสดงอีก</p>
@@ -76,33 +80,17 @@ internal static class AdminHtml
             <div class='flex items-center justify-between mb-1'>
               <div class='text-xs text-slate-500'>Token</div>
               <button type='button'
-                      data-token='
-        """);
-        sb.Append(Escape(license.Token));
-        sb.Append("""
-                      '
+                      data-token='{escapedToken}'
                       onclick='copyToken(this)'
                       class='copy-btn text-slate-400 hover:text-blue-600 text-sm flex items-center gap-1'>
                 <span>📋 คัดลอก</span>
               </button>
             </div>
-            <div class='font-mono text-lg text-slate-900 select-all break-all'>
-        """);
-        sb.Append(Escape(license.Token));
-        sb.Append("""
-            </div>
+            <div class='font-mono text-lg text-slate-900 select-all break-all'>{escapedToken}</div>
           </div>
           <div class='grid grid-cols-2 gap-4 text-sm'>
-            <div><span class='text-slate-500'>ลูกค้า:</span> <span class='font-medium'>
-        """);
-        sb.Append(Escape(license.ClientName));
-        sb.Append("""
-            </span></div>
-            <div><span class='text-slate-500'>หมดอายุ:</span> <span class='font-medium'>
-        """);
-        sb.Append(ToBangkok(license.ExpiresAt).ToString("yyyy-MM-dd HH:mm"));
-        sb.Append("""
-              (เวลาไทย)</span></div>
+            <div><span class='text-slate-500'>ลูกค้า:</span> <span class='font-medium'>{escapedName}</span></div>
+            <div><span class='text-slate-500'>หมดอายุ:</span> <span class='font-medium'>{expiry} (เวลาไทย)</span></div>
           </div>
         </div>
         <a href='/admin' class='inline-block bg-slate-200 hover:bg-slate-300 text-slate-800 text-sm font-medium px-4 py-2 rounded'>← กลับไปหน้ารายการ</a>
@@ -183,7 +171,7 @@ internal static class AdminHtml
           <script src='https://cdn.tailwindcss.com'></script>
           <script>
             async function copyToken(btn) {
-              const token = btn.dataset.token;
+              const token = btn.dataset.token.trim();
               try {
                 await navigator.clipboard.writeText(token);
                 const original = btn.innerHTML;
