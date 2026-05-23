@@ -34,10 +34,10 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET ${{ env.DOTNET_VERSION }}
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -74,7 +74,7 @@ jobs:
             --outputDir "dist/releases"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: releases-${{ matrix.rid }}
           path: dist/releases/
@@ -90,7 +90,7 @@ jobs:
     steps:
       # Download all build artifacts into one flat directory
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: releases-*
           path: dist/releases
