@@ -10,6 +10,9 @@ on:
 env:
   DOTNET_VERSION: '10.0.x'
 
+permissions:
+  contents: write   # allow GITHUB_TOKEN to create releases at workflow level
+
 jobs:
   # ── Build each platform in parallel ──────────────────────────────────────────
   build:
@@ -103,7 +106,7 @@ jobs:
       # ไม่ใช้ vpk upload github เพราะมันดู channel ของ runner (linux) ไม่ใช่ของที่ pack ไว้
       - name: Create GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ github.ref_name }}" \
             --title "CargoFit ${{ github.ref_name }}" \
