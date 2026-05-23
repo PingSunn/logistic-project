@@ -166,15 +166,23 @@ public class PlanningView : UserControl
             Padding = new Thickness(18, 16, 18, 16)
         };
 
+        // Row 0 (Auto) = containers + products
+        // Row 1 (Auto) = "จำนวน" label
+        // Row 2 (*)    = quantity scroll — fills remaining space
+        // Row 3 (Auto) = Start button
+        // Row 4 (Auto) = PDF button
         var rootGrid = new Grid();
+        rootGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
+        rootGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
         rootGrid.RowDefinitions.Add(new RowDefinition(GridLength.Star));
         rootGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
         rootGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
 
-        var inner = new StackPanel { Spacing = 4 };
+        // ── Row 0: containers + products ────────────────────────────────────
+        var topPanel = new StackPanel { Spacing = 4 };
 
         // Container section
-        inner.Children.Add(SectionLabel("ตู้คอนเทนเนอร์"));
+        topPanel.Children.Add(SectionLabel("ตู้คอนเทนเนอร์"));
         var containerStack = new StackPanel { Spacing = 5, Margin = new Thickness(0, 4, 0, 8) };
         for (int i = 0; i < ContainerSpec.All.Count; i++)
         {
@@ -185,10 +193,10 @@ public class PlanningView : UserControl
             containerStack.Children.Add(item);
             _containerItems.Add(item);
         }
-        inner.Children.Add(containerStack);
+        topPanel.Children.Add(containerStack);
 
         // Product section
-        inner.Children.Add(SectionLabel("สินค้า"));
+        topPanel.Children.Add(SectionLabel("สินค้า"));
 
         var searchBox = new TextBox
         {
@@ -196,7 +204,7 @@ public class PlanningView : UserControl
             FontSize = 12,
             Margin = new Thickness(0, 4, 0, 5)
         };
-        inner.Children.Add(searchBox);
+        topPanel.Children.Add(searchBox);
 
         var productStack = new StackPanel { Spacing = 3 };
         foreach (var spec in ProductSpec.All)
@@ -252,27 +260,33 @@ public class PlanningView : UserControl
 
         searchBox.TextChanged += (_, _) => FilterProducts(searchBox.Text ?? "");
 
-        inner.Children.Add(new ScrollViewer
+        topPanel.Children.Add(new ScrollViewer
         {
             Content = productStack,
-            Height = 178,
+            Height = 260,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            Margin = new Thickness(0, 0, 0, 8)
+            Margin = new Thickness(0, 0, 0, 4)
         });
 
-        // Quantity section
-        inner.Children.Add(SectionLabel("จำนวน"));
-        _quantityRows = new StackPanel { Spacing = 5, Margin = new Thickness(0, 4, 0, 0) };
-        inner.Children.Add(_quantityRows);
+        rootGrid.Children.Add(topPanel); // Row 0
 
-        var scroll = new ScrollViewer
+        // ── Row 1: "จำนวน" label ────────────────────────────────────────────
+        var qtyLabel = SectionLabel("จำนวน");
+        qtyLabel.Margin = new Thickness(2, 6, 0, 4);
+        Grid.SetRow(qtyLabel, 1);
+        rootGrid.Children.Add(qtyLabel);
+
+        // ── Row 2: quantity rows (scrollable, fills remaining space) ─────────
+        _quantityRows = new StackPanel { Spacing = 5 };
+        var qtyScroll = new ScrollViewer
         {
-            Content = inner,
+            Content = _quantityRows,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto
         };
-        rootGrid.Children.Add(scroll);
+        Grid.SetRow(qtyScroll, 2);
+        rootGrid.Children.Add(qtyScroll);
 
-        // Start button
+        // ── Row 3: Start button ──────────────────────────────────────────────
         var startBtn = new Button
         {
             Content = "Start",
@@ -284,9 +298,10 @@ public class PlanningView : UserControl
             Padding = new Thickness(0, 11)
         };
         startBtn.Click += Calculate_Click;
-        Grid.SetRow(startBtn, 1);
+        Grid.SetRow(startBtn, 3);
         rootGrid.Children.Add(startBtn);
 
+        // ── Row 4: PDF button ────────────────────────────────────────────────
         _exportPdfBtn = new Button
         {
             Content = "พิมพ์ PDF",
@@ -298,7 +313,7 @@ public class PlanningView : UserControl
             Padding = new Thickness(0, 9)
         };
         _exportPdfBtn.Click += ExportPdf_Click;
-        Grid.SetRow(_exportPdfBtn, 2);
+        Grid.SetRow(_exportPdfBtn, 4);
         rootGrid.Children.Add(_exportPdfBtn);
 
         panel.Child = rootGrid;
