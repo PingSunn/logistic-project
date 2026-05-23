@@ -5,8 +5,8 @@ namespace logistic;
 internal static class LicenseConfig
 {
     // Base URL of the activation server (no trailing slash).
-    internal const string ServerUrl = "http://localhost:5080";
+    internal const string ServerUrl = "https://license-sappe.pskwr.com/";              
 
     // Ed25519 public key (base64). Replace with the value printed by `license-admin init-keys`.
-    internal const string ServerPublicKeyBase64 = "cLqIOXHLVglsaCQqjsaOnpw8q/xhBP7HplGHXijNoxc=";
+    internal const string ServerPublicKeyBase64 = "/juJs8OqEr9UYmme5F8Ptxkf3mCJS9e94VIr9S5jNV8=";
 }
