@@ -5,13 +5,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY logistic.LicenseServer.Core/ ./logistic.LicenseServer.Core/
-COPY logistic.LicenseServer/      ./logistic.LicenseServer/
-COPY logistic.LicenseAdmin/       ./logistic.LicenseAdmin/
+COPY CargoFit.LicenseServer.Core/ ./CargoFit.LicenseServer.Core/
+COPY CargoFit.LicenseServer/      ./CargoFit.LicenseServer/
+COPY CargoFit.LicenseAdmin/       ./CargoFit.LicenseAdmin/
 
-RUN dotnet publish logistic.LicenseServer/logistic.LicenseServer.csproj \
+RUN dotnet publish CargoFit.LicenseServer/CargoFit.LicenseServer.csproj \
         -c Release -o /out/server
-RUN dotnet publish logistic.LicenseAdmin/logistic.LicenseAdmin.csproj \
+RUN dotnet publish CargoFit.LicenseAdmin/CargoFit.LicenseAdmin.csproj \
         -c Release -o /out/admin
 
 
@@ -29,4 +29,4 @@ ENV ASPNETCORE_URLS=http://0.0.0.0:5080
 EXPOSE 5080
 VOLUME /data
 
-ENTRYPOINT ["dotnet", "/app/server/logistic.LicenseServer.dll"]
+ENTRYPOINT ["dotnet", "/app/server/CargoFit.LicenseServer.dll"]
