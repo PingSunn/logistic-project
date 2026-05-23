@@ -15,6 +15,27 @@ public partial class MainWindow : Window
 
         LicenseManager.Verified += _ => Dispatcher.UIThread.Post(UpdateTrialBanner);
         UpdateTrialBanner();
+
+        // เช็คอัปเดตใน background หลังแอปโหลดเสร็จ
+        _ = CheckForUpdateAsync();
+    }
+
+    private async System.Threading.Tasks.Task CheckForUpdateAsync()
+    {
+        await UpdateService.CheckAsync();
+        if (UpdateService.PendingUpdate is { } update)
+        {
+            UpdateBannerText.Text = $"🆕 มีเวอร์ชันใหม่ {update.TargetFullRelease.Version} พร้อมแล้ว";
+            UpdateBanner.IsVisible = true;
+        }
+    }
+
+    private async void UpdateButton_Click(object? sender, RoutedEventArgs e)
+    {
+        UpdateButton.IsEnabled = false;
+        UpdateBannerText.Text = "⏳ กำลังดาวน์โหลด กรุณารอสักครู่...";
+        await UpdateService.ApplyUpdateAsync();
+        // ApplyUpdatesAndRestart() ไม่ return — แอป restart ทันทีเมื่อสำเร็จ
     }
 
     private void UpdateTrialBanner()

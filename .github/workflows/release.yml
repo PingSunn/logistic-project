@@ -1,0 +1,126 @@
+name: Release
+
+# Trigger: push a tag ที่ขึ้นต้นด้วย v (e.g. v1.0.0)
+# วิธีใช้: ./scripts/release.sh patch|minor|major
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+env:
+  DOTNET_VERSION: '10.0.x'
+
+jobs:
+  # ── Build each platform in parallel ──────────────────────────────────────────
+  build:
+    name: Build (${{ matrix.rid }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS Apple Silicon
+          - runs-on: macos-latest
+            rid: osx-arm64
+            exe: CargoFit
+          # macOS Intel (cross-compiled from arm64 runner)
+          - runs-on: macos-latest
+            rid: osx-x64
+            exe: CargoFit
+          # Windows x64
+          - runs-on: windows-latest
+            rid: win-x64
+            exe: CargoFit.exe
+
+    runs-on: ${{ matrix.runs-on }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install vpk
+        run: dotnet tool install -g vpk
+
+      # Strip "v" prefix: v1.2.3 → 1.2.3
+      - name: Extract version
+        id: ver
+        shell: bash
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Publish
+        shell: bash
+        run: |
+          dotnet publish CargoFit/CargoFit.csproj \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:EnableCompressionInSingleFile=true \
+            -p:Version=${{ steps.ver.outputs.version }} \
+            -o dist/publish
+
+      - name: Pack with vpk
+        shell: bash
+        run: |
+          vpk pack \
+            --packId "CargoFit" \
+            --packVersion "${{ steps.ver.outputs.version }}" \
+            --packDir "dist/publish" \
+            --mainExe "${{ matrix.exe }}" \
+            --outputDir "dist/releases"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: releases-${{ matrix.rid }}
+          path: dist/releases/
+
+  # ── Merge all platform artifacts → publish GitHub Release ────────────────────
+  release:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to create releases + upload assets
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install vpk
+        run: dotnet tool install -g vpk
+
+      - name: Extract version
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      # Download all build artifacts into one flat directory
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: releases-*
+          path: dist/releases
+          merge-multiple: true
+
+      - name: List release assets
+        run: ls -lh dist/releases/
+
+      # Create GitHub Release and upload all Velopack assets
+      - name: Upload to GitHub Releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          vpk upload github \
+            --repoUrl "https://github.com/PingSunn/cargofit" \
+            --token "$GITHUB_TOKEN" \
+            --outputDir "dist/releases" \
+            --tag "${{ github.ref_name }}" \
+            --releaseName "CargoFit ${{ github.ref_name }}"

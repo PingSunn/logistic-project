@@ -51,6 +51,29 @@
                  HorizontalAlignment="Center" />
     </Border>
 
+    <!-- Update-available banner (visible when a new GitHub release is found) -->
+    <Border x:Name="UpdateBanner"
+            DockPanel.Dock="Top"
+            Background="#EFF6FF"
+            BorderBrush="#3B82F6"
+            BorderThickness="0,0,0,1"
+            Padding="16,6"
+            IsVisible="False">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock x:Name="UpdateBannerText"
+                   Grid.Column="0"
+                   FontSize="13"
+                   FontWeight="Medium"
+                   Foreground="#1E40AF"
+                   VerticalAlignment="Center" />
+        <Button x:Name="UpdateButton"
+                Grid.Column="1"
+                Classes="primary"
+                Content="อัปเดตเดี๋ยวนี้"
+                Click="UpdateButton_Click" />
+      </Grid>
+    </Border>
+
     <!-- Single-page planning view -->
     <ContentControl x:Name="MainContent" />
 

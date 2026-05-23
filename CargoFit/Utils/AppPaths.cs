@@ -13,6 +13,7 @@ internal static class AppPaths
 
     private static string FindDataDir()
     {
+        // Dev: walk up to find repo root (.git folder)
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         while (dir != null)
         {
@@ -20,6 +21,12 @@ internal static class AppPaths
                 return dir.FullName;
             dir = dir.Parent;
         }
-        return AppContext.BaseDirectory;
+        // Release: use a stable per-user directory that survives Velopack updates
+        // Windows: %LocalAppData%\CargoFit\   macOS: ~/.local/share/CargoFit/
+        var appData = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "CargoFit");
+        Directory.CreateDirectory(appData);
+        return appData;
     }
 }
