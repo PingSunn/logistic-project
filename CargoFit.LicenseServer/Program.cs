@@ -1,6 +1,7 @@
 using System.Text;
 using CargoFit.LicenseServer;
 using CargoFit.LicenseServer.Core;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,16 @@ builder.Services.AddDbContext<LicenseDbContext>(opts =>
 builder.Services.AddSingleton(new ServerSigningKey(signingKey));
 
 var app = builder.Build();
+
+// Read real client IP from X-Forwarded-For set by Traefik/reverse proxy.
+// KnownNetworks/KnownProxies cleared so any direct peer (Docker bridge) is trusted —
+// safe because port 5080 is never exposed directly to the internet.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    KnownIPNetworks = { },
+    KnownProxies = { },
+});
 
 using (var scope = app.Services.CreateScope())
 {
