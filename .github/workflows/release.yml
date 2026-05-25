@@ -87,6 +87,8 @@ jobs:
       contents: write   # needed to create releases + upload assets
 
     steps:
+      - uses: actions/checkout@v6
+
       # Download all build artifacts into one flat directory
       - name: Download all artifacts
         uses: actions/download-artifact@v7
@@ -100,6 +102,7 @@ jobs:
 
       # gh CLI is pre-installed on all GitHub Actions runners
       # ไม่ใช้ vpk upload github เพราะมันดู channel ของ runner (linux) ไม่ใช่ของที่ pack ไว้
+      # อัปโหลดเฉพาะไฟล์ที่จำเป็น — ลด clutter ใน release
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -107,4 +110,9 @@ jobs:
           gh release create "${{ github.ref_name }}" \
             --title "CargoFit ${{ github.ref_name }}" \
             --repo "PingSunn/cargofit" \
-            dist/releases/*
+            dist/releases/CargoFit-win-Setup.exe \
+            dist/releases/CargoFit-osx-Setup.pkg \
+            dist/releases/CargoFit-*-full.nupkg \
+            dist/releases/releases.win.json \
+            dist/releases/releases.osx.json \
+            "scripts/ติดตั้ง-CargoFit.bat"
