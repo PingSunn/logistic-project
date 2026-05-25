@@ -25,4 +25,10 @@
         </AssemblyAttribute>
     </ItemGroup>
 
+    <!-- Seed data: embedded so first-run installs get full patterns out of the box -->
+    <ItemGroup>
+        <EmbeddedResource Include="..\containers.json" LogicalName="CargoFit.containers.json" />
+        <EmbeddedResource Include="..\products.json"   LogicalName="CargoFit.products.json"   />
+    </ItemGroup>
+
 </Project>

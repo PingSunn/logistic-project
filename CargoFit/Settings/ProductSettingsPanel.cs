@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using System.Text.Json;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -23,7 +22,6 @@ internal sealed class ProductSettingsPanel : UserControl
         LayerPatternEditor PatternA, LayerPatternEditor PatternB,
         Border Card, TextBlock CbmHint);
 
-    private const string CsvHeader = "Description,Content,PackSize,WeightPerBoxKg,W,L,H";
 
     public ProductSettingsPanel()
     {
@@ -41,7 +39,6 @@ internal sealed class ProductSettingsPanel : UserControl
         header.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         header.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
         header.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-        header.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
 
         var titleText = new TextBlock
         {
@@ -53,19 +50,14 @@ internal sealed class ProductSettingsPanel : UserControl
         };
         header.Children.Add(titleText);
 
-        var templateBtn = new Button { Content = "⬇  Template", Classes = { "ghost" }, Margin = new Avalonia.Thickness(0, 0, 8, 0) };
-        templateBtn.Click += ProductTemplateBtn_Click;
-        Grid.SetColumn(templateBtn, 1);
-        header.Children.Add(templateBtn);
-
-        var importBtn = new Button { Content = "↑  Import CSV", Classes = { "outline" }, Margin = new Avalonia.Thickness(0, 0, 8, 0) };
+        var importBtn = new Button { Content = "↑  Import", Classes = { "outline" }, Margin = new Avalonia.Thickness(0, 0, 8, 0) };
         importBtn.Click += ProductImportBtn_Click;
-        Grid.SetColumn(importBtn, 2);
+        Grid.SetColumn(importBtn, 1);
         header.Children.Add(importBtn);
 
-        var exportBtn = new Button { Content = "↓  Export CSV", Classes = { "outline" } };
+        var exportBtn = new Button { Content = "↓  Export", Classes = { "outline" } };
         exportBtn.Click += ProductExportBtn_Click;
-        Grid.SetColumn(exportBtn, 3);
+        Grid.SetColumn(exportBtn, 2);
         header.Children.Add(exportBtn);
 
         var subtitle = new TextBlock
@@ -77,7 +69,7 @@ internal sealed class ProductSettingsPanel : UserControl
             TextWrapping = TextWrapping.Wrap
         };
         Grid.SetRow(subtitle, 1);
-        Grid.SetColumnSpan(subtitle, 4);
+        Grid.SetColumnSpan(subtitle, 3);
         header.Children.Add(subtitle);
 
         root.Children.Add(header);
@@ -306,32 +298,6 @@ internal sealed class ProductSettingsPanel : UserControl
         return specs;
     }
 
-    private async void ProductTemplateBtn_Click(object? sender, RoutedEventArgs e)
-    {
-        try
-        {
-            var top = TopLevel.GetTopLevel(this);
-            if (top is null) return;
-            var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-            {
-                Title = "Download Product Template",
-                SuggestedFileName = "products_template.csv",
-                FileTypeChoices = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
-            });
-
-            if (file is null) return;
-
-            var sb = new StringBuilder();
-            sb.AppendLine(CsvHeader);
-            sb.AppendLine("Aloe,365ML,Pack 24,9.9,21.9,33.4,20.5");
-
-            await using var stream = await file.OpenWriteAsync();
-            await using var writer = new StreamWriter(stream, Encoding.UTF8);
-            await writer.WriteAsync(sb.ToString());
-        }
-        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ProductSettingsPanel.Template] {ex}"); }
-    }
-
     private async void ProductImportBtn_Click(object? sender, RoutedEventArgs e)
     {
         try
@@ -342,27 +308,14 @@ internal sealed class ProductSettingsPanel : UserControl
             {
                 Title = "Import Products",
                 AllowMultiple = false,
-                FileTypeFilter = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
+                FileTypeFilter = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
             });
 
             if (files.Count == 0) return;
 
             await using var stream = await files[0].OpenReadAsync();
-            using var reader = new StreamReader(stream);
-
-            var specs = new List<ProductSpec>();
-            var isFirst = true;
-            while (await reader.ReadLineAsync() is { } line)
-            {
-                if (isFirst) { isFirst = false; continue; }
-                var parts = line.Split(',');
-                if (parts.Length < 7) continue;
-                double.TryParse(parts[3], out var weight);
-                double.TryParse(parts[4], out var w);
-                double.TryParse(parts[5], out var l);
-                double.TryParse(parts[6], out var h);
-                specs.Add(new ProductSpec(parts[0], parts[1], parts[2], weight, w, l, h));
-            }
+            var specs = await JsonSerializer.DeserializeAsync<ProductSpec[]>(stream, JsonOptions.WriteIndented);
+            if (specs is null) return;
 
             _productEditRows.Clear();
             _productRowsPanel.Children.Clear();
@@ -381,21 +334,14 @@ internal sealed class ProductSettingsPanel : UserControl
             var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
                 Title = "Export Products",
-                SuggestedFileName = "products.csv",
-                FileTypeChoices = [new FilePickerFileType("CSV") { Patterns = ["*.csv"] }]
+                SuggestedFileName = "products.json",
+                FileTypeChoices = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
             });
 
             if (file is null) return;
 
-            var specs = CollectProductSpecs();
-            var sb = new StringBuilder();
-            sb.AppendLine(CsvHeader);
-            foreach (var p in specs)
-                sb.AppendLine($"{p.Description},{p.Content},{p.PackSize},{p.WeightPerBoxKg},{p.W},{p.L},{p.H}");
-
             await using var stream = await file.OpenWriteAsync();
-            await using var writer = new StreamWriter(stream, Encoding.UTF8);
-            await writer.WriteAsync(sb.ToString());
+            await JsonSerializer.SerializeAsync(stream, CollectProductSpecs(), JsonOptions.WriteIndented);
         }
         catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ProductSettingsPanel.Export] {ex}"); }
     }

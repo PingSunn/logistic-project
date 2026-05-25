@@ -34,6 +34,9 @@ public record ContainerSpec(
 
     public static void Load()
     {
+        if (!File.Exists(FilePath))
+            SeedFromResource();
+
         if (!File.Exists(FilePath)) return;
         try
         {
@@ -44,6 +47,23 @@ public record ContainerSpec(
             All.AddRange(specs);
         }
         catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ContainerSpec.Load] {ex}"); /* keep defaults */ }
+    }
+
+    /// <summary>
+    /// Extracts the bundled containers.json from the assembly to DataDir on first run.
+    /// </summary>
+    private static void SeedFromResource()
+    {
+        try
+        {
+            var asm = typeof(ContainerSpec).Assembly;
+            using var stream = asm.GetManifestResourceStream("CargoFit.containers.json");
+            if (stream is null) return;
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
+            using var fs = File.Create(FilePath);
+            stream.CopyTo(fs);
+        }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ContainerSpec.Seed] {ex}"); }
     }
 
     public static void Save()

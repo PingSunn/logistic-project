@@ -79,6 +79,9 @@ public record ProductSpec(
     public static void Load()
     {
         if (!File.Exists(FilePath))
+            SeedFromResource();
+
+        if (!File.Exists(FilePath))
         {
             All.AddRange(Defaults);
             return;
@@ -92,6 +95,24 @@ public record ProductSpec(
             All.AddRange(specs);
         }
         catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ProductSpec.Load] {ex}"); All.AddRange(Defaults); }
+    }
+
+    /// <summary>
+    /// Extracts the bundled products.json (with patterns) from the assembly to DataDir on first run.
+    /// Falls back silently — Load() will use the hardcoded Defaults list if extraction fails.
+    /// </summary>
+    private static void SeedFromResource()
+    {
+        try
+        {
+            var asm = typeof(ProductSpec).Assembly;
+            using var stream = asm.GetManifestResourceStream("CargoFit.products.json");
+            if (stream is null) return;
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
+            using var fs = File.Create(FilePath);
+            stream.CopyTo(fs);
+        }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ProductSpec.Seed] {ex}"); }
     }
 
     public static void Save()

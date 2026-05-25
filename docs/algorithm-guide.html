@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>คู่มือ Algorithm — CargoFit</title>
+<style>
+/* ── PRINT SETUP ─────────────────────────────── */
+@page { size: A4 portrait; margin: 0; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #0f2849;
+  --blue:   #1a4a8a;
+  --sky:    #2e7dd1;
+  --accent: #e8841a;
+  --gold:   #f5a623;
+  --light:  #f0f6ff;
+  --lighter:#f8fbff;
+  --border: #ccdaee;
+  --text:   #1a2637;
+  --muted:  #5a6f88;
+  --codebg: #1c2d45;
+}
+
+body {
+  font-family: 'Thonburi', 'TH Sarabun New', 'Noto Sans Thai', sans-serif;
+  font-size: 10.5pt;
+  color: var(--text);
+  line-height: 1.75;
+  background: #fff;
+}
+
+/* ── COVER ───────────────────────────────────── */
+.cover {
+  width: 210mm;
+  height: 297mm;
+  background: linear-gradient(155deg, #0a1e38 0%, #0f2849 40%, #1a4a8a 75%, #2e7dd1 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30mm;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+}
+
+.cover-circle1 {
+  position: absolute; top: -80px; right: -80px;
+  width: 320px; height: 320px; border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.cover-circle2 {
+  position: absolute; bottom: -60px; left: -60px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.cover-circle3 {
+  position: absolute; bottom: 120px; right: 40px;
+  width: 140px; height: 140px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.06);
+}
+
+.cover-tag {
+  font-size: 8pt;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(245,166,35,0.4);
+  padding: 5px 18px;
+  border-radius: 20px;
+  margin-bottom: 28px;
+}
+.cover-icon { font-size: 56pt; margin-bottom: 16px; }
+.cover h1 {
+  font-size: 28pt;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 10px;
+  letter-spacing: -0.3px;
+}
+.cover h2 {
+  font-size: 12pt;
+  font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 40px;
+}
+.cover-line {
+  width: 80px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 40px;
+}
+.cover-meta {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+}
+.cover-meta-item { text-align: center; }
+.cover-meta-label {
+  display: block;
+  font-size: 7pt;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.cover-meta-val {
+  font-size: 10.5pt;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+/* ── SHARED PAGE WRAPPER ─────────────────────── */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 18mm 22mm 18mm;
+  page-break-after: always;
+  position: relative;
+}
+.page:last-child { page-break-after: auto; }
+
+/* ── PAGE HEADER BAND ────────────────────────── */
+.page-band {
+  margin: -18mm -22mm 0;
+  padding: 16px 22mm;
+  background: linear-gradient(90deg, var(--navy), var(--blue));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  position: relative;
+}
+.page-band::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--accent), transparent);
+}
+.band-num {
+  font-size: 26pt;
+  font-weight: 700;
+  color: rgba(255,255,255,0.2);
+  font-family: monospace;
+  line-height: 1;
+}
+.band-title { font-size: 15pt; font-weight: 700; }
+.band-sub { font-size: 9pt; color: rgba(255,255,255,0.6); display: block; margin-top: 2px; }
+
+/* ── TOC ─────────────────────────────────────── */
+.toc-heading {
+  font-size: 18pt;
+  font-weight: 700;
+  color: var(--navy);
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 8px;
+  display: inline-block;
+  margin-bottom: 28px;
+}
+.toc { list-style: none; }
+.toc > li { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+.toc > li > a {
+  display: flex; align-items: baseline; gap: 8px;
+  text-decoration: none; color: var(--navy);
+  font-size: 11pt; font-weight: 600;
+}
+.toc-n { color: var(--accent); font-weight: 700; min-width: 22px; }
+.toc-dots { flex: 1; border-bottom: 1px dotted #aab; margin: 0 6px; position: relative; top: -3px; }
+.toc-p { color: var(--muted); font-size: 9.5pt; }
+.toc-sub { list-style: none; padding-left: 30px; }
+.toc-sub li { padding: 3px 0; }
+.toc-sub li a {
+  display: flex; align-items: baseline; gap: 6px;
+  font-size: 9.5pt; color: var(--muted); text-decoration: none;
+}
+
+/* ── TYPOGRAPHY ──────────────────────────────── */
+h2 {
+  font-size: 13pt; font-weight: 700; color: var(--navy);
+  border-left: 4px solid var(--accent);
+  padding-left: 12px;
+  margin: 24px 0 12px;
+}
+h3 { font-size: 11.5pt; font-weight: 700; color: var(--blue); margin: 18px 0 8px; }
+h4 { font-size: 10.5pt; font-weight: 700; color: var(--navy); margin: 14px 0 6px; }
+p  { margin-bottom: 10px; }
+ul, ol { padding-left: 22px; margin-bottom: 10px; }
+li { margin-bottom: 4px; }
+
+/* ── PHASE BLOCK ─────────────────────────────── */
+.phase { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 20px; }
+.phase-h {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 18px;
+  background: var(--navy); color: #fff;
+}
+.phase-badge {
+  background: var(--gold); color: var(--navy);
+  font-weight: 700; font-size: 8.5pt; font-family: monospace;
+  padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+}
+.phase-title { font-size: 12.5pt; font-weight: 700; }
+.phase-sub   { font-size: 9pt; color: rgba(255,255,255,0.6); margin-left: auto; }
+.phase-body  { padding: 16px 20px; background: var(--lighter); font-size: 10.5pt; }
+.phase-body p:last-child { margin-bottom: 0; }
+
+/* ── CODE ────────────────────────────────────── */
+pre {
+  background: var(--codebg);
+  color: #c5d5ee;
+  border-radius: 7px;
+  padding: 14px 18px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 8.5pt;
+  line-height: 1.6;
+  margin: 12px 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-left: 3px solid var(--sky);
+}
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 8.5pt;
+  background: #e2ecf8;
+  color: var(--blue);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── TABLE ───────────────────────────────────── */
+table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 10pt; }
+thead tr { background: var(--navy); color: #fff; }
+thead th { padding: 9px 12px; text-align: left; font-size: 9.5pt; font-weight: 600; }
+tbody tr:nth-child(even) { background: var(--light); }
+tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody td:first-child { font-weight: 600; color: var(--navy); }
+
+/* ── CALLOUT ─────────────────────────────────── */
+.callout {
+  display: flex; gap: 12px; padding: 12px 16px;
+  border-radius: 7px; margin: 14px 0; font-size: 10pt; line-height: 1.7;
+  page-break-inside: avoid;
+}
+.ci { font-size: 15pt; flex-shrink: 0; margin-top: 1px; }
+.info   { background: var(--light);  border-left: 4px solid var(--sky); }
+.warn   { background: #fff8ea;       border-left: 4px solid var(--gold); }
+.tip    { background: #e8f7ef;       border-left: 4px solid #1a7a4a; }
+.danger { background: #fdf1f0;       border-left: 4px solid #c0392b; }
+
+/* ── TWO COLUMN ──────────────────────────────── */
+.two { display: flex; gap: 16px; margin: 12px 0; }
+.col { flex: 1; background: var(--lighter); border: 1px solid var(--border); border-radius: 7px; padding: 14px; }
+.col h4 { margin-top: 0; padding-bottom: 6px; border-bottom: 2px solid var(--accent); }
+
+/* ── FLOW ────────────────────────────────────── */
+.flow { max-width: 460px; margin: 16px auto; }
+.fbox {
+  background: var(--navy); color: #fff;
+  border-radius: 7px; padding: 9px 16px;
+  text-align: center; font-size: 10pt; font-weight: 600;
+  margin: 0 auto; line-height: 1.4;
+}
+.fbox .fn {
+  display: inline-block; background: var(--gold); color: var(--navy);
+  font-size: 8pt; font-weight: 700; padding: 1px 8px;
+  border-radius: 10px; margin-bottom: 3px; font-family: monospace;
+}
+.farrow { text-align: center; color: var(--sky); font-size: 14pt; padding: 2px 0; }
+.fout { background: #1a7a4a; }
+
+/* ── ZONE DIAGRAM ────────────────────────────── */
+.zone-wrap {
+  border: 2px solid var(--navy);
+  border-radius: 8px; overflow: hidden; margin: 16px 0;
+}
+.zone-header {
+  background: var(--navy); color: rgba(255,255,255,0.55);
+  padding: 5px 16px; font-size: 8pt; font-family: monospace;
+}
+.zone-body { display: flex; height: 90px; }
+.zone-p {
+  flex: 5; background: linear-gradient(135deg, #e8f2ff, #d4e8ff);
+  border-right: 3px dashed var(--navy);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 8px;
+}
+.zone-c {
+  flex: 1; background: linear-gradient(135deg, #fff4e0, #ffe8bb);
+  border-right: 2px solid var(--accent);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 6px 4px;
+}
+.zone-d {
+  flex: 0 0 32px; background: #f2f2f2;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 7pt; color: var(--muted);
+  writing-mode: vertical-rl;
+}
+.zl { font-weight: 700; font-size: 10pt; color: var(--navy); }
+.zs { font-size: 8pt; color: var(--muted); margin-top: 2px; }
+.zb {
+  font-size: 7.5pt; font-family: monospace;
+  background: var(--navy); color: #fff;
+  padding: 2px 7px; border-radius: 10px; margin-top: 5px;
+}
+.zb-a { background: var(--accent); }
+
+/* ── STEPS (numbered list) ───────────────────── */
+.steps { list-style: none; counter-reset: sc; margin: 14px 0; }
+.steps li {
+  counter-increment: sc; display: flex; gap: 12px;
+  margin-bottom: 12px; font-size: 10.5pt; line-height: 1.7;
+}
+.steps li::before {
+  content: counter(sc);
+  background: var(--sky); color: #fff;
+  font-weight: 700; font-size: 8.5pt; font-family: monospace;
+  min-width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 3px;
+}
+
+/* ── GUARANTEE GRID ──────────────────────────── */
+.gguarantees { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.gg {
+  flex: 1 1 45%;
+  display: flex; gap: 10px; align-items: flex-start;
+  background: #e8f7ef; border: 1px solid #a3d9bf;
+  border-radius: 7px; padding: 12px 14px;
+  page-break-inside: avoid;
+}
+.gg-icon { font-size: 18pt; flex-shrink: 0; }
+.gg-title { font-weight: 700; font-size: 10pt; color: #1a7a4a; }
+.gg-desc  { font-size: 9.5pt; color: #3a6655; margin-top: 2px; }
+
+/* ── PRIORITY TABLE ──────────────────────────── */
+.priority td:first-child { white-space: nowrap; }
+
+/* ── PAGE FOOTER ─────────────────────────────── */
+.pfooter {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 10mm;
+  background: var(--navy);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 22mm;
+  color: rgba(255,255,255,0.45);
+  font-size: 7.5pt;
+}
+.pfooter strong { color: var(--gold); }
+
+/* Avoid breaks inside key blocks */
+.phase, .col, .callout, .gg, pre { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ COVER ═══════════════ -->
+<div class="cover">
+  <div class="cover-circle1"></div>
+  <div class="cover-circle2"></div>
+  <div class="cover-circle3"></div>
+  <div class="cover-tag">CargoFit v1.0.4</div>
+  <div class="cover-icon">📦</div>
+  <h1>คู่มือ Algorithm<br>การจัดวางสินค้า<br>ในตู้คอนเทนเนอร์</h1>
+  <h2>Container Packing Engine — Technical Reference</h2>
+  <div class="cover-line"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Version</span>
+      <span class="cover-meta-val">1.0.4</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">ประเภท</span>
+      <span class="cover-meta-val">Technical Reference</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">วันที่</span>
+      <span class="cover-meta-val">พฤษภาคม 2569</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TOC ═══════════════ -->
+<div class="page">
+  <div class="toc-heading">สารบัญ</div>
+  <ul class="toc">
+    <li>
+      <a href="#"><span class="toc-n">1</span> ภาพรวมระบบ <span class="toc-dots"></span><span class="toc-p">3</span></a>
+    </li>
+    <li>
+      <a href="#"><span class="toc-n">2</span> นิยามศัพท์สำคัญ <span class="toc-dots"></span><span class="toc-p">4</span></a>
+    </li>
+    <li>
+      <a href="#"><span class="toc-n">3</span> ข้อมูล Input ที่ระบบรับ <span class="toc-dots"></span><span class="toc-p">5</span></a>
+    </li>
+    <li>
+      <a href="#"><span class="toc-n">4</span> ลำดับขั้นตอน Algorithm <span class="toc-dots"></span><span class="toc-p">6</span></a>
+      <ul class="toc-sub">
+        <li><a href="#"><span class="toc-n">—</span> ขั้น 0: คำนวณจำนวนชั้นที่เหมาะสม (ComputeEffectiveLayers)<span class="toc-dots"></span><span class="toc-p">7</span></a></li>
+        <li><a href="#"><span class="toc-n">—</span> ขั้น 1: การจัดวางหลัก (Primary Packing)<span class="toc-dots"></span><span class="toc-p">8</span></a></li>
+        <li><a href="#"><span class="toc-n">—</span> ขั้น 2: การปรับสมดุล (Balancing)<span class="toc-dots"></span><span class="toc-p">9</span></a></li>
+        <li><a href="#"><span class="toc-n">—</span> ขั้น 3: ปรับสมดุลชั้น (Layer Balancing)<span class="toc-dots"></span><span class="toc-p">10</span></a></li>
+        <li><a href="#"><span class="toc-n">—</span> ขั้น 4: ตัดกองส่วนเกิน (Partial Removal)<span class="toc-dots"></span><span class="toc-p">10</span></a></li>
+        <li><a href="#"><span class="toc-n">—</span> ขั้น 5: เรียงกองตามความสูง<span class="toc-dots"></span><span class="toc-p">11</span></a></li>
+        <li><a href="#"><span class="toc-n">—</span> ขั้น 6: โซนหน้าตู้ (Condo Placement)<span class="toc-dots"></span><span class="toc-p">11</span></a></li>
+        <li><a href="#"><span class="toc-n">—</span> ขั้น 7: กระจายกล่องที่เหลือ (Scatter)<span class="toc-dots"></span><span class="toc-p">12</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#"><span class="toc-n">5</span> รูปแบบการวางชั้น (Layer Pattern) <span class="toc-dots"></span><span class="toc-p">13</span></a>
+    </li>
+    <li>
+      <a href="#"><span class="toc-n">6</span> ตัวอย่างจริง <span class="toc-dots"></span><span class="toc-p">15</span></a>
+    </li>
+    <li>
+      <a href="#"><span class="toc-n">7</span> การรับประกันและข้อจำกัด <span class="toc-dots"></span><span class="toc-p">16</span></a>
+    </li>
+  </ul>
+</div>
+
+<!-- ═══════════════ SEC 1: OVERVIEW ═══════════════ -->
+<div class="page">
+  <div class="page-band">
+    <div class="band-num">01</div>
+    <div>
+      <div class="band-title">ภาพรวมระบบ</div>
+      <span class="band-sub">System Overview</span>
+    </div>
+  </div>
+
+  <p>
+    <strong>CargoFit</strong> คำนวณการจัดวางกล่องสินค้าลงในตู้คอนเทนเนอร์โดยอัตโนมัติ
+    โดยพยายามให้ได้จำนวนกล่องมากที่สุดภายใต้ข้อจำกัดด้านขนาดและความสูงที่รับน้ำหนักได้
+    ผลลัพธ์แสดงเป็นภาพ 3 มิติเพื่อให้ทีมขนส่งวางแผนล่วงหน้า
+  </p>
+
+  <div class="two" style="margin-top:16px;">
+    <div class="col">
+      <h4>🔢 ข้อมูลที่รับ</h4>
+      <ul style="font-size:10pt;">
+        <li>ประเภทตู้คอนเทนเนอร์</li>
+        <li>รายการสินค้า + ขนาด + Pattern</li>
+        <li>จำนวนกล่องที่ต้องการบรรจุ</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>📐 ผลลัพธ์ที่ส่งออก</h4>
+      <ul style="font-size:10pt;">
+        <li>ตำแหน่ง (X, Y, Z) ของกล่องทุกกล่อง</li>
+        <li>สถิติจำนวนที่บรรจุได้จริง</li>
+        <li>ภาพ Isometric 3 มิติ</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>แกนพิกัดของตู้</h2>
+
+  <div class="zone-wrap">
+    <div class="zone-header">มุมมองจากด้านบน — ทิศทางแกน X/Y ภายในตู้</div>
+    <div class="zone-body">
+      <div class="zone-p">
+        <div class="zl">Primary Zone</div>
+        <div class="zs">กองสินค้าหลัก — เรียงจากผนังหลัง (Y=0)</div>
+        <div class="zb">Y : 0 → L−50 cm</div>
+      </div>
+      <div class="zone-c">
+        <div class="zl">Condo</div>
+        <div class="zs">กล่องส่วนเกิน</div>
+        <div class="zb zb-a">~50 cm</div>
+      </div>
+      <div class="zone-d">🚪 ประตู</div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="ci">📏</span>
+    <div>
+      <strong>ระบบพิกัด:</strong>
+      แกน <code>X</code> = ความกว้าง (ซ้าย→ขวา),
+      แกน <code>Y</code> = ความยาว (ผนังหลัง→ประตู),
+      แกน <code>Z</code> = ความสูง (พื้น→เพดาน)
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SEC 2: GLOSSARY ═══════════════ -->
+<div class="page">
+  <div class="page-band">
+    <div class="band-num">02</div>
+    <div>
+      <div class="band-title">นิยามศัพท์สำคัญ</div>
+      <span class="band-sub">Glossary</span>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th style="width:30%">คำศัพท์</th><th>ความหมาย</th></tr></thead>
+    <tbody>
+      <tr><td>Stack (กอง)</td><td>กลุ่มกล่องซ้อนกันในแนวตั้ง ณ ตำแหน่ง Y เดียวกัน แต่ละกองมีหมายเลข <code>StackIndex</code> เริ่มจาก 0</td></tr>
+      <tr><td>Layer (ชั้น)</td><td>ระดับความสูงหนึ่งๆ ของกอง — ชั้น 0 = พื้น, ชั้น 1 = เหนือขึ้นไป มี <code>LayerIndex</code></td></tr>
+      <tr><td>Pattern A / B</td><td>รูปแบบการจัดเรียงกล่องต่อชั้น — ชั้นเลขคู่ใช้ A, ชั้นเลขคี่ใช้ B เพื่อสลับทิศทางเพิ่มความเสถียร</td></tr>
+      <tr><td>Section</td><td>กลุ่มย่อยภายใน Pattern หนึ่งชั้น วางต่อกันในแนวกว้าง (X)</td></tr>
+      <tr><td>SubRow</td><td>แถวย่อยภายใน Section ที่มีการหมุนกล่อง (Rotated) ต่างกัน</td></tr>
+      <tr><td>Primary Zone</td><td>พื้นที่หลักจาก Y=0 ถึง L−50 cm สำหรับจัดกองสินค้าหลัก</td></tr>
+      <tr><td>Condo Zone</td><td>พื้นที่หน้าตู้ ~50 cm สำหรับวางกล่องส่วนเกินจาก Primary เป็นคอลัมน์ตรงๆ</td></tr>
+      <tr><td>Scatter</td><td>การนำกล่องที่เหลือหลัง Condo วางเสริมทับยอดกองเดิม (เฉพาะสินค้าชนิดเดียวกัน)</td></tr>
+      <tr><td>MaxLayers</td><td>ชั้นสูงสุดต่อกองที่อนุญาต กำหนดตามน้ำหนักสินค้าและความปลอดภัย</td></tr>
+      <tr><td>EffectiveLayers</td><td>ชั้นที่ระบบคำนวณให้ใช้จริง เพื่อกระจายหลายสินค้าให้ใช้ความยาวตู้สม่ำเสมอ (≤ MaxLayers)</td></tr>
+      <tr><td>CBM</td><td>ปริมาตรกล่องในหน่วยลูกบาศก์เมตร = W × L × H ÷ 1,000,000</td></tr>
+      <tr><td>Tier Replication</td><td>การทำซ้ำชุด Pattern ในแนวกว้าง X เมื่อตู้กว้างพอจะใส่ได้มากกว่า 1 ชุด</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ SEC 3: INPUT ═══════════════ -->
+<div class="page">
+  <div class="page-band">
+    <div class="band-num">03</div>
+    <div>
+      <div class="band-title">ข้อมูล Input ที่ระบบรับ</div>
+      <span class="band-sub">Input Data Structure</span>
+    </div>
+  </div>
+
+  <h2>ตู้คอนเทนเนอร์ (ContainerSpec)</h2>
+  <table>
+    <thead><tr><th>ฟิลด์</th><th>ความหมาย</th><th>ตัวอย่าง (ตู้สั้น)</th></tr></thead>
+    <tbody>
+      <tr><td>Name</td><td>ชื่อประเภทตู้</td><td>ตู้สั้น</td></tr>
+      <tr><td>NominalW/L/H</td><td>ขนาดตามสเปก (cm)</td><td>244 × 600 × 259</td></tr>
+      <tr><td>Gap</td><td>ระยะห่างจากผนัง (cm)</td><td>5</td></tr>
+      <tr><td>InteriorW/L/H</td><td>พื้นที่ใช้งานจริง = Nominal − Gap</td><td>239 × 595 × 254</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <span class="ci">ℹ️</span>
+    <div>ตู้มาตรฐาน: <strong>ตู้สั้น 20 ft</strong> (244×600×259), <strong>ตู้ยาว 40 ft</strong> (244×1209×260), <strong>ตู้ไฮคิวบ์ 40 ft HC</strong> (244×1203×290)</div>
+  </div>
+
+  <h2>สินค้า (ProductSpec)</h2>
+  <table>
+    <thead><tr><th>ฟิลด์</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr></thead>
+    <tbody>
+      <tr><td>W, L, H</td><td>ขนาดกล่อง กว้าง × ยาว × สูง (cm)</td><td>26.2 × 34.8 × 26.7</td></tr>
+      <tr><td>PatternA</td><td>รูปแบบการวางชั้นเลขคู่ (0, 2, 4, ...)</td><td>[Section, Section]</td></tr>
+      <tr><td>PatternB</td><td>รูปแบบการวางชั้นเลขคี่ (1, 3, 5, ...)</td><td>[Section, Section]</td></tr>
+      <tr><td>MaxLayers</td><td>ชั้นสูงสุดต่อกอง (0 = เต็มความสูงตู้)</td><td>8</td></tr>
+      <tr><td>CondoCount</td><td>จำนวนกล่องต่อแถวในโซน Condo (0 = auto)</td><td>9</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span>
+    <div>สินค้าที่ <strong>ไม่มี PatternA</strong> จะไม่ถูกวางในทุกขั้นตอน — ต้องกำหนด Pattern ก่อนใช้งาน</div>
+  </div>
+</div>
+
+<!-- ═══════════════ SEC 4: ALGORITHM OVERVIEW ═══════════════ -->
+<div class="page">
+  <div class="page-band">
+    <div class="band-num">04</div>
+    <div>
+      <div class="band-title">ลำดับขั้นตอน Algorithm</div>
+      <span class="band-sub">6-Phase Packing Algorithm</span>
+    </div>
+  </div>
+
+  <p>Algorithm ทำงานตามลำดับ 8 ขั้น (ขั้น 0–7) โดยแต่ละขั้นรับ Output จากขั้นก่อนหน้า:</p>
+
+  <div class="flow">
+    <div class="fbox"><span class="fn">INPUT</span><br>ตู้ + รายการสินค้า + จำนวน</div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><span class="fn">PHASE 0</span><br>ComputeEffectiveLayers — ปรับจำนวนชั้นให้สมดุล</div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><span class="fn">PHASE 1</span><br>Primary Packing — วางกองหลักจากผนังออกมา</div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><span class="fn">PHASE 2</span><br>Balancing — เพิ่มกองเติมพื้นที่ว่าง + ปรับชั้น</div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><span class="fn">PHASE 3</span><br>Layer Balancing — โยกชั้นจากกองสูงไปกองต่ำ</div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><span class="fn">PHASE 4</span><br>Partial Removal — ตัดกองสุดท้ายที่สั้นผิดปกติ</div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><span class="fn">PHASE 5</span><br>Sort Stacks by Height — กองสั้น→ประตู, กองสูง→ผนัง</div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><span class="fn">PHASE 6</span><br>Condo Placement — วางกล่องเหลือในโซนหน้าตู้</div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><span class="fn">PHASE 7</span><br>Scatter Top — กระจายกล่องเหลือทับยอดกอง</div>
+    <div class="farrow">↓</div>
+    <div class="fbox fout"><span class="fn" style="background:rgba(255,255,255,0.2);color:#fff;">OUTPUT</span><br>รายการ BoxPlacement ทุกกล่อง</div>
+  </div>
+</div>
+
+<!-- ═══════════════ PHASE 0 ═══════════════ -->
+<div class="page">
+  <div class="phase">
+    <div class="phase-h">
+      <span class="phase-badge">PHASE 0</span>
+      <span class="phase-title">คำนวณจำนวนชั้นที่เหมาะสม</span>
+      <span class="phase-sub">ComputeEffectiveLayers</span>
+    </div>
+    <div class="phase-body">
+      <p>เมื่อมีสินค้าหลายชนิด ถ้าปล่อยให้แต่ละชนิดวางสูงเต็ม MaxLayers พื้นที่ความยาวตู้อาจถูกใช้ไม่หมดหรืออาจล้น
+      ขั้นนี้หา <strong>EffectiveLayers</strong> ให้รวมพื้นที่ที่ใช้ทั้งหมดอยู่ภายใน
+      <code>targetY = InteriorL − 50 cm</code></p>
+    </div>
+  </div>
+
+  <h2>สูตรคำนวณเบื้องต้น</h2>
+<pre>สำหรับสินค้าแต่ละชนิด i:
+  bpl[i]        = กล่องต่อชั้น (จาก Pattern A)
+  stackDepth[i] = ความลึกของกอง 1 กอง (cm)
+  stacks[i]     = ⌈ qty / (bpl × MaxLayers) ⌉
+
+requiredY = Σ stacks[i] × stackDepth[i]
+targetY   = InteriorL − 50 cm
+
+ถ้า requiredY ≤ targetY  →  ใช้ MaxLayers ปกติ (ไม่ต้องปรับ)
+ถ้า requiredY > targetY  →  ลด EffectiveLayers ด้วย Snap Point Search</pre>
+
+  <h2>Snap Point Search</h2>
+  <p>ระบบสร้างชุด snap points คือความสูงที่เป็นจำนวนเต็มเท่าของความสูงกล่อง แล้วทดลองจากน้อยไปมาก:</p>
+<pre>สินค้า A สูง 26.7 cm → {26.7, 53.4, 80.1, 106.8, ...}
+สินค้า B สูง 15.7 cm → {15.7, 31.4, 47.1, 62.8, ...}
+
+รวมทั้งหมด เรียงน้อย→มาก: {15.7, 26.7, 31.4, 47.1, 53.4, ...}
+
+ทดลองทุก snap Tₕ:
+  effectiveLayers[i] = ⌊ Tₕ / H[i] ⌋
+  requiredY = Σ ⌈ totalLayers[i] / effectiveLayers[i] ⌉ × stackDepth[i]
+  → เลือก Tₕ แรกที่ requiredY ≤ targetY</pre>
+
+  <div class="callout tip">
+    <span class="ci">💡</span>
+    <div>
+      <strong>ทำไมต้อง Snap Points?</strong> การจำกัดด้วยจำนวนเต็มชั้นทำให้กองสินค้าต่างชนิดมีความสูงใกล้เคียงกัน
+      หากใช้การ scale แบบทั่วไปจะได้ชั้นครึ่งซึ่งในความเป็นจริงเป็นไปไม่ได้
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PHASE 1 ═══════════════ -->
+<div class="page">
+  <div class="phase">
+    <div class="phase-h">
+      <span class="phase-badge">PHASE 1</span>
+      <span class="phase-title">การจัดวางหลัก</span>
+      <span class="phase-sub">Primary Packing</span>
+    </div>
+    <div class="phase-body">
+      <p>วางกองสินค้าแต่ละชนิดเรียงจาก <strong>ด้านในสุด (Y=0)</strong> ออกมาหาประตู
+      สินค้าชนิดแรกในรายการวางก่อน ตามด้วยชนิดถัดไป</p>
+    </div>
+  </div>
+
+  <h2>ขั้นตอนการวางกอง</h2>
+  <ol class="steps">
+    <li>คำนวณ <code>stackDepth</code> = ความลึกกอง 1 กอง (ผลรวมความยาวกล่องในแนว Y ตาม Pattern)</li>
+    <li>วางกองที่ <code>currentY</code> — ซ้อนชั้นตาม Pattern จนครบ <code>EffectiveLayers</code> หรือเต็มความสูงตู้</li>
+    <li>เลื่อน <code>currentY += stackDepth</code> แล้ววางกองถัดไป</li>
+    <li>วนซ้ำจนได้กล่องครบหรือ <code>currentY ≥ InteriorL</code></li>
+  </ol>
+
+  <h2>กฎการสลับ Pattern A/B</h2>
+  <div class="callout info">
+    <span class="ci">🔄</span>
+    <div>
+      <strong>กองเลขคู่</strong> (SI 0, 2, 4, ...) — ชั้น 0=A, 1=B, 2=A, ...<br>
+      <strong>กองเลขคี่</strong> (SI 1, 3, 5, ...) — ชั้น 0=B, 1=A, 2=B, ...<br>
+      การสลับทิศทางทุกชั้นและทุกกองทำให้โครงสร้างล็อกกันมั่นคงขึ้นระหว่างขนส่ง
+    </div>
+  </div>
+
+  <h2>Tier Replication</h2>
+  <p>ถ้าความกว้างตู้เกินกว่า 1 ชุด Pattern ระบบทำซ้ำ Pattern ในแนว X อัตโนมัติ:</p>
+<pre>tierWidth = ผลรวมความกว้างของทุก Section ใน Pattern
+numTiers  = ⌊ InteriorW / tierWidth ⌋
+
+ตัวอย่าง Aloe 365:
+  Section1 = 6 × 21.9 = 131.4 cm  (ไม่หมุน)
+  Section2 = 3 × 33.4 = 100.2 cm  (หมุน)
+  tierWidth = 231.6 cm,  InteriorW = 239 cm  →  numTiers = 1</pre>
+</div>
+
+<!-- ═══════════════ PHASE 2 ═══════════════ -->
+<div class="page">
+  <div class="phase">
+    <div class="phase-h">
+      <span class="phase-badge">PHASE 2</span>
+      <span class="phase-title">การปรับสมดุล</span>
+      <span class="phase-sub">Balancing (A + B + C)</span>
+    </div>
+    <div class="phase-body">
+      <p>หลัง Primary อาจยังมีพื้นที่ว่างและกล่องที่ยังไม่ได้วาง ขั้นนี้แบ่งเป็น 3 ส่วน</p>
+    </div>
+  </div>
+
+  <h3>ส่วน A — เพิ่มกองเติมพื้นที่ว่าง</h3>
+  <p>ขณะที่ <code>currentY &lt; targetY</code> ระบบวนเพิ่มกองใหม่ให้สินค้าที่มีกล่องเหลือ
+  เรียงลำดับจาก <strong>CBM มากที่สุดก่อน</strong> (สินค้าใหญ่กว่ามีสิทธิ์เติมพื้นที่ก่อน)</p>
+
+<pre>ขณะที่ currentY &lt; targetY และมีสินค้าเหลือ:
+  สำหรับสินค้าเรียงตาม CBM (มาก→น้อย):
+    ถ้ามีกล่องเหลือและตำแหน่งไม่ถูก clip:
+      → เพิ่มกองใหม่ที่ currentY
+      → currentY = max(currentY, r.EndY)</pre>
+
+  <h3>ส่วน B — ปรับจำนวนชั้นให้ตรง EffectiveLayers</h3>
+
+  <div class="two">
+    <div class="col">
+      <h4>กองสูงเกิน EffectiveLayers</h4>
+      <p style="font-size:10pt;margin:0;">ลบชั้นบนสุดออกจนถึงขีดจำกัด</p>
+    </div>
+    <div class="col">
+      <h4>กองต่ำกว่า EffectiveLayers</h4>
+      <p style="font-size:10pt;margin:0;">เติมชั้นขึ้นไป ถ้ากล่องเพียงพอต่อ 1 ชั้นเต็ม</p>
+    </div>
+  </div>
+
+  <h3>ส่วน C — อัปเดตสถิติ</h3>
+  <p>นับจำนวนกล่องที่วางได้จริงในพื้นที่ Primary และบันทึกไว้เพื่อขั้นตอนถัดไป</p>
+
+  <!-- PHASE 3 -->
+  <div class="phase" style="margin-top:24px;">
+    <div class="phase-h">
+      <span class="phase-badge">PHASE 3</span>
+      <span class="phase-title">ปรับสมดุลชั้น</span>
+      <span class="phase-sub">Layer Balancing</span>
+    </div>
+    <div class="phase-body">
+      <p>หากกองของสินค้าชนิดเดียวกันยังมีความสูงต่างกันเกิน 1 ชั้น จะโยกชั้นบนสุดจากกองสูงที่สุดไปเพิ่มให้กองต่ำที่สุด ทำซ้ำจนความต่าง ≤ 1 ชั้น</p>
+    </div>
+  </div>
+
+<pre>ก่อน:                     หลัง:
+████                       ████  ████
+████                       ████  ████
+████  ██                   ████  ████
+████  ████                 ████  ████
+[A]  [B]                   [A]  [B]
+A:4 ชั้น, B:2 ชั้น → ต่าง 2 (✗)   A:3, B:3 → ต่าง 0 (✓)</pre>
+</div>
+
+<!-- ═══════════════ PHASE 4-5 ═══════════════ -->
+<div class="page">
+  <div class="phase">
+    <div class="phase-h">
+      <span class="phase-badge">PHASE 4</span>
+      <span class="phase-title">ตัดกองส่วนเกิน</span>
+      <span class="phase-sub">Partial Removal</span>
+    </div>
+    <div class="phase-body">
+      <p>ถ้าโซน Condo แน่น (พื้นที่ &lt;50 cm) ตรวจกองสุดท้ายของแต่ละสินค้า —
+      ถ้ากองนั้นสั้นกว่ากองก่อนหน้าเกิน 1 ชั้น จะถูกลบออก
+      เพื่อให้กล่องไปอยู่ใน Condo/Scatter แทนซึ่งใช้พื้นที่คุ้มกว่า</p>
+    </div>
+  </div>
+
+  <div class="phase" style="margin-top:20px;">
+    <div class="phase-h">
+      <span class="phase-badge">PHASE 5</span>
+      <span class="phase-title">เรียงกองตามความสูง</span>
+      <span class="phase-sub">Sort Stacks by Height</span>
+    </div>
+    <div class="phase-body">
+      <p>จัดให้กองที่ <strong>สั้นกว่า</strong> อยู่ใกล้ประตู (Y มากกว่า) และกองที่ <strong>สูงกว่า</strong> อยู่ด้านใน (Y น้อยกว่า)
+      ช่วยให้พนักงานมองเห็นสินค้าชั้นล่างและเข้าถึงง่ายกว่า
+      นอกจากนี้ยังทำให้โซน Condo มีความสูงที่ถูกต้องในขั้นถัดไป</p>
+    </div>
+  </div>
+
+  <!-- PHASE 6 -->
+  <div class="phase" style="margin-top:20px;">
+    <div class="phase-h">
+      <span class="phase-badge">PHASE 6</span>
+      <span class="phase-title">การจัดวางโซนหน้าตู้</span>
+      <span class="phase-sub">Condo Placement</span>
+    </div>
+    <div class="phase-body">
+      <p>วางกล่องที่ยังเหลือหลัง Primary ลงในพื้นที่หน้าตู้ต่อจาก Primary Zone
+      โดยวางเรียงเป็น <strong>คอลัมน์ตรงๆ</strong> ไม่มีการสลับ Pattern</p>
+    </div>
+  </div>
+
+  <h2>เงื่อนไขการเข้าโซน Condo</h2>
+  <ol class="steps">
+    <li>สินค้านั้นยังมีกล่องค้างเหลือหลัง Primary</li>
+    <li>จำนวนที่เหลือ <strong>≥ cols × targetLayers</strong> (ต้องเต็ม 1 คอลัมน์พอดี)</li>
+    <li>มีพื้นที่ใน Y เพียงพอ (condoY + colDepth ≤ InteriorL)</li>
+  </ol>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span>
+    <div>กล่องที่เหลือ <strong>ไม่พอ 1 คอลัมน์เต็ม</strong> จะไม่ถูกวางใน Condo แต่จะส่งต่อไป Scatter แทน</div>
+  </div>
+
+<pre>targetCondoZ  = ⌊ InteriorH / H_adjacent ⌋ × H_adjacent
+targetLayers  = min( ⌊ targetCondoZ / H_product ⌋, ⌊ InteriorH / H_product ⌋ )
+condoCap      = cols × targetLayers  (กล่องต่อ 1 คอลัมน์)</pre>
+</div>
+
+<!-- ═══════════════ PHASE 7 ═══════════════ -->
+<div class="page">
+  <div class="phase">
+    <div class="phase-h">
+      <span class="phase-badge">PHASE 7</span>
+      <span class="phase-title">กระจายกล่องที่เหลือทับกองเดิม</span>
+      <span class="phase-sub">Scatter Top Placement</span>
+    </div>
+    <div class="phase-body">
+      <p>ถ้ายังมีกล่องเหลือหลัง Primary + Condo จะนำไปวางทับยอดกองที่มีอยู่แล้ว
+      <strong>เฉพาะกล่องสินค้าเดิมทับกองสินค้านั้น</strong> (ห้ามข้ามสินค้า)</p>
+    </div>
+  </div>
+
+  <h2>อัลกอริทึมเลือกกอง</h2>
+<pre>สร้างรายการ "กองที่รับได้" = กองที่ยังไม่เต็มเพดาน InteriorH
+
+วนซ้ำจนกล่องหมดหรือทุกกองเต็ม:
+  1. เลือกกองที่มี TopZ ต่ำสุด (สั้นที่สุด)
+     ✦ TopZ เท่ากัน → เลือก StackIndex น้อยกว่า
+  2. วางชั้นใหม่ที่ยอดกองนั้น (Pattern ตาม A/B ของกองนั้น)
+  3. อัปเดต TopZ ของกองนั้น
+  4. ถ้ากองเต็ม → นำออกจากรายการ</pre>
+
+  <h2>ตัวอย่าง 3 รอบ</h2>
+<pre>รอบที่ 1:         รอบที่ 2:         รอบที่ 3:
+████              ████              ████
+████              ████  ████        ████  ████
+████  ██          ████  ██          ████  ████
+████  ████        ████  ████        ████  ████
+[A]  [B]          [A]  [B]          [A]  [B]
+
+B สั้นกว่า        A สั้นกว่า        เท่ากัน→A (SI เล็กกว่า)</pre>
+
+  <div class="callout warn">
+    <span class="ci">⚡</span>
+    <div>
+      <strong>Scatter ไม่จำกัดด้วย MaxLayers</strong> — วางได้จนถึงเพดานตู้ (<code>InteriorH</code>)
+      MaxLayers ส่งผลเฉพาะในขั้น Primary เท่านั้น
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SEC 5: PATTERN ═══════════════ -->
+<div class="page">
+  <div class="page-band">
+    <div class="band-num">05</div>
+    <div>
+      <div class="band-title">รูปแบบการวางชั้น (Layer Pattern)</div>
+      <span class="band-sub">Layer Pattern Structure</span>
+    </div>
+  </div>
+
+  <p>แต่ละชั้นถูกกำหนดด้วย Pattern ซึ่งประกอบด้วย <strong>Section</strong> หลายส่วนวางต่อกันในแนวกว้าง (X)
+  แต่ละ Section มี <strong>SubRow</strong> ที่กำหนดแถว คอลัมน์ และทิศทางการวาง</p>
+
+  <h2>โครงสร้าง JSON</h2>
+<pre>{
+  "PatternA": [
+    {
+      "SubRows": [
+        { "Rows": 2, "Cols": 6, "Rotated": false },  // 2 แถว × 6 คอลัมน์ ไม่หมุน
+      ]
+    },
+    {
+      "SubRows": [
+        { "Rows": 3, "Cols": 3, "Rotated": true  }   // 3 แถว × 3 คอลัมน์ หมุน 90°
+      ]
+    }
+  ]
+}</pre>
+
+  <table>
+    <thead><tr><th>Field</th><th>ความหมาย</th></tr></thead>
+    <tbody>
+      <tr><td>Rows</td><td>จำนวนแถวในแนว Y (ความลึก)</td></tr>
+      <tr><td>Cols</td><td>จำนวนคอลัมน์ในแนว X (ความกว้าง)</td></tr>
+      <tr><td>Rotated = false</td><td>วางปกติ — ด้าน W ในแนว X, ด้าน L ในแนว Y</td></tr>
+      <tr><td>Rotated = true</td><td>หมุน 90° — ด้าน L ในแนว X, ด้าน W ในแนว Y</td></tr>
+    </tbody>
+  </table>
+
+  <h2>ตัวอย่าง: Aloe 365 ML (21.9 × 33.4 × 20.5 cm)</h2>
+<pre>PatternA: [Section(2×6 ไม่หมุน), Section(3×3 หมุน)]
+PatternB: [Section(3×3 หมุน),    Section(2×6 ไม่หมุน)]
+
+ชั้น 0 (PatternA):             ชั้น 1 (PatternB):
+┌──────────────┬─────────┐     ┌─────────┬──────────────┐
+│ ○ ○ ○ ○ ○ ○ │ □ □ □   │     │ □ □ □   │ ○ ○ ○ ○ ○ ○ │
+│ ○ ○ ○ ○ ○ ○ │ □ □ □   │     │ □ □ □   │ ○ ○ ○ ○ ○ ○ │
+│              │ □ □ □   │     │ □ □ □   │              │
+└──────────────┴─────────┘     └─────────┴──────────────┘
+  ○ = ไม่หมุน   □ = หมุน 90°
+  A/B สลับซ้าย-ขวา → แต่ละชั้นล็อกกันมั่นคง</pre>
+
+  <h2>ความจุต่อชั้น (Layer Capacity)</h2>
+  <p>ระบบนับความจุโดย simulate การวางลงบน scratch list แล้วนับ:</p>
+<pre>capacity = PlaceLayerAt(sections, spec, dims, stackY, z=0,
+                        limit=∞, productIndex=-1, scratch, ...)
+→ จำนวนกล่องที่วางได้จริงใน 1 ชั้น ณ ตำแหน่ง Y นั้น</pre>
+
+  <div class="callout info">
+    <span class="ci">📌</span>
+    <div>ถ้ากล่องบางตัวล้นขอบตู้ (<code>px+bw > InteriorW</code> หรือ <code>py+bl > InteriorL</code>) จะถูกข้ามไป — ไม่ถูกนับและไม่ถูกวาง</div>
+  </div>
+</div>
+
+<!-- ═══════════════ SEC 6: EXAMPLE ═══════════════ -->
+<div class="page">
+  <div class="page-band">
+    <div class="band-num">06</div>
+    <div>
+      <div class="band-title">ตัวอย่างจริง</div>
+      <span class="band-sub">Real-world Example</span>
+    </div>
+  </div>
+
+  <h2>Mogu 1000 ML × 540 + Mogu 320 ML × 850 ในตู้สั้น 20 ft</h2>
+
+  <table>
+    <thead><tr><th>สินค้า</th><th>ขนาด W×L×H (cm)</th><th>MaxLayers</th><th>ต้องการ</th></tr></thead>
+    <tbody>
+      <tr><td>Mogu 1000 ML</td><td>26.2 × 34.8 × 26.7</td><td>8</td><td>540 กล่อง</td></tr>
+      <tr><td>Mogu 320 ML</td><td>25.8 × 38.5 × 15.7</td><td>13</td><td>850 กล่อง</td></tr>
+    </tbody>
+  </table>
+
+  <h3>ขั้น 0 — ComputeEffectiveLayers</h3>
+<pre>Mogu 1000: bpl≈26, stacks=⌈540/(26×8)⌉=3, depth=3×34.8=104.4 cm
+Mogu 320:  bpl≈26, stacks=⌈850/(26×13)⌉=3, depth=3×38.5=115.5 cm
+
+requiredY ≈ 220 cm  &lt;  targetY = 595−50 = 545 cm  ✅ ไม่ต้องลด EffectiveLayers</pre>
+
+  <h3>ขั้น 1 — Primary Packing</h3>
+<pre>Mogu 1000: วาง 3 กอง × 8 ชั้น → บรรจุครบ 540
+Mogu 320:  วาง 3 กอง × 13 ชั้น → บรรจุครบ 850</pre>
+
+  <h3>ขั้น 2–4 — Balancing</h3>
+<pre>ปรับให้กองแต่ละกองของสินค้าเดียวกันมีจำนวนชั้นใกล้เคียงกัน ±1 ชั้น</pre>
+
+  <h3>ขั้น 5 — Sort</h3>
+<pre>กองที่มีชั้นน้อยกว่า → เลื่อนไปใกล้ประตูมากขึ้น</pre>
+
+  <h3>ขั้น 6–7 — Condo + Scatter</h3>
+<pre>ถ้ายังมีกล่องเหลือหลัง Primary:
+  Condo  → วางคอลัมน์ที่ condoAreaStart จนหมดหรือไม่พอ 1 คอลัมน์เต็ม
+  Scatter → เอากล่องที่เหลือทับยอดกองเดิม เลือกกองสั้นสุดก่อน</pre>
+
+  <div class="callout tip">
+    <span class="ci">✅</span>
+    <div>
+      ผลลัพธ์ที่คาดหวัง: <strong>Mogu 1000 ML ครบ 540, Mogu 320 ML ครบ 850</strong>
+      ทุกกล่องอยู่ภายในขอบตู้ ไม่มีกล่องล้น ไม่มีการข้ามสินค้า
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SEC 7: GUARANTEES ═══════════════ -->
+<div class="page">
+  <div class="page-band">
+    <div class="band-num">07</div>
+    <div>
+      <div class="band-title">การรับประกันและข้อจำกัด</div>
+      <span class="band-sub">Guarantees &amp; Known Limitations</span>
+    </div>
+  </div>
+
+  <h2>การรับประกันของ Algorithm</h2>
+  <div class="gguarantees">
+    <div class="gg">
+      <span class="gg-icon">🔒</span>
+      <div>
+        <div class="gg-title">ไม่มีกล่องล้นตู้</div>
+        <div class="gg-desc">ทุก BoxPlacement ถูกตรวจสอบให้อยู่ภายใน InteriorW × InteriorL × InteriorH เสมอ</div>
+      </div>
+    </div>
+    <div class="gg">
+      <span class="gg-icon">📊</span>
+      <div>
+        <div class="gg-title">ไม่วางเกินจำนวนที่ต้องการ</div>
+        <div class="gg-desc">Packed ≤ Requested ทุกสินค้า ระบบหยุดเมื่อถึงจำนวนพอดี</div>
+      </div>
+    </div>
+    <div class="gg">
+      <span class="gg-icon">🏗️</span>
+      <div>
+        <div class="gg-title">ชั้นต้องต่อเนื่อง</div>
+        <div class="gg-desc">ไม่มีช่องว่างระหว่างชั้น ทุกกล่องมีฐานรองรับ ไม่มีกล่องลอยอากาศ</div>
+      </div>
+    </div>
+    <div class="gg">
+      <span class="gg-icon">🚫</span>
+      <div>
+        <div class="gg-title">สินค้าไม่ข้ามกอง</div>
+        <div class="gg-desc">Scatter วางเฉพาะกล่องสินค้าเดิมทับกองของสินค้านั้นเท่านั้น</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>ลำดับความสำคัญ</h2>
+  <table class="priority">
+    <thead><tr><th>ลำดับ</th><th>เป้าหมาย</th><th>วิธีการ</th></tr></thead>
+    <tbody>
+      <tr><td>1st</td><td>วางกล่องให้ได้มากที่สุด</td><td>Primary → Condo → Scatter</td></tr>
+      <tr><td>2nd</td><td>ใช้พื้นที่ตู้อย่างสม่ำเสมอ</td><td>EffectiveLayers + Balancing</td></tr>
+      <tr><td>3rd</td><td>กองสั้นอยู่ใกล้ประตู (ขนง่าย)</td><td>Sort Stacks by Height</td></tr>
+      <tr><td>4th</td><td>ความสูงกองสินค้าเดียวกันใกล้เคียงกัน</td><td>Layer Balancing</td></tr>
+    </tbody>
+  </table>
+
+  <h2>ข้อจำกัดที่ทราบ</h2>
+  <div class="callout danger">
+    <span class="ci">⛔</span>
+    <div><strong>สินค้าที่ไม่มี Pattern</strong> จะไม่ถูกวางเลยในทุกขั้นตอน ต้องกำหนด PatternA ก่อน</div>
+  </div>
+  <div class="callout warn">
+    <span class="ci">⚠️</span>
+    <div><strong>Condo รองรับเฉพาะกล่องที่มีพอเต็ม 1 คอลัมน์</strong> (cols × targetLayers) ถ้าน้อยกว่าจะใช้ Scatter แทน</div>
+  </div>
+  <div class="callout info">
+    <span class="ci">ℹ️</span>
+    <div>Algorithm <strong>ไม่รองรับหลายสินค้าปนกันในกองเดียว</strong> — แต่ละกองมีสินค้าชนิดเดียว ตามความต้องการด้านการจัดการโกดัง</div>
+  </div>
+
+  <div style="margin-top:40px; padding:14px 20px; background:var(--navy); border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+    <span style="color:var(--gold); font-weight:700; font-size:11pt;">📦 CargoFit</span>
+    <span style="color:rgba(255,255,255,0.5); font-size:8.5pt;">Container Packing Engine v1.0.4 — พฤษภาคม 2569</span>
+  </div>
+</div>
+
+</body>
+</html>
