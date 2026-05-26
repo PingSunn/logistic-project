@@ -23,14 +23,19 @@ public class App : Application
 
     private static async System.Threading.Tasks.Task StartAsync(IClassicDesktopStyleApplicationLifetime desktop)
     {
-        var result = await LicenseManager.EnforceAsync();
-        if (!result.IsOk)
+        // DEV BYPASS: ข้าม license check ชั่วคราว — ลบออกก่อน build release
+        bool devBypass = Environment.GetEnvironmentVariable("CARGOFIT_DEV") == "1";
+        if (!devBypass)
         {
-            var activated = await LicenseWindow.ShowAndActivateAsync(result);
-            if (!activated)
+            var result = await LicenseManager.EnforceAsync();
+            if (!result.IsOk)
             {
-                desktop.Shutdown(1);
-                return;
+                var activated = await LicenseWindow.ShowAndActivateAsync(result);
+                if (!activated)
+                {
+                    desktop.Shutdown(1);
+                    return;
+                }
             }
         }
 
@@ -42,8 +47,11 @@ public class App : Application
         desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
         main.Show();
 
-        LicenseManager.Lost += lost => Dispatcher.UIThread.Post(() => OnLicenseLost(desktop, lost));
-        LicenseManager.StartBackgroundHeartbeat();
+        if (!devBypass)
+        {
+            LicenseManager.Lost += lost => Dispatcher.UIThread.Post(() => OnLicenseLost(desktop, lost));
+            LicenseManager.StartBackgroundHeartbeat();
+        }
     }
 
     private static async void OnLicenseLost(IClassicDesktopStyleApplicationLifetime desktop, LicenseResult lost)

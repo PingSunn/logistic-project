@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Console app — supports trimming unlike WinForms, gives ~5-8 MB single file -->
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+
+    <!-- Output filename -->
+    <AssemblyName>CargoFit-Installer</AssemblyName>
+    <RootNamespace>CargoFit.Installer</RootNamespace>
+
+    <!-- Identity -->
+    <Version>1.0.0</Version>
+    <Product>CargoFit Installer</Product>
+    <Description>ตัวติดตั้ง CargoFit — ดาวน์โหลดและติดตั้งเวอร์ชันล่าสุดอัตโนมัติ</Description>
+    <Company>CargoFit</Company>
+    <Copyright>Copyright © 2025 CargoFit</Copyright>
+
+    <!-- Size reduction: self-contained single-file trimmed ~5-8 MB -->
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <PublishTrimmed>true</PublishTrimmed>
+
+    <!-- Thai console output: UTF-8 -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- No extra NuGet packages — System.Net.Http + System.Text.Json are inbox in net10 -->
+
+</Project>

@@ -78,10 +78,49 @@ jobs:
           name: releases-${{ matrix.rid }}
           path: dist/releases/
 
+  # ── Build stub installer (Windows-only) ──────────────────────────────────────
+  build-installer:
+    name: Build Stub Installer
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Strip "v" prefix: v1.2.3 → 1.2.3
+      - name: Extract version
+        id: ver
+        shell: bash
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Publish stub installer
+        shell: bash
+        run: |
+          dotnet publish CargoFit.Installer/CargoFit.Installer.csproj \
+            -c Release \
+            -r win-x64 \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:EnableCompressionInSingleFile=true \
+            -p:PublishTrimmed=true \
+            -p:Version=${{ steps.ver.outputs.version }} \
+            -o dist/installer
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: stub-installer
+          path: dist/installer/CargoFit-Installer.exe
+
   # ── Merge all platform artifacts → publish GitHub Release ────────────────────
   release:
     name: Publish GitHub Release
-    needs: build
+    needs: [build, build-installer]
     runs-on: ubuntu-latest
     permissions:
       contents: write   # needed to create releases + upload assets
@@ -97,12 +136,20 @@ jobs:
           path: dist/releases
           merge-multiple: true
 
+      # Download stub installer separately
+      - name: Download stub installer
+        uses: actions/download-artifact@v7
+        with:
+          name: stub-installer
+          path: dist/
+
       - name: List release assets
-        run: ls -lh dist/releases/
+        run: ls -lh dist/ dist/releases/
 
       # gh CLI is pre-installed on all GitHub Actions runners
       # ไม่ใช้ vpk upload github เพราะมันดู channel ของ runner (linux) ไม่ใช่ของที่ pack ไว้
       # อัปโหลดเฉพาะไฟล์ที่จำเป็น — ลด clutter ใน release
+      # CargoFit-Installer.exe ไว้บนสุด = prominent ใน GitHub Release page
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -110,6 +157,7 @@ jobs:
           gh release create "${{ github.ref_name }}" \
             --title "CargoFit ${{ github.ref_name }}" \
             --repo "PingSunn/cargofit" \
+            dist/CargoFit-Installer.exe \
             dist/releases/CargoFit-win-Setup.exe \
             dist/releases/CargoFit-osx-Setup.pkg \
             dist/releases/CargoFit-*-full.nupkg \

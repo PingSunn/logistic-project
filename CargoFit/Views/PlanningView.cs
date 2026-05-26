@@ -696,6 +696,9 @@ public class PlanningView : UserControl
 
     private async System.Threading.Tasks.Task<bool> RequireLicenseAsync()
     {
+        // DEV BYPASS: ลบออกก่อน build release
+        if (Environment.GetEnvironmentVariable("CARGOFIT_DEV") == "1") return true;
+
         var result = await LicenseManager.EnsureFreshAsync();
         if (result.IsOk) return true;
         await ShowErrorAsync(LicenseGateMessage(result.Status));

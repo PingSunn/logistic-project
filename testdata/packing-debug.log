@@ -1,0 +1,58 @@
+
+=== [INPUT] ===
+  Container : ตู้ยาว 40 ft  interior=234×1199×250 cm
+  Requests  : 4 products
+    [0] Aloe 365 ML Pack 24  qty=200  box=21.9×33.4×20.5  maxLayers=10  hasPattern=True
+    [1] Mogu 320 ML Pack 24  qty=1100  box=25.8×38.5×15.7  maxLayers=13  hasPattern=True
+    [2] Mogu Tea 450 ML Pack 24  qty=340  box=25.8×39×20.3  maxLayers=10  hasPattern=True
+    [3] Mogu 1000 ML Pack 12  qty=625  box=26.2×34.8×26.7  maxLayers=8  hasPattern=True
+  EffectiveLayers: [0]=9  [1]=12  [2]=9  [3]=7
+
+=== [PRIMARY PACKING] ===
+  [0] Aloe 365 ML  startY=0.0  effectiveLayers=9  hasPattern=True
+    → placed=189  endY=66.8  fullStacks=1  partial=0
+  [1] Mogu 320 ML  startY=66.8  effectiveLayers=12  hasPattern=True
+    → placed=1080  endY=479.6  fullStacks=3  partial=216
+  [2] Mogu Tea 450 ML  startY=479.6  effectiveLayers=9  hasPattern=True
+    → placed=324  endY=635.6  fullStacks=2  partial=0
+  [3] Mogu 1000 ML  startY=635.6  effectiveLayers=7  hasPattern=True
+    → placed=624  endY=1054.8  fullStacks=3  partial=78
+  PrimaryDone: currentY=1054.8  placed=2217
+
+=== [BALANCING] ===
+  StepA (fill Y): currentY=1054.8  fillLimit=1149.0
+  StepB (height balance): targets=[0]=9  [1]=12  [2]=9  [3]=7
+  StepC (sync counts):
+    [0] Aloe 365 ML: packed=189→189  rem=11
+    [1] Mogu 320 ML: packed=1080→1080  rem=20
+    [2] Mogu Tea 450 ML: packed=324→324  rem=16
+    [3] Mogu 1000 ML: packed=624→624  rem=1
+  BalancingDone: currentY=1054.8  placed=2217
+
+=== [LAYER BALANCING] ===
+    [1] Mogu: stack2(h=12) layer11→stack3(h=9) layer9  moved=24
+    [1] Mogu: stack1(h=12) layer11→stack3(h=10) layer10  moved=24
+    [3] Mogu: stack2(h=7) layer6→stack3(h=3) layer3  moved=26
+    [3] Mogu: stack1(h=7) layer6→stack3(h=4) layer4  moved=26
+    [3] Mogu: stack0(h=7) layer6→stack3(h=5) layer5  moved=26
+  LayerBalancingDone: placed=2217
+
+=== [PARTIAL REMOVAL] ===
+  Removed 0 boxes  currentY=1054.8
+
+=== [CONDO PLACEMENT] ===
+  CondoStartY=1054.8  available=144.2 cm
+
+=== [SCATTER TOP PLACEMENT] ===
+    [0] Aloe 365 ML: scatterPlaced=11
+    [1] Mogu 320 ML: scatterPlaced=20
+    [2] Mogu Tea 450 ML: scatterPlaced=16
+    [3] Mogu 1000 ML: scatterPlaced=1
+
+=== [OUTPUT SUMMARY] ===
+  Total placements: 2265  CBM: 42.313/70.141 (60.3%)
+    [0] Aloe 365 ML  packed=189  primary=200  condo=0  scatter=11
+    [1] Mogu 320 ML  packed=1080  primary=1100  condo=0  scatter=20
+    [2] Mogu Tea 450 ML  packed=324  primary=340  condo=0  scatter=16
+    [3] Mogu 1000 ML  packed=624  primary=625  condo=0  scatter=1
+    BBox: maxX=232.8  maxY=1054.8  maxZ=205.0

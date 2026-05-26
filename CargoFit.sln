@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoFit", "CargoFit\CargoFit.csproj", "{A9961B8C-83E9-418F-91CE-CD28FD30E0CF}"
 EndProject
@@ -9,6 +9,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoFit.LicenseServer", "CargoFit.LicenseServer\CargoFit.LicenseServer.csproj", "{F355014A-EA1E-47F1-9025-76A44B4C6BDF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoFit.LicenseAdmin", "CargoFit.LicenseAdmin\CargoFit.LicenseAdmin.csproj", "{9439443D-F2B3-45AB-9E96-08CA280EF621}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoFit.Installer", "CargoFit.Installer\CargoFit.Installer.csproj", "{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,18 @@ Global
 		{9439443D-F2B3-45AB-9E96-08CA280EF621}.Release|x64.Build.0 = Release|Any CPU
 		{9439443D-F2B3-45AB-9E96-08CA280EF621}.Release|x86.ActiveCfg = Release|Any CPU
 		{9439443D-F2B3-45AB-9E96-08CA280EF621}.Release|x86.Build.0 = Release|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Debug|x64.Build.0 = Debug|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Debug|x86.Build.0 = Debug|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Release|x64.ActiveCfg = Release|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Release|x64.Build.0 = Release|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Release|x86.ActiveCfg = Release|Any CPU
+		{9547F0BB-B91F-4484-AECC-FE0CB1B456E2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
