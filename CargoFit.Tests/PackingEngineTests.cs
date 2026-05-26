@@ -760,5 +760,33 @@ public class PackingEngineTests
                 }
             }
         }
+
+        // Condo-at-innermost: if any condo boxes exist, they must occupy Y=0 (back wall)
+        // and all primary boxes must start at Y >= condoDepth.
+        var condoBoxes = output.Placements
+            .Where(p => p.StackIndex >= PackingEngine.CondoStackBase)
+            .ToList();
+
+        if (condoBoxes.Count > 0)
+        {
+            double condoMinY = condoBoxes.Min(p => p.Y);
+            double condoMaxY = condoBoxes.Max(p => p.Y + p.BL);
+
+            Assert.True(condoMinY < 0.01,
+                $"Condo must start at Y=0 (back wall / innermost); got condoMinY={condoMinY:F3}");
+
+            double condoDepth = condoMaxY - condoMinY;
+
+            var primaryBoxes = output.Placements
+                .Where(p => p.StackIndex < PackingEngine.CondoStackBase)
+                .ToList();
+
+            foreach (var p in primaryBoxes)
+            {
+                Assert.True(p.Y >= condoDepth - 0.01,
+                    $"Primary box (product={p.ProductIndex}, SI={p.StackIndex}) at Y={p.Y:F1} " +
+                    $"overlaps condo zone [0, {condoDepth:F1}] — primary must start after condoDepth");
+            }
+        }
     }
 }
