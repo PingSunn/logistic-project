@@ -20,3 +20,4 @@ license-cache.json
 *.nupkg
 *.snupkg
 .env
+testdata/packing-debug.log

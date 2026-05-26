@@ -41,14 +41,85 @@ internal static class PackingEngine
         var dims = new ContainerDims(container.InteriorW, container.InteriorL, container.InteriorH);
         var placements = new List<BoxPlacement>();
 
+        // ── Input summary ─────────────────────────────────────────────────────
+        if (PackingLog.IsEnabled)
+        {
+            PackingLog.Phase("INPUT");
+            PackingLog.Info($"Container : {container.Name} {container.SizeLabel}  interior={dims.W}×{dims.L}×{dims.H} cm");
+            PackingLog.Info($"Requests  : {requests.Count} products");
+            for (int i = 0; i < requests.Count; i++)
+            {
+                var (s, qty) = requests[i];
+                bool hp = s.PatternA is { Length: > 0 };
+                PackingLog.Info($"  [{i}] {s.Description} {s.Content} {s.PackSize}  qty={qty}  box={s.W}×{s.L}×{s.H}  maxLayers={s.MaxLayers}  hasPattern={hp}");
+            }
+        }
+
         var effectiveLayers = ComputeEffectiveLayers(dims, requests);
+        if (PackingLog.IsEnabled)
+            PackingLog.Info($"EffectiveLayers: {string.Join("  ", effectiveLayers.Select((v, i) => $"[{i}]={v}"))}");
+
+        // ── Primary ───────────────────────────────────────────────────────────
+        PackingLog.Phase("PRIMARY PACKING");
         var packInfos = RunPrimaryPacking(dims, requests, placements, out double currentY, effectiveLayers);
+        if (PackingLog.IsEnabled)
+            PackingLog.Info($"PrimaryDone: currentY={currentY:F1}  placed={placements.Count}");
+
+        // ── Balancing ─────────────────────────────────────────────────────────
+        PackingLog.Phase("BALANCING");
         RunBalancing(packInfos, dims, placements, ref currentY, effectiveLayers);
+        if (PackingLog.IsEnabled)
+            PackingLog.Info($"BalancingDone: currentY={currentY:F1}  placed={placements.Count}");
+
+        // ── Layer balancing ───────────────────────────────────────────────────
+        PackingLog.Phase("LAYER BALANCING");
         RunLayerBalancing(packInfos, dims, placements);
+        if (PackingLog.IsEnabled)
+            PackingLog.Info($"LayerBalancingDone: placed={placements.Count}");
+
+        // ── Partial removal ───────────────────────────────────────────────────
+        PackingLog.Phase("PARTIAL REMOVAL");
+        int beforeRemoval = placements.Count;
         RunPartialRemoval(packInfos, dims, placements, ref currentY);
+        if (PackingLog.IsEnabled)
+            PackingLog.Info($"Removed {beforeRemoval - placements.Count} boxes  currentY={currentY:F1}");
+
         SortStacksByHeight(packInfos, placements, dims);
-        var condoMap   = RunCondoPlacement(packInfos, dims, currentY, placements);
+
+        // ── Condo ─────────────────────────────────────────────────────────────
+        PackingLog.Phase("CONDO PLACEMENT");
+        if (PackingLog.IsEnabled)
+            PackingLog.Info($"CondoStartY={currentY:F1}  available={dims.L - currentY:F1} cm");
+        var condoMap = RunCondoPlacement(packInfos, dims, currentY, placements);
+        if (PackingLog.IsEnabled)
+            foreach (var (k, v) in condoMap)
+                PackingLog.Info($"  [{k}] {requests[k].Spec.Description} {requests[k].Spec.Content}: condoPlaced={v}");
+
+        // ── Scatter ───────────────────────────────────────────────────────────
+        PackingLog.Phase("SCATTER TOP PLACEMENT");
         var scatterMap = RunScatteredTopPlacement(packInfos, dims, placements);
+        if (PackingLog.IsEnabled)
+            foreach (var (k, v) in scatterMap)
+                PackingLog.Info($"  [{k}] {requests[k].Spec.Description} {requests[k].Spec.Content}: scatterPlaced={v}");
+
+        // ── Output summary ────────────────────────────────────────────────────
+        if (PackingLog.IsEnabled)
+        {
+            PackingLog.Phase("OUTPUT SUMMARY");
+            double containerCbm = dims.W * dims.L * dims.H / 1_000_000.0;
+            double usedCbm      = placements.Sum(p => p.BW * p.BL * p.BH / 1_000_000.0);
+            double pct          = containerCbm > 0 ? usedCbm / containerCbm * 100 : 0;
+            PackingLog.Info($"Total placements: {placements.Count}  CBM: {usedCbm:F3}/{containerCbm:F3} ({pct:F1}%)");
+            foreach (var info in packInfos)
+            {
+                int pri     = placements.Count(p => p.ProductIndex == info.ProductIndex && p.StackIndex < CondoStackBase);
+                int condo   = condoMap.GetValueOrDefault(info.ProductIndex, 0);
+                int scatter = scatterMap.GetValueOrDefault(info.ProductIndex, 0);
+                PackingLog.Info($"  [{info.ProductIndex}] {info.Spec.Description} {info.Spec.Content}  packed={info.Result.Packed}  primary={pri}  condo={condo}  scatter={scatter}");
+            }
+            if (placements.Count > 0)
+                PackingLog.Info($"  BBox: maxX={placements.Max(p => p.X + p.BW):F1}  maxY={placements.Max(p => p.Y + p.BL):F1}  maxZ={placements.Max(p => p.Z + p.BH):F1}");
+        }
 
         return new PackingOutput(placements, packInfos, new Dictionary<int,int>(), condoMap, scatterMap);
     }
@@ -66,6 +137,9 @@ internal static class PackingEngine
             bool hasPattern = spec.PatternA is { Length: > 0 };
             double productStartY = currentY;
 
+            if (PackingLog.IsEnabled)
+                PackingLog.Info($"[{i}] {spec.Description} {spec.Content}  startY={productStartY:F1}  effectiveLayers={effectiveLayers[i]}  hasPattern={hasPattern}");
+
             PlaceResult r;
             if (hasPattern)
             {
@@ -77,6 +151,15 @@ internal static class PackingEngine
             {
                 r = new PlaceResult(0, currentY, 0, 0);
             }
+
+            if (PackingLog.IsEnabled)
+            {
+                if (hasPattern)
+                    PackingLog.Info($"  → placed={r.Packed}  endY={r.EndY:F1}  fullStacks={r.FullStacks}  partial={r.PartialBoxes}");
+                else
+                    PackingLog.Info($"  → no pattern, skipped");
+            }
+
             packInfos.Add(new PackInfo(spec, i, requested, productStartY, r, hasPattern));
         }
 
@@ -90,6 +173,9 @@ internal static class PackingEngine
         // ── Step A: Fill free Y with more primary stacks ──────────────────────
         // Leave 50 cm for condo/mixed; keep adding stacks while space remains.
         var fillDims = dims with { L = dims.L - 50.0 };
+
+        if (PackingLog.IsEnabled)
+            PackingLog.Info($"StepA (fill Y): currentY={currentY:F1}  fillLimit={fillDims.L:F1}");
 
         bool anyAdded = true;
         while (anyAdded && fillDims.L - currentY > 0)
@@ -126,6 +212,8 @@ internal static class PackingEngine
                                      overrideMaxLayers: effectiveLayers[info.ProductIndex]);
                 if (r.Packed > 0)
                 {
+                    if (PackingLog.IsEnabled)
+                        PackingLog.Info($"  [{info.ProductIndex}] added stack{nextSI}  placed={r.Packed}  newEndY={r.EndY:F1}  rem→{rem - r.Packed}");
                     currentY = Math.Max(currentY, r.EndY);
                     anyAdded = true;
                 }
@@ -133,6 +221,9 @@ internal static class PackingEngine
         }
 
         // ── Step B: Global height balance (average target, ±1 layer) ──────────
+        if (PackingLog.IsEnabled)
+            PackingLog.Info($"StepB (height balance): targets={string.Join("  ", effectiveLayers.Select((v, i) => $"[{i}]={v}"))}");
+
         var active = packInfos
             .Where(info => info.HasPattern &&
                    placements.Any(p => p.ProductIndex == info.ProductIndex && p.StackIndex < CondoStackBase))
@@ -168,7 +259,10 @@ internal static class PackingEngine
                             p.LayerIndex   >= targetLayers);
                         int after = placements.Count(p =>
                             p.ProductIndex == info.ProductIndex && p.StackIndex == si);
-                        primaryPacked -= before - after;
+                        int trimmed = before - after;
+                        primaryPacked -= trimmed;
+                        if (PackingLog.IsEnabled)
+                            PackingLog.Info($"  [{info.ProductIndex}] stack{si}: {current}→{targetLayers} layers (trimmed {trimmed})");
                     }
                     else if (current < targetLayers)
                     {
@@ -199,12 +293,16 @@ internal static class PackingEngine
         }
 
         // ── Step C: Sync PackInfo.Result.Packed ───────────────────────────────
+        if (PackingLog.IsEnabled)
+            PackingLog.Info("StepC (sync counts):");
         for (int i = 0; i < packInfos.Count; i++)
         {
             var info = packInfos[i];
             if (!info.HasPattern) continue;
             int actual = placements.Count(p =>
                 p.ProductIndex == info.ProductIndex && p.StackIndex < CondoStackBase);
+            if (PackingLog.IsEnabled)
+                PackingLog.Info($"  [{info.ProductIndex}] {info.Spec.Description} {info.Spec.Content}: packed={info.Result.Packed}→{actual}  rem={info.Requested - actual}");
             packInfos[i] = info with { Result = info.Result with { Packed = actual } };
         }
     }
@@ -226,7 +324,10 @@ internal static class PackingEngine
                 .ToList();
             if (stacks.Count < 2 || stacks[^1].Layers >= stacks[^2].Layers - 1) continue;
 
-            int maxSI = stacks[^1].Key;
+            int maxSI    = stacks[^1].Key;
+            int removing = placements.Count(p => p.ProductIndex == info.ProductIndex && p.StackIndex == maxSI);
+            if (PackingLog.IsEnabled)
+                PackingLog.Info($"  [{info.ProductIndex}] {info.Spec.Description}: stack{maxSI} layers={stacks[^1].Layers} < prev={stacks[^2].Layers-1}  removing {removing} boxes");
             placements.RemoveAll(p => p.ProductIndex == info.ProductIndex && p.StackIndex == maxSI);
         }
 
@@ -662,6 +763,9 @@ internal static class PackingEngine
 
                 int capacity = CountLayerCapacity(sections, info.Spec, dims, low.StackY);
                 if (capacity != removedCount) break;
+
+                if (PackingLog.IsEnabled)
+                    PackingLog.Info($"  [{info.ProductIndex}] {info.Spec.Description}: stack{tall.SI}(h={tall.Height}) layer{removeLayer}→stack{low.SI}(h={low.Height}) layer{nextLayer}  moved={capacity}");
 
                 placements.RemoveAll(p =>
                     p.ProductIndex == info.ProductIndex &&
