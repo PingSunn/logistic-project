@@ -102,6 +102,14 @@ internal static class PackingEngine
             foreach (var (k, v) in scatterMap)
                 PackingLog.Info($"  [{k}] {requests[k].Spec.Description} {requests[k].Spec.Content}: scatterPlaced={v}");
 
+        // ── Move condo to innermost (Y=0) ─────────────────────────────────────
+        // Primary stacks fill from condoDepth toward the door (high Y).
+        // Condo sits at Y=0 (back wall / innermost) — loaded first.
+        PackingLog.Phase("MOVE CONDO TO INNERMOST");
+        MoveCandoToInnermost(placements);
+        if (PackingLog.IsEnabled && placements.Count > 0)
+            PackingLog.Info($"  After swap: BBoxY=[{placements.Min(p => p.Y):F1}, {placements.Max(p => p.Y + p.BL):F1}]");
+
         // ── Output summary ────────────────────────────────────────────────────
         if (PackingLog.IsEnabled)
         {
@@ -496,6 +504,43 @@ internal static class PackingEngine
         }
 
         return scatterMap;
+    }
+
+    /// <summary>
+    /// Moves all condo boxes to Y=0 (innermost/back wall) and shifts primary stacks
+    /// (including scatter) upward by the condo depth so they fill from condoDepth toward
+    /// the door. No-op when there are no condo boxes.
+    /// </summary>
+    private static void MoveCandoToInnermost(List<BoxPlacement> placements)
+    {
+        if (placements.Count == 0) return;
+
+        // Identify condo boxes (StackIndex >= CondoStackBase).
+        double condoMin = double.MaxValue;
+        double condoMax = double.MinValue;
+        bool   hasCondo = false;
+
+        foreach (var p in placements)
+        {
+            if (p.StackIndex < CondoStackBase) continue;
+            hasCondo = true;
+            if (p.Y           < condoMin) condoMin = p.Y;
+            if (p.Y + p.BL    > condoMax) condoMax = p.Y + p.BL;
+        }
+
+        if (!hasCondo) return;
+
+        double condoDepth  = condoMax - condoMin;
+        double condoShift  = -condoMin;          // translate condo so its start = Y=0
+        double primaryShift = condoDepth;        // shift primary/scatter up by condo depth
+
+        for (int i = 0; i < placements.Count; i++)
+        {
+            var p = placements[i];
+            placements[i] = p.StackIndex >= CondoStackBase
+                ? p with { Y = p.Y + condoShift }
+                : p with { Y = p.Y + primaryShift };
+        }
     }
 
     private record struct ScatterStack(int SI, double StackY, int TopLayer, double TopZ);
