@@ -362,10 +362,15 @@ internal static class PackingEngine
         // will reach after scatter top-up — i.e. min(MaxLayers, floor(H/spec.H)) × spec.H
         // of the adjacent product. Using "current TopZ" before scatter would
         // under-estimate, leaving condo columns >1 layer below primary.
+        // BUG FIX: group by (ProductIndex, StackIndex) — StackIndex is per-product,
+        // not global. Grouping by StackIndex alone merges stacks from different products
+        // (e.g. Mogu320 Stack=1 and Mogu1000 Stack=1 collapse into one group whose
+        // g.First() returns the first-placed product, yielding the wrong adjSpec and
+        // an under-estimated targetCondoZ → fewer condo layers than the container allows).
         var adjacent = placements
             .Where(p => p.StackIndex < CondoStackBase)
-            .GroupBy(p => p.StackIndex)
-            .Select(g => new { EndY = g.Max(p => p.Y + p.BL), ProductIndex = g.First().ProductIndex })
+            .GroupBy(p => (p.ProductIndex, p.StackIndex))
+            .Select(g => new { EndY = g.Max(p => p.Y + p.BL), ProductIndex = g.Key.ProductIndex })
             .OrderByDescending(s => s.EndY)
             .FirstOrDefault();
 
@@ -395,8 +400,10 @@ internal static class PackingEngine
             int cols = colsMap[info.ProductIndex];
             if (cols <= 0) continue;
 
+            // 1e-9 epsilon guards against float imprecision when targetCondoZ is an
+            // exact multiple of spec.H (e.g. 9×26.7 = 240.299... → ratio = 8.9999...).
             int targetLayers = Math.Min(
-                (int)Math.Floor(targetCondoZ / info.Spec.H),
+                (int)Math.Floor(targetCondoZ / info.Spec.H + 1e-9),
                 (int)Math.Floor(dims.H / info.Spec.H));
             if (targetLayers <= 0) continue;
 
