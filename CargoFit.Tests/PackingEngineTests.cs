@@ -669,4 +669,96 @@ public class PackingEngineTests
             Assert.Equal(0, aloeCondo % cols);
         }
     }
+
+    // ── Scenario 16: Y=0 is back wall — SI=0 is innermost per product ────────
+    // Verifies the Y-origin convention: within each product's primary stacks,
+    // StackIndex 0 must sit at the lowest Y (back wall / innermost), and each
+    // successive StackIndex must have a higher MinY (toward door).
+    // Also checks that SortStacksByHeight places taller stacks at lower Y.
+
+    [Fact]
+    public void StackIndex0_IsInnermostPerProduct_Y0IsBackWall()
+    {
+        var container = TestHelpers.Container20ft();
+
+        var mogu1000 = new ProductSpec("Mogu", "1000 ML", "Pack 12", 13.47,
+            26.2, 34.8, 26.7,
+            PatternA: [new LayerSection(4, 2, true), new LayerSection(3, 6, false)],
+            PatternB: [new LayerSection(3, 6, false), new LayerSection(4, 2, true)],
+            MaxLayers: 8, CondoCount: 9);
+
+        var mogu320 = new ProductSpec("Mogu", "320 ML", "Pack 24", 8.7,
+            25.8, 38.5, 15.7,
+            PatternA:
+            [
+                new LayerSection(4, 1, true),
+                new LayerSection(0, 0, false, [new SectionSubRow(1, 3, false), new SectionSubRow(1, 2, true), new SectionSubRow(1, 3, false)]),
+                new LayerSection(0, 0, false, [new SectionSubRow(1, 3, false), new SectionSubRow(1, 2, true), new SectionSubRow(1, 3, false)]),
+                new LayerSection(4, 1, true),
+            ],
+            PatternB:
+            [
+                new LayerSection(0, 0, false, [new SectionSubRow(1, 3, false), new SectionSubRow(1, 2, true), new SectionSubRow(1, 3, false)]),
+                new LayerSection(4, 1, true),
+                new LayerSection(4, 1, true),
+                new LayerSection(0, 0, false, [new SectionSubRow(1, 3, false), new SectionSubRow(1, 2, true), new SectionSubRow(1, 3, false)]),
+            ],
+            MaxLayers: 13, CondoCount: 9);
+
+        var requests = new List<(ProductSpec, int)>
+        {
+            (mogu1000, 540),
+            (mogu320,  850),
+        };
+        var output = PackingEngine.Calculate(container, requests);
+
+        TestHelpers.DumpOutput(container, requests, output, _log);
+
+        AssertBounds(output, container);
+        AssertPackedLeRequested(output, requests);
+
+        foreach (var info in output.PackInfos)
+        {
+            if (!info.HasPattern) continue;
+
+            // Gather primary stacks: (SI, MinY) sorted by SI ascending.
+            var primaryStacks = output.Placements
+                .Where(p => p.ProductIndex == info.ProductIndex && p.StackIndex < PackingEngine.CondoStackBase)
+                .GroupBy(p => p.StackIndex)
+                .Select(g => (SI: g.Key, MinY: g.Min(p => p.Y), MaxLayer: g.Max(p => p.LayerIndex)))
+                .OrderBy(s => s.SI)
+                .ToList();
+
+            if (primaryStacks.Count < 2) continue;
+
+            // Convention: SI=0 must be at the lowest MinY (back wall / innermost).
+            double si0MinY = primaryStacks.First(s => s.SI == 0).MinY;
+            foreach (var s in primaryStacks)
+            {
+                Assert.True(s.MinY >= si0MinY - 0.01,
+                    $"Product {info.ProductIndex}: stack SI={s.SI} MinY={s.MinY:F1} is below SI=0 MinY={si0MinY:F1} — SI=0 must be innermost (lowest Y)");
+            }
+
+            // Convention: MinY must be non-decreasing with SI (stacks ordered back→door).
+            for (int i = 1; i < primaryStacks.Count; i++)
+            {
+                Assert.True(primaryStacks[i].MinY >= primaryStacks[i - 1].MinY - 0.01,
+                    $"Product {info.ProductIndex}: SI={primaryStacks[i].SI} MinY={primaryStacks[i].MinY:F1} < SI={primaryStacks[i-1].SI} MinY={primaryStacks[i-1].MinY:F1} — stacks must be ordered innermost→door");
+            }
+
+            // SortStacksByHeight: tallest stack (highest MaxLayer) must have the smallest MinY.
+            int maxH = primaryStacks.Max(s => s.MaxLayer);
+            var tallest = primaryStacks.Where(s => s.MaxLayer == maxH).ToList();
+            double tallestMinY = tallest.Min(s => s.MinY);
+            foreach (var s in primaryStacks)
+            {
+                if (s.MaxLayer < maxH)
+                {
+                    Assert.True(s.MinY >= tallestMinY - 0.01,
+                        $"Product {info.ProductIndex}: shorter stack SI={s.SI} (h={s.MaxLayer}) at MinY={s.MinY:F1} " +
+                        $"should not be closer to back wall than tallest (h={maxH}) at MinY={tallestMinY:F1}");
+                }
+            }
+        }
+    }
 }
