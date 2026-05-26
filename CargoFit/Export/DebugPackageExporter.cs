@@ -125,19 +125,7 @@ internal static class DebugPackageExporter
                 condoPlaced   = r.CondoPlaced,
                 scatterPlaced = r.ScatterPlaced,
             }).ToList(),
-            placements = output.Placements.Select(p => new
-            {
-                x            = p.X,
-                y            = p.Y,
-                z            = p.Z,
-                bw           = p.BW,
-                bl           = p.BL,
-                bh           = p.BH,
-                productIndex = p.ProductIndex,
-                rotated      = p.Rotated,
-                stackIndex   = p.StackIndex,
-                layerIndex   = p.LayerIndex,
-            }).ToList(),
+            replayNote = "To reproduce exact placements: re-run PackingEngine.Calculate(container, requests) with the data above.",
         };
 
         return JsonSerializer.SerializeToUtf8Bytes(doc, JsonOptions.WriteIndented);
