@@ -146,8 +146,8 @@ internal static partial class PdfExporter
                     Layers: layers));
             }
 
-            // Innermost first (highest avg Y)
-            var sorted = raw.OrderByDescending(u => u.AvgY).ToList();
+            // Innermost first (lowest avg Y — Y=0 is back wall)
+            var sorted = raw.OrderBy(u => u.AvgY).ToList();
 
             // Assign per-product primary-stack ordinals (innermost = #1).
             var ordinalByKey = new Dictionary<(int Pi, int Si), (int Ord, int Total)>();
@@ -155,7 +155,7 @@ internal static partial class PdfExporter
                                         .Where(u => u.Kind == UnitKind.PrimaryStack)
                                         .GroupBy(u => u.ProductIndex!.Value))
             {
-                var stacksInner = byProduct.OrderByDescending(u => u.AvgY).ToList();
+                var stacksInner = byProduct.OrderBy(u => u.AvgY).ToList();
                 int total = stacksInner.Count;
                 for (int i = 0; i < total; i++)
                     ordinalByKey[(stacksInner[i].ProductIndex!.Value, stacksInner[i].StackIndex!.Value)] = (i + 1, total);
@@ -294,7 +294,7 @@ internal static partial class PdfExporter
             // Top view — only this unit, zoomed to its own footprint.
             string topCaption  = xHorizontal
                 ? "จากด้านบน (กว้างตู้ ←→)"
-                : "จากด้านบน (ประตู ←→ ในสุด)";
+                : "จากด้านบน (ในสุด ←→ ประตู)";
             string sideCaption = xHorizontal
                 ? "จากด้านข้าง (มองจากประตู — เห็นทุกชั้น)"
                 : "จากด้านข้าง (มองจากด้านข้างตู้ — เห็นทุกชั้น)";

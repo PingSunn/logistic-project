@@ -175,7 +175,7 @@ internal static partial class PdfExporter
 
         private void DrawFrontView(SKRect bounds)
         {
-            // Door (ประตู) is at Y=0; we look in the +Y direction.
+            // Back wall (ในสุด) is at Y=0; door (ประตู) is at Y=cL; we look in the -Y direction.
             // Project (X, Z) onto the page — Z flipped so up is visually up.
             double cW = container.InteriorW, cH = container.InteriorH, cL = container.InteriorL;
 
@@ -195,12 +195,12 @@ internal static partial class PdfExporter
             _canvas.Save();
             _canvas.ClipRect(new SKRect(ox, oy, ox + (float)cW * scale, oy + (float)cH * scale));
 
-            // Sort by Y descending: far boxes first, door-side boxes on top
-            var sorted = placements.OrderByDescending(b => b.Y).ToList();
+            // Sort by Y ascending: far boxes (Y=0, back wall) first, door-side boxes (high Y) on top
+            var sorted = placements.OrderBy(b => b.Y).ToList();
 
             foreach (var box in sorted)
             {
-                float depthT  = cL > 0 ? (float)(box.Y / cL) : 0f;
+                float depthT  = cL > 0 ? (float)(1.0f - box.Y / cL) : 0f;  // 1 at back wall (Y=0), 0 at door (Y=cL)
                 SKColor baseC = Palette[box.ProductIndex % Palette.Length];
                 SKColor drawC = DarkenColor(baseC, depthT * 0.15f);
 

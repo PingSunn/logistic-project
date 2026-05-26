@@ -726,7 +726,7 @@ public class PlanningView : UserControl
         _statsPanel.Children.Clear();
         _hiddenProducts.Clear();
 
-        // Sort CBM ascending: smallest → door side, largest → back wall (adjacent to condo)
+        // Sort CBM ascending: smallest → back wall (Y=0, innermost), largest → door side (adjacent to condo)
         var requests = _products
             .Where(x => x.Cb.IsChecked == true && _qtyMap.ContainsKey(x.Spec))
             .OrderBy(x => x.Spec.Cbm)
@@ -751,13 +751,12 @@ public class PlanningView : UserControl
 
         var output = PackingEngine.Calculate(container, requests);
 
-        // Slide the entire pack to the back wall — preserves internal order, no flip
+        // Slide the entire pack flush to the back wall (Y=0) — preserves internal order, no flip
         if (output.Placements.Count > 0)
         {
-            var dims = new ContainerDims(container.InteriorW, container.InteriorL, container.InteriorH);
-            double maxUsedY = output.Placements.Max(p => p.Y + p.BL);
-            double shift = dims.L - maxUsedY;
-            if (shift > 0.01)
+            double minUsedY = output.Placements.Min(p => p.Y);
+            double shift = -minUsedY;
+            if (Math.Abs(shift) > 0.01)
                 for (int i = 0; i < output.Placements.Count; i++)
                 {
                     var p = output.Placements[i];

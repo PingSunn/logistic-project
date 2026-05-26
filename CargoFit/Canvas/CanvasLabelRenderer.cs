@@ -90,8 +90,8 @@ internal static class CanvasLabelRenderer
             dc.DrawText(ft, new Point(p.X - ft.Width / 2, p.Y - ft.Height / 2));
         }
 
-        DrawBadge("ประตู", cW / 2, 0,  cH / 2, Color.Parse("#0EA5E9"));
-        DrawBadge("ในสุด", cW / 2, cL, cH / 2, Color.Parse("#F97316"));
+        DrawBadge("ในสุด", cW / 2, 0,  cH / 2, Color.Parse("#F97316"));   // Y=0 = back wall (ในสุด)
+        DrawBadge("ประตู", cW / 2, cL, cH / 2, Color.Parse("#0EA5E9"));   // Y=cL = door (ประตู)
     }
 
     internal static void DrawEdgeLabels(DrawingContext dc,

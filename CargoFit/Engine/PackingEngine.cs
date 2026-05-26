@@ -805,7 +805,7 @@ internal static class PackingEngine
 
             var ySlots  = stacks.Select(x => x.MinY).ToList();
             var caps    = ySlots.Select(y => CountLayerCapacity(info.Spec.PatternA!, info.Spec, dims, y)).ToList();
-            var sorted  = stacks.OrderBy(x => x.Height).ToList(); // short → tall (tall goes to highest Y)
+            var sorted  = stacks.OrderByDescending(x => x.Height).ToList(); // tall → lowest Y (back wall/innermost)
 
             if (stacks.Select(x => x.SI).SequenceEqual(sorted.Select(x => x.SI))) continue;
 
