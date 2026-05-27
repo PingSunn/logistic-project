@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- Console app — supports trimming unlike WinForms, gives ~5-8 MB single file -->
+    <!-- Multi-file self-contained: ship as folder + zip to avoid AV false-positives
+         (single-file + trimmed + compressed = malware-packer heuristic match) -->
     <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
 
@@ -16,13 +17,9 @@
     <Company>CargoFit</Company>
     <Copyright>Copyright © 2025 CargoFit</Copyright>
 
-    <!-- Size reduction: self-contained single-file trimmed ~5-8 MB -->
+    <!-- Self-contained but multi-file: bundle .NET runtime as separate .dlls -->
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishSingleFile>true</PublishSingleFile>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <PublishTrimmed>true</PublishTrimmed>
 
     <!-- Thai console output: UTF-8 -->
     <InvariantGlobalization>true</InvariantGlobalization>

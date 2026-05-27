@@ -49,6 +49,7 @@ jobs:
         shell: bash
         run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
+      # Multi-file publish (no single-file/compression) to avoid AV false-positives
       - name: Publish
         shell: bash
         run: |
@@ -56,9 +57,6 @@ jobs:
             -c Release \
             -r ${{ matrix.rid }} \
             --self-contained true \
-            -p:PublishSingleFile=true \
-            -p:IncludeNativeLibrariesForSelfExtract=true \
-            -p:EnableCompressionInSingleFile=true \
             -p:Version=${{ steps.ver.outputs.version }} \
             -o dist/publish
 
@@ -97,6 +95,8 @@ jobs:
         shell: bash
         run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
+      # Multi-file publish (no single-file/trimming) to avoid AV false-positives.
+      # Output is a folder of .exe + .dll; zipped below for distribution.
       - name: Publish stub installer
         shell: bash
         run: |
@@ -104,18 +104,18 @@ jobs:
             -c Release \
             -r win-x64 \
             --self-contained true \
-            -p:PublishSingleFile=true \
-            -p:IncludeNativeLibrariesForSelfExtract=true \
-            -p:EnableCompressionInSingleFile=true \
-            -p:PublishTrimmed=true \
             -p:Version=${{ steps.ver.outputs.version }} \
             -o dist/installer
+
+      - name: Zip installer folder
+        shell: pwsh
+        run: Compress-Archive -Path dist/installer/* -DestinationPath dist/CargoFit-Installer.zip
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v6
         with:
           name: stub-installer
-          path: dist/installer/CargoFit-Installer.exe
+          path: dist/CargoFit-Installer.zip
 
   # ── Merge all platform artifacts → publish GitHub Release ────────────────────
   release:
@@ -149,7 +149,7 @@ jobs:
       # gh CLI is pre-installed on all GitHub Actions runners
       # ไม่ใช้ vpk upload github เพราะมันดู channel ของ runner (linux) ไม่ใช่ของที่ pack ไว้
       # อัปโหลดเฉพาะไฟล์ที่จำเป็น — ลด clutter ใน release
-      # CargoFit-Installer.exe ไว้บนสุด = prominent ใน GitHub Release page
+      # CargoFit-Installer.zip ไว้บนสุด = prominent ใน GitHub Release page
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -157,10 +157,9 @@ jobs:
           gh release create "${{ github.ref_name }}" \
             --title "CargoFit ${{ github.ref_name }}" \
             --repo "PingSunn/cargofit" \
-            dist/CargoFit-Installer.exe \
+            dist/CargoFit-Installer.zip \
             dist/releases/CargoFit-win-Setup.exe \
             dist/releases/CargoFit-osx-Setup.pkg \
             dist/releases/CargoFit-*-full.nupkg \
             dist/releases/releases.win.json \
-            dist/releases/releases.osx.json \
-            "scripts/ติดตั้ง-CargoFit.bat"
+            dist/releases/releases.osx.json

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace CargoFit.Installer;
 
@@ -54,8 +53,6 @@ internal static class Program
 
             // Step 3: รัน setup --silent
             Print("กำลังติดตั้ง กรุณารอสักครู่...", ConsoleColor.Cyan);
-
-            UnblockFile(tempSetup);
 
             // UseShellExecute=true เพื่อให้ Velopack ขอ UAC elevation ได้
             var psi  = new ProcessStartInfo(tempSetup, "--silent") { UseShellExecute = true };
@@ -129,15 +126,5 @@ internal static class Program
 
         // \r เพื่อ overwrite บรรทัดเดิม
         Console.Write($"\r  [{bar}] {pct,3}%  {mbRecv:F1}/{mbTotal:F1} MB  ");
-    }
-
-    /// <summary>
-    /// ลบ Zone.Identifier ADS (SmartScreen mark) เพื่อให้ Windows ไม่ block
-    /// การรันไฟล์ที่ดาวน์โหลดมา — ไม่ต้องขอ elevation
-    /// </summary>
-    private static void UnblockFile(string path)
-    {
-        try { File.Delete(path + ":Zone.Identifier"); }
-        catch { /* ไม่มี ADS = ปลอดภัยอยู่แล้ว */ }
     }
 }
