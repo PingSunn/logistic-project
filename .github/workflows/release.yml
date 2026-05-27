@@ -68,6 +68,7 @@ jobs:
             --packVersion "${{ steps.ver.outputs.version }}" \
             --packDir "dist/publish" \
             --mainExe "${{ matrix.exe }}" \
+            --icon "CargoFit/Assets/Logo.ico" \
             --outputDir "dist/releases"
 
       - name: Upload artifacts

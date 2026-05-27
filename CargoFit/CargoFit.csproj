@@ -12,6 +12,7 @@
         <Nullable>enable</Nullable>
         <InvariantGlobalization>true</InvariantGlobalization>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <ApplicationIcon>Assets\Logo.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -41,6 +42,11 @@
         <EmbeddedResource Include="Assets\Prompt-Bold.ttf"    LogicalName="CargoFit.Prompt-Bold.ttf"    />
         <AvaloniaResource  Include="Assets\Prompt-Regular.ttf" />
         <AvaloniaResource  Include="Assets\Prompt-Bold.ttf"    />
+    </ItemGroup>
+
+    <!-- App icon for Avalonia Window.Icon binding -->
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\Logo.ico" />
     </ItemGroup>
 
 </Project>

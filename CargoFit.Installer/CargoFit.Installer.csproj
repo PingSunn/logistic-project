@@ -24,6 +24,9 @@
     <!-- Thai console output: UTF-8 -->
     <InvariantGlobalization>true</InvariantGlobalization>
 
+    <!-- Share the same app icon as main CargoFit binary -->
+    <ApplicationIcon>..\CargoFit\Assets\Logo.ico</ApplicationIcon>
+
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
