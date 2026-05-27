@@ -25,10 +25,12 @@ jobs:
           - runs-on: macos-latest
             rid: osx-arm64
             exe: CargoFit
+            icon: CargoFit/Assets/Logo.icns
           # Windows x64
           - runs-on: windows-latest
             rid: win-x64
             exe: CargoFit.exe
+            icon: CargoFit/Assets/Logo.ico
 
     runs-on: ${{ matrix.runs-on }}
 
@@ -68,7 +70,7 @@ jobs:
             --packVersion "${{ steps.ver.outputs.version }}" \
             --packDir "dist/publish" \
             --mainExe "${{ matrix.exe }}" \
-            --icon "CargoFit/Assets/Logo.ico" \
+            --icon "${{ matrix.icon }}" \
             --outputDir "dist/releases"
 
       - name: Upload artifacts
